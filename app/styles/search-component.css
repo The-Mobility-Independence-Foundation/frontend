@@ -1,0 +1,9 @@
+input, select {
+  border-radius: 5px !important;
+  border-color: black !important;
+}
+
+button, .button {
+  background-color: #D3E8FF !important;
+  color: black !important;
+}
