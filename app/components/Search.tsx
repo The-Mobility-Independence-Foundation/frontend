@@ -1,6 +1,6 @@
 "use client";
 
-import Dropdown from "./Dropdown";
+import Image from 'next/image';
 import "../styles/search-component.css";
 import { ChangeEvent, SetStateAction, SyntheticEvent, useState } from "react";
 
@@ -33,7 +33,7 @@ export default function Search({placeholderText, newButtonText, newButtonEvent, 
         + {newButtonText || "New"}
         </button>
     : ""}
-    <div className="flex max-w-[700px] w-[50%]">
+    <div className="flex max-w-[700px] w-[50%] relative items-center">
       <input 
         type="text" 
         className="border-black w-full"
@@ -41,7 +41,13 @@ export default function Search({placeholderText, newButtonText, newButtonEvent, 
         value={searchQuery}
         onChange={handleSearchQueryChange}
       />
-      {/* TODO: Icons */}
+      <Image 
+        src="/images/search.svg"
+        height={35}
+        width={35}
+        alt="Search"
+        className="absolute right-[5px]"
+      />
     </div>
     {filter ?
       <button>
