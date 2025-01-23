@@ -5,13 +5,14 @@ import "../styles/search-component.css";
 import { ChangeEvent, SetStateAction, SyntheticEvent, useState } from "react";
 
 interface Props {
+  apiRoute: string;
   placeholderText?: string;
   newButtonText?: string;
   newButtonEvent?: (clicked: boolean) => void;
   filter?: boolean;
 }
 
-export default function Search({placeholderText, newButtonText, newButtonEvent, filter}: Props) {
+export default function Search({apiRoute, placeholderText, newButtonText, newButtonEvent, filter}: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearchQueryChange = (event: any) => {
@@ -23,6 +24,9 @@ export default function Search({placeholderText, newButtonText, newButtonEvent, 
       newButtonEvent(true);
     }
   }
+
+  // TODO: API route hook up -> sends information back to parent
+  // TODO: Add filter component once finished
 
   return <div 
     className="w-full py-[15px] px-[10%] flex place-content-around"
