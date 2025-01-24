@@ -3,12 +3,18 @@
 import { useState } from "react";
 import "../styles/pagination-component.css";
 
+export interface PageChangeEvent {
+  startIndex: number;
+  endIndex: number;
+}
+
 interface Props {
   numberOfItems: number;
   itemsPerPage: number;
+  onPageChange: (event: PageChangeEvent) => {};
 }
 
-export default function Pagination({numberOfItems, itemsPerPage}: Props) {
+export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: Props) {
   // default page data
   const [startIndex, setStartIndex] = useState(0);
   const [page, setPage] = useState(1);
@@ -21,6 +27,7 @@ export default function Pagination({numberOfItems, itemsPerPage}: Props) {
   const changePage = (newPage: number) => {
     setPage(newPage);
     setStartIndex((newPage - 1) * itemsPerPage);
+    endIndex = startIndex + itemsPerPage - 1;
     let newBoxes = [];
     let ellipsisAdded = false;
     for(let i = 1; i <= numberOfPages; i++) {
@@ -39,10 +46,10 @@ export default function Pagination({numberOfItems, itemsPerPage}: Props) {
       }
     }
     setBoxes(newBoxes);
+    onPageChange({startIndex: startIndex, endIndex: endIndex});
   };
 
-  // resetBoxes();
-
+  // TODO: make it appear at bottom of page no matter what
   return <div className="flex">
     <div className="box" style={{pointerEvents: page == 1 ? "none" : "initial"}}
          onClick={() => changePage(page - 1)}>
