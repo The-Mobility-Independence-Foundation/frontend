@@ -1,0 +1,19 @@
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 3px;
+  color: #757575;
+  font-size: 20px;
+  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  border: solid 1px #D1D1D1;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #EBEBEB !important;
+    transition: 0.3s;
+  }
+}
