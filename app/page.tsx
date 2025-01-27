@@ -10,6 +10,6 @@ export default function Home() {
   }
 
   return <div className="w-screen h-screen">
-    <Pagination numberOfItems={890} itemsPerPage={10} onPageChange={async (event) => onPageChange(event)} />
+    <Pagination numberOfItems={888} itemsPerPage={10} onPageChange={async (event) => onPageChange(event)} />
   </div>
 }

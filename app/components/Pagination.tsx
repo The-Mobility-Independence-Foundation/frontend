@@ -16,18 +16,22 @@ interface Props {
 
 export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: Props) {
   // default page data
-  const [startIndex, setStartIndex] = useState(0);
-  const [page, setPage] = useState(1);
+  let startIndex = 0;
   let endIndex = numberOfItems < itemsPerPage ? numberOfItems-1 : itemsPerPage-1;
+  const [page, setPage] = useState(1);
   const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
   const [boxes, setBoxes] = useState(numberOfPages > 5 
     ? [1, 2, "...", numberOfPages-1, numberOfPages]
     : Array.from({length: numberOfPages}, (_, index) => index + 1));
 
   const changePage = (newPage: number) => {
+    // Set the new item indices
     setPage(newPage);
-    setStartIndex((newPage - 1) * itemsPerPage);
-    endIndex = startIndex + itemsPerPage - 1;
+    startIndex = (newPage - 1) * itemsPerPage;
+    endIndex = startIndex + (itemsPerPage - 1) > numberOfItems ? numberOfItems - 1 : startIndex + (itemsPerPage - 1);
+    onPageChange({startIndex: startIndex, endIndex: endIndex});
+
+    // set the new boxes that are rendered
     let newBoxes = [];
     let ellipsisAdded = false;
     for(let i = 1; i <= numberOfPages; i++) {
@@ -46,7 +50,6 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
       }
     }
     setBoxes(newBoxes);
-    onPageChange({startIndex: startIndex, endIndex: endIndex});
   };
 
   // TODO: make it appear at bottom of page no matter what
