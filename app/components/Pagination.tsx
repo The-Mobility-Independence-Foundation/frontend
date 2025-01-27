@@ -35,16 +35,16 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
     let newBoxes = [];
     let ellipsisAdded = false;
     for(let i = 1; i <= numberOfPages; i++) {
-      if(i == 1 || i == 2) {
+      if(i == 1 || i == 2) { // first 2
         newBoxes.push(i);
         ellipsisAdded = false;
-      } else if(i == newPage - 1 || i == newPage || i == newPage + 1) {
+      } else if(i == newPage - 1 || i == newPage || i == newPage + 1) { // middle
         newBoxes.push(i);
         ellipsisAdded = false;
-      } else if(i == numberOfPages - 1 || i == numberOfPages) {
+      } else if(i == numberOfPages - 1 || i == numberOfPages) { // last 2
         newBoxes.push(i);
         ellipsisAdded = false;
-      } else if(!ellipsisAdded) {
+      } else if(!ellipsisAdded) { // ellipsis
         newBoxes.push("...");
         ellipsisAdded = true;
       }
@@ -53,7 +53,7 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
   };
 
   // TODO: make it appear at bottom of page no matter what
-  return <div className="flex">
+  return <div className="flex w-[470px]">
     <div className="box" style={{pointerEvents: page == 1 ? "none" : "initial"}}
          onClick={() => changePage(page - 1)}>
       <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 4L9 11L4.5 7.5L9 4Z" fill="currentColor"></path></svg>
@@ -71,7 +71,7 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
               </div>;
       })
     }
-    <div className="box" style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
+    <div className="!ml-auto box" style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
          onClick={() => changePage(page + 1)}>
       <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 11L6 4L10.5 7.5L6 11Z" fill="currentColor"></path></svg>
     </div>
