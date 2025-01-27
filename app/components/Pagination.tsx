@@ -52,8 +52,7 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
     setBoxes(newBoxes);
   };
 
-  // TODO: make it appear at bottom of page no matter what
-  return <div className="flex w-[470px]">
+  return <div className="flex w-[470px] absolute left-[15px] bottom-[15px]">
     <div className="box" style={{pointerEvents: page == 1 ? "none" : "initial"}}
          onClick={() => changePage(page - 1)}>
       <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 4L9 11L4.5 7.5L9 4Z" fill="currentColor"></path></svg>

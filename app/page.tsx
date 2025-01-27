@@ -5,7 +5,6 @@ import { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
   const onPageChange = (event: PageChangeEvent) => {
-    // TODO: function call is beheind
     console.log(event);
   }
 
