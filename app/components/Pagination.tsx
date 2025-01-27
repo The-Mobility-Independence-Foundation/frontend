@@ -70,7 +70,7 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
               </div>;
       })
     }
-    <div className="!ml-auto box" style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
+    <div className="box !ml-auto" style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
          onClick={() => changePage(page + 1)}>
       <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 11L6 4L10.5 7.5L6 11Z" fill="currentColor"></path></svg>
     </div>
