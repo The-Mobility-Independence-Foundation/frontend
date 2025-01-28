@@ -1,6 +1,6 @@
 "use client";
 
-import Pagination from "./components/Pagination";
+import PaginationComponent from "./components/Pagination";
 import { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
@@ -9,6 +9,6 @@ export default function Home() {
   }
 
   return <div className="w-screen h-screen">
-    <Pagination numberOfItems={880} itemsPerPage={10} onPageChange={async (event) => onPageChange(event)} />
+    <PaginationComponent numberOfItems={880} itemsPerPage={10} onPageChange={async (event) => onPageChange(event)} />
   </div>
 }
