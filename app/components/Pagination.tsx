@@ -1,7 +1,15 @@
 "use client";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { useState } from "react";
-import "../styles/pagination-component.css";
 
 export interface PageChangeEvent {
   startIndex: number;
@@ -14,7 +22,7 @@ interface Props {
   onPageChange: (event: PageChangeEvent) => {};
 }
 
-export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: Props) {
+export default function PaginationComponent({numberOfItems, itemsPerPage, onPageChange}: Props) {
   // default page data
   let startIndex = 0;
   let endIndex = numberOfItems < itemsPerPage ? numberOfItems-1 : itemsPerPage-1;
@@ -52,27 +60,35 @@ export default function Pagination({numberOfItems, itemsPerPage, onPageChange}: 
     setBoxes(newBoxes);
   };
 
-  return <div className="flex w-[470px] absolute left-[15px] bottom-[15px]">
-    <div className="box" style={{pointerEvents: page == 1 ? "none" : "initial"}}
-         onClick={() => changePage(page - 1)}>
-      <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 4L9 11L4.5 7.5L9 4Z" fill="currentColor"></path></svg>
-    </div>
-    {boxes.map((num, index) => {
-      if(num == "...") {
-        return <div key={"ellipsis-" + index} className="relative mr-[5px] ml-[5px] mt-[3px] text-[20px] text-center font-semibold h-[40px] w-[18px]">
-          <span className="absolute bottom-0 left-0">{num}</span>
-        </div>;
-      }
-      return <div className="box" key={num}
-                  style={{backgroundColor: num == page ? "#EBEBEB" : "white", pointerEvents: page == num ? "none" : "initial"}}
-                  onClick={() => changePage(num as number)}>
-                    {num}
-              </div>;
-      })
-    }
-    <div className="box !ml-auto" style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
-         onClick={() => changePage(page + 1)}>
-      <svg width="25" height="25" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 11L6 4L10.5 7.5L6 11Z" fill="currentColor"></path></svg>
-    </div>
-  </div>
+  return <Pagination className="w-[550px] absolute left-[15px] bottom-[15px] justify-start">
+    <PaginationContent className="w-full">
+      <PaginationItem 
+        onClick={() => changePage(page - 1)}
+        style={{pointerEvents: page == 1 ? "none" : "initial"}}
+        className="cursor-pointer"
+        >
+        <PaginationPrevious/>
+      </PaginationItem>
+      {boxes.map((num, index) => {
+        if(num == "...") {
+          return <PaginationItem key={index}><PaginationEllipsis /></PaginationItem>
+        }
+        return <PaginationItem key={index}  
+                               onClick={() => changePage(num as number)}
+                               className="cursor-pointer"
+                >
+        <PaginationLink isActive={page == num}>
+          {num}
+        </PaginationLink>
+      </PaginationItem>
+      })}
+      <PaginationItem 
+        onClick={() => changePage(page + 1)}
+        style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
+        className="cursor-pointer !ml-auto"
+      >
+        <PaginationNext />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
 }
