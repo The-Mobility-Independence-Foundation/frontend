@@ -37,14 +37,14 @@ export default function Search({apiRoute, placeholderText, newButtonText, newBut
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // TODO: API route hook up -> sends information back to parent
     console.log(values)
   }
 
-  // TODO: API route hook up -> sends information back to parent
   // TODO: Add filter component once finished
 
   return <div 
-    className="w-full py-[15px] px-[2%] flex place-content-around"
+    className="w-full py-[15px] px-[2%] flex place-content-around items-center"
     style={{backgroundColor: "#D1D5DB"}}
   >
     {newButtonEvent ? 
