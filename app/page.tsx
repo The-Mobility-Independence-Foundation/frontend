@@ -1,7 +1,6 @@
 "use client";
 
-import PaginationComponent from "./components/Pagination";
-import { PageChangeEvent } from "./components/Pagination";
+import PaginationComponent, { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
   const onPageChange = (event: PageChangeEvent) => {
