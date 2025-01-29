@@ -40,19 +40,19 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
     onPageChange({startIndex: startIndex, endIndex: endIndex});
 
     // set the new boxes that are rendered
+    // always include the first 2 pages
+    // always include the current page and its neighbors
+    // always include the last two pages
+    // insert ellipsis where there is a gap between pages
     let newBoxes = [];
     let ellipsisAdded = false;
     for(let i = 1; i <= numberOfPages; i++) {
-      if(i == 1 || i == 2) { // first 2
+      if (i <= 2 || 
+          i >= numberOfPages - 1 || 
+          Math.abs(i - newPage) <= 1) {
         newBoxes.push(i);
         ellipsisAdded = false;
-      } else if(i == newPage - 1 || i == newPage || i == newPage + 1) { // middle
-        newBoxes.push(i);
-        ellipsisAdded = false;
-      } else if(i == numberOfPages - 1 || i == numberOfPages) { // last 2
-        newBoxes.push(i);
-        ellipsisAdded = false;
-      } else if(!ellipsisAdded) { // ellipsis
+      } else if (!ellipsisAdded) {
         newBoxes.push("...");
         ellipsisAdded = true;
       }
