@@ -1,31 +1,40 @@
-import axios from "axios";
+class BackendService {
+  async get(endpoint: string, filters: string[] = [], sorts: string[] = []) {
+    if (filters) {
+      endpoint += "?filters=" + filters.join(",");
+    }
 
-const fetch = async (route: string) => {
-  const request = axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}${route}`);
-  return request
-    .then(response => response.data)
-    .catch(error => console.log(error));
+    if (sorts) {
+      endpoint += "&sorts=" + sorts.join(",");
+    }
+
+    return this.fetcher("GET", endpoint);
+  }
+
+  async post(endpoint: string, data: any) {
+    return this.fetcher("POST", endpoint, data);
+  }
+
+  async put(endpoint: string, data: any) {
+    return this.fetcher("PUT", endpoint, data);
+  }
+
+  async delete(endpoint: string) {
+    return this.fetcher("DELETE", endpoint);
+  }
+
+  private async fetcher(method: string, endpoint: string, data: any = null) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
+      method: method,
+      body: data ? JSON.stringify(data) : null,
+    });
+
+    if (!response.ok) {
+      console.log(response.text);
+    }
+
+    return response.json();
+  }
 }
 
-const create = async (route: string, data: any) => {
-  const request = axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}${route}`, data)
-  return request
-    .then(response => response.data)
-    .catch(error => console.log(error));
-}
-
-const update = async (route: string, data: any) => {
-  const request = axios.put(`${process.env.NEXT_PUBLIC_BASE_URL}${route}`, data);
-  return request
-    .then(response => response.data)
-    .catch(error => console.log(error));
-}
-
-const remove = async (route: string) => {
-  const request = axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}${route}`);
-  return request
-    .then(response => response.data)
-    .catch(error => console.log(error));
-}
-
-export {fetch, create, update, remove}
+export default new BackendService();
