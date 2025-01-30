@@ -11,11 +11,18 @@ const get = async (route: string) => {
     .catch(error => console.log(error));
 }
 
-const post = async (route: string, obj: any) => {
-  const request = axios.post(`${BASE_URL}${route}`, obj)
+const post = async (route: string, data: any) => {
+  const request = axios.post(`${BASE_URL}${route}`, data)
   return request
     .then(response => response.data)
     .catch(error => console.log(error));
 }
 
-export {get, post}
+const put = async (route: string, data: any) => {
+  const request = axios.put(`${BASE_URL}${route}`, data);
+  return request
+    .then(response => response.data)
+    .catch(error => console.log(error));
+}
+
+export {get, post, put}
