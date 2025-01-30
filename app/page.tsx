@@ -1,11 +1,13 @@
-import * as backendService from "./services/backend.service";
+"use client";
 
-interface Post {
-  id: number;
-  title: string;
-}
+import { useEffect, useState } from "react";
+import {fetch, create, update, remove} from "./services/backend.service";
 
-export default async function Home() {
-  const data = await backendService.get("/posts");
-  return (data)
+export default function Home() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch("/posts").then(response => setData(response));
+  }, [])
+  console.log(data)
+  return <div>{"erm"}</div>
 }
