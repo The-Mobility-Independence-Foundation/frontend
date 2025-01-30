@@ -11,4 +11,11 @@ const get = async (route: string) => {
     .catch(error => console.log(error));
 }
 
-export {get}
+const post = async (route: string, obj: any) => {
+  const request = axios.post(`${BASE_URL}${route}`, obj)
+  return request
+    .then(response => response.data)
+    .catch(error => console.log(error));
+}
+
+export {get, post}
