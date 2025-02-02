@@ -24,8 +24,8 @@ interface Props {
 
 export default function PaginationComponent({numberOfItems, itemsPerPage, onPageChange}: Props) {
   // default page data
-  let startIndex = 0;
-  let endIndex = numberOfItems < itemsPerPage ? numberOfItems-1 : itemsPerPage-1;
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(numberOfItems < itemsPerPage ? numberOfItems-1 : itemsPerPage-1);
   const [page, setPage] = useState(1);
   const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
   const [boxes, setBoxes] = useState(numberOfPages > 5 
@@ -35,8 +35,8 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
   const changePage = (newPage: number) => {
     // Set the new item indices
     setPage(newPage);
-    startIndex = (newPage - 1) * itemsPerPage;
-    endIndex = startIndex + (itemsPerPage - 1) > numberOfItems ? numberOfItems - 1 : startIndex + (itemsPerPage - 1);
+    setStartIndex((newPage - 1) * itemsPerPage);
+    setEndIndex(startIndex + (itemsPerPage - 1) > numberOfItems ? numberOfItems - 1 : startIndex + (itemsPerPage - 1));
     onPageChange({startIndex: startIndex, endIndex: endIndex});
 
     // set the new boxes that are rendered
