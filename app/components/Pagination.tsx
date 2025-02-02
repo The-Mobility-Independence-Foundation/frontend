@@ -10,10 +10,16 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useState } from "react";
+import {v4 as uuidv4} from "uuid";
 
 export interface PageChangeEvent {
   startIndex: number;
   endIndex: number;
+}
+
+interface Box {
+  value: number | string;
+  id: string;
 }
 
 interface Props {
@@ -29,8 +35,8 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
   const [page, setPage] = useState(1);
   const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
   const [boxes, setBoxes] = useState(numberOfPages > 5 
-    ? [1, 2, "...", numberOfPages-1, numberOfPages]
-    : Array.from({length: numberOfPages}, (_, index) => index + 1));
+    ? [{value: 1, id: uuidv4()}, {value: 2, id: uuidv4()}, {value: "...", id: uuidv4()}, {value: numberOfPages-1, id: uuidv4()}, {value: numberOfPages, id: uuidv4()}]
+    : Array.from({length: numberOfPages}, (_, index) => {return {value: index+1, id: uuidv4()}}));
 
   const changePage = (newPage: number) => {
     // Set the new item indices
@@ -50,10 +56,10 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
       if (i <= 2 || 
           i >= numberOfPages - 1 || 
           Math.abs(i - newPage) <= 1) {
-        newBoxes.push(i);
+        newBoxes.push({value: i, id: uuidv4()});
         ellipsisAdded = false;
       } else if (!ellipsisAdded) {
-        newBoxes.push("...");
+        newBoxes.push({value: "...", id: uuidv4()});
         ellipsisAdded = true;
       }
     }
@@ -68,17 +74,17 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
         >
         <PaginationPrevious/>
       </PaginationItem>
-      {boxes.map((num, index) => {
-        if(num == "...") {
-          return <PaginationItem key={index}><PaginationEllipsis /></PaginationItem>
+      {boxes.map(box => {
+        if(box.value == "...") {
+          return <PaginationItem key={box.id}><PaginationEllipsis /></PaginationItem>
         }
         return <PaginationItem 
-                  key={index}  
-                  onClick={() => changePage(num as number)}
+                  key={box.id}  
+                  onClick={() => changePage(box.value as number)}
                   className="cursor-pointer"
                 >
-        <PaginationLink isActive={page == num}>
-          {num}
+        <PaginationLink isActive={page == box.value}>
+          {box.value}
         </PaginationLink>
       </PaginationItem>
       })}
