@@ -60,7 +60,7 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
     setBoxes(newBoxes);
   };
 
-  return <Pagination className="w-[550px] absolute left-[15px] bottom-[15px] justify-start">
+  return <Pagination className="w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start">
     <PaginationContent className="w-full">
       <PaginationItem 
         onClick={() => changePage(page - 1)}
@@ -73,9 +73,10 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
         if(num == "...") {
           return <PaginationItem key={index}><PaginationEllipsis /></PaginationItem>
         }
-        return <PaginationItem key={index}  
-                               onClick={() => changePage(num as number)}
-                               className="cursor-pointer"
+        return <PaginationItem 
+                  key={index}  
+                  onClick={() => changePage(num as number)}
+                  className="cursor-pointer"
                 >
         <PaginationLink isActive={page == num}>
           {num}
