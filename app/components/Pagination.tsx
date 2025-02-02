@@ -64,8 +64,7 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
     <PaginationContent className="w-full">
       <PaginationItem 
         onClick={() => changePage(page - 1)}
-        style={{pointerEvents: page == 1 ? "none" : "initial"}}
-        className="cursor-pointer"
+        className={`cursor-pointer ${page == 1 ? "pointer-events-none" : "pointer-events-auto"}`}
         >
         <PaginationPrevious/>
       </PaginationItem>
@@ -85,8 +84,7 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
       })}
       <PaginationItem 
         onClick={() => changePage(page + 1)}
-        style={{pointerEvents: page == numberOfPages ? "none" : "initial"}}
-        className="cursor-pointer !ml-auto"
+        className={`cursor-pointer !ml-auto ${page == numberOfPages ? "pointer-events-none" : "pointer-events-auto"}`}
       >
         <PaginationNext />
       </PaginationItem>
