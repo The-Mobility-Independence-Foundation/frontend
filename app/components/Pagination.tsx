@@ -75,18 +75,19 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
         <PaginationPrevious/>
       </PaginationItem>
       {boxes.map(box => {
-        if(box.value == "...") {
-          return <PaginationItem key={box.id}><PaginationEllipsis /></PaginationItem>
-        }
-        return <PaginationItem 
-                  key={box.id}  
-                  onClick={() => changePage(box.value as number)}
-                  className="cursor-pointer"
-                >
-        <PaginationLink isActive={page == box.value}>
-          {box.value}
-        </PaginationLink>
-      </PaginationItem>
+        return <PaginationItem key={box.id}>
+          {box.value === "..." ? <PaginationEllipsis/> : 
+            <PaginationItem 
+              key={box.id}  
+              onClick={() => changePage(box.value as number)}
+              className="cursor-pointer"
+            >
+              <PaginationLink isActive={page == box.value}>
+                {box.value}
+              </PaginationLink>
+            </PaginationItem>
+          }
+        </PaginationItem>
       })}
       <PaginationItem 
         onClick={() => changePage(page + 1)}
