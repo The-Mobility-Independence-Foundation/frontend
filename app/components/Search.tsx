@@ -1,28 +1,40 @@
 "use client";
 
 import "../styles/search-component.css";
-import { useState } from "react";
 import { Input } from "@/components/ui/input"
-import { Form, FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import backendService from "../services/backend.service";
 
 interface Props {
   apiRoute: string;
+  receiveData: (data: any[]) => void;
   placeholderText?: string;
   newButtonText?: string;
-  newButtonEvent?: (clicked: boolean) => void;
   filter?: boolean;
   defaultQuery?: string;
+  newButtonEvent?: (clicked: boolean) => void;
 }
 
 const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: Props) {
+export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: Props) {  
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  useEffect(() => {
+    // TODO: parse filter result into route
+    const filters = [`query="${searchQuery}`];
+    backendService.get(apiRoute, filters)
+      .then(response => {
+        receiveData(response);
+      });
+  }, [searchQuery]);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,11 +49,10 @@ export default function Search({apiRoute, placeholderText, newButtonText, newBut
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: API route hook up -> sends information back to parent
-    console.log(values)
+    setSearchQuery(values.query);
   }
 
-  // TODO: Add filter component once finished
+  // TODO: Add filter component
 
   return <div 
     className="w-full py-[15px] px-[2%] flex place-content-around items-center"
