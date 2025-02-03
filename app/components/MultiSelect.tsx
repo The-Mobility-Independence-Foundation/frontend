@@ -7,15 +7,16 @@ interface Props {
     className: string
     title: string
     options: string[]
+    onChange: (newSelected: string) => void
 }
 
-export default function MultiSelect({className, title, options}: Props) {
-    return <div id="multi-select" className={className}>
+export default function MultiSelect({className, title, options, onChange}: Props) {
+    return <div className={className}>
         <h1 className="font-[inter] font-semibold text-2xl mb-2">{title}</h1>
         {options.map((option) => 
             <div key={option}>
                 <Label className="font-[inter] font-normal text-sm">
-                    <Checkbox className="mr-2" />
+                    <Checkbox className="mr-2" onClick={() => onChange(option)} />
                     {option}
                 </Label>
                 <br></br>
