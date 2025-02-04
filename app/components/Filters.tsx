@@ -4,6 +4,7 @@ import MultiSelect from "./MultiSelect"
 import { Input } from "@/components/ui/input"
 import RadioButton from "./RadioButton"
 import { useState } from "react";
+import { FilterTypes } from "../types/filterTypes";
 
 interface Props {
     partTypes: string[]
@@ -28,28 +29,28 @@ export default function Filters({partTypes, brands, selectedValues, onValueChang
 
     function changeActiveStatus(newActiveStatus: number) {
         setActiveStatusSelected(newActiveStatus);
-        onValueChange("active", newActiveStatus == 1);
+        onValueChange(FilterTypes.Active, newActiveStatus == 1);
     }
 
     return <div className="flex" id="filters">
-        <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Part Type" options={partTypes} onChange={(newSelected) => updateMultiSelect("partType", newSelected)}/>
-        <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Brand" options={brands} onChange={(newSelected) => updateMultiSelect("brand", newSelected)}/>
+        <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Part Type" options={partTypes} onChange={(newSelected) => updateMultiSelect(FilterTypes.PartType, newSelected)}/>
+        <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Brand" options={brands} onChange={(newSelected) => updateMultiSelect(FilterTypes.Brand, newSelected)}/>
         <div id="dimensions" className="px-7 mt-4 max-w-fit">
             <h1 className="font-[inter] font-semibold text-2xl mb-2">
                 Dimensions
             </h1>
             <div className="flex mb-6">
-                <Input placeholder="Width (in.)" type="number" min={0} onChange={(e) => onValueChange("width", e.target.value)}/>
+                <Input placeholder="Width (in.)" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.Width, e.target.value)}/>
                 <p className="font-[inter] font-semibold text-2xl mb-2 px-0 mx-2">X</p>
-                <Input placeholder="Height (in.)" type="number" min={0} onChange={(e) => onValueChange("height", e.target.value)}/>
+                <Input placeholder="Height (in.)" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.Height, e.target.value)}/>
             </div>
             <h1 className="font-[inter] font-semibold text-2xl mb-2">
                 Quantity
             </h1>
             <div className="flex mb-6">
-                <Input placeholder="Lower Bound" type="number" min={0} onChange={(e) => onValueChange("quantityMin", e.target.value)}/>
+                <Input placeholder="Lower Bound" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.QuantityMin, e.target.value)}/>
                 <p className="font-[inter] font-semibold text-2xl mb-2 px-0 mx-2">-</p>
-                <Input placeholder="Upper Bound" type="number" min={0} onChange={(e) => onValueChange("quantityMax", e.target.value)}/>
+                <Input placeholder="Upper Bound" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.QuantityMax, e.target.value)}/>
             </div>
             <RadioButton label1="Active" label2="Inactive" selected={activeStatusSelected} onChange={changeActiveStatus}></RadioButton>
         </div>  
