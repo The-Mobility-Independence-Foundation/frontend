@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import backendService from "./services/backend.service";
+import PaginationComponent, { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    backendService.get("/posts").then(response => setData(response));
-  }, [])
-  console.log(data);
-  return <div>{"erm"}</div>
+  const onPageChange = (event: PageChangeEvent) => {
+    console.log(event);
+  }
+
+  return <div className="w-screen h-screen">
+    <PaginationComponent count={50} total={1000} hasNext={true} nextToken={251} onPageChange={async (event) => onPageChange(event)} />
+  </div>
 }
