@@ -30,6 +30,8 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
 
+  // TODO: grab brands & types from DB
+
   const onFilterValueChange = (field: string, newValue: any) => {
     let newSelectedValues = new Map(selectedValues);
     if(newValue == null || newValue == "") {
