@@ -1,6 +1,5 @@
 "use client";
 
-import "../styles/search-component.css";
 import { Input } from "@/components/ui/input"
 import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -8,13 +7,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
+import Filters from "./Filters";
 
 interface Props {
   apiRoute: string;
   receiveData: (data: any[]) => void;
+  filter?: boolean;
   placeholderText?: string;
   newButtonText?: string;
-  filter?: boolean;
   defaultQuery?: string;
   newButtonEvent?: (clicked: boolean) => void;
 }
@@ -25,6 +25,15 @@ const formSchema = z.object({
 
 export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: Props) {  
   const [searchQuery, setSearchQuery] = useState("");
+  const [partTypes, setPartTypes] = useState(["type1", "type2"]);
+  const [brands, setBrands] = useState(["brand1", "brand2"]);
+  const [selectedValues, setSelectedValues] = useState(new Map());
+
+  const onFilterValueChange = (field: string, newValue: any) => {
+    console.log(field, newValue);
+  }
+
+  const [showFilter, setShowFilter] = useState("" as any);
   
   useEffect(() => {
     // TODO: parse filter result into route
@@ -48,18 +57,26 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
     }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     setSearchQuery(values.query);
   }
 
-  // TODO: Add filter component
+  const toggleFilter = () => {
+    if(filter) {
+      if(showFilter == "") {
+        setShowFilter(<Filters partTypes={partTypes} brands={brands} selectedValues={selectedValues} onValueChange={onFilterValueChange}></Filters>);
+      } else {
+        setShowFilter("");
+      }
+    }
+  }
 
-  return <div 
+  return <><div 
     className="w-full py-[15px] px-[2%] flex place-content-around items-center"
     style={{backgroundColor: "#D1D5DB"}}
   >
     {newButtonEvent ? 
-      <button onClick={handleNewButtonClick}>
+      <button onClick={handleNewButtonClick} className="bg-[#D3E8FF] text-black">
         + {newButtonText || "New"}
         </button>
     : ""}
@@ -76,7 +93,7 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
               <FormControl>
                   <Input 
                     {...field}
-                    className="bg-white"
+                    className="bg-white rounded-sm border-black"
                     placeholder={placeholderText || "Search"}
                   />
               </FormControl>
@@ -90,9 +107,11 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
       </form>
     </FormProvider>
     {filter ?
-      <button>
+      <button className="bg-[#D3E8FF] text-black" onClick={() => toggleFilter()}>
         Filter
       </button>
     : ""}
   </div>
+  {showFilter}
+  </>
 }
