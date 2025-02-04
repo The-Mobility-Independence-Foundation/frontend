@@ -8,6 +8,6 @@ export default function Home() {
   }
 
   return <div className="w-screen h-screen">
-    <PaginationComponent numberOfItems={880} itemsPerPage={10} onPageChange={async (event) => onPageChange(event)} />
+    <PaginationComponent count={50} total={1000} hasNext={true} nextToken={251} onPageChange={async (event) => onPageChange(event)} />
   </div>
 }

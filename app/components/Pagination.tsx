@@ -23,17 +23,19 @@ interface Box {
 }
 
 interface Props {
-  numberOfItems: number;
-  itemsPerPage: number;
+  count: number;
+  total: number;
+  hasNext: boolean;
+  nextToken: number;
   onPageChange: (event: PageChangeEvent) => {};
 }
 
-export default function PaginationComponent({numberOfItems, itemsPerPage, onPageChange}: Props) {
+export default function PaginationComponent({count, total, hasNext, nextToken, onPageChange}: Props) {
   // default page data
   const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(numberOfItems < itemsPerPage ? numberOfItems-1 : itemsPerPage-1);
+  const [endIndex, setEndIndex] = useState(total < count ? total-1 : count-1);
   const [page, setPage] = useState(1);
-  const numberOfPages = Math.ceil(numberOfItems / itemsPerPage);
+  const numberOfPages = Math.ceil(total / count);
   const [boxes, setBoxes] = useState(numberOfPages > 5 
     ? [{value: 1, id: uuidv4()}, {value: 2, id: uuidv4()}, {value: "...", id: uuidv4()}, {value: numberOfPages-1, id: uuidv4()}, {value: numberOfPages, id: uuidv4()}]
     : Array.from({length: numberOfPages}, (_, index) => {return {value: index+1, id: uuidv4()}}));
@@ -41,8 +43,8 @@ export default function PaginationComponent({numberOfItems, itemsPerPage, onPage
   const changePage = (newPage: number) => {
     // Set the new item indices
     setPage(newPage);
-    setStartIndex((newPage - 1) * itemsPerPage);
-    setEndIndex(startIndex + (itemsPerPage - 1) > numberOfItems ? numberOfItems - 1 : startIndex + (itemsPerPage - 1));
+    setStartIndex((newPage - 1) * count);
+    setEndIndex(startIndex + (count - 1) > total ? total - 1 : startIndex + (count - 1));
     onPageChange({startIndex: startIndex, endIndex: endIndex});
 
     // set the new boxes that are rendered
