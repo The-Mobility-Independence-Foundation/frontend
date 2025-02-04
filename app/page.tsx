@@ -4,7 +4,7 @@ import PaginationComponent, { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
   const onPageChange = (event: PageChangeEvent) => {
-    // console.log(event);
+    console.log(event);
   }
 
   return <div className="w-screen h-screen">
