@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface Link {
   route: string;
@@ -10,8 +10,10 @@ interface Link {
 
 export default function Header() {
   const userID = 1;
-  // TODO: fix useRouter
-  // const router = useRouter();
+  const basePath = usePathname();
+  const params = useSearchParams();
+  const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
+  // TODO: reformat view for tablet/phone
 
   const links: Link[] = [
     {route: "/listings", title: "Public Listings"},
@@ -27,15 +29,14 @@ export default function Header() {
       {links.map(link => 
         <Link 
           href={link.route}
-          // className={router.pathname == link.route ? "text-[#009D4F]" : "text-white"}
+          className={path == link.route ? "text-[#009D4F]" : "text-white"}
           key={link.route}
         >{link.title}</Link>
       )}
     </nav>
     <Link 
-          href="/account"
-          // className={router.pathname == "/account" ? "text-[#009D4F]" : "text-white"}
-        >Account</Link>
-    <a href="/account">Account</a>
+      href="/account"
+      className={path == "/account" ? "text-[#009D4F]" : "text-white"}
+    >Account</Link>
   </div>
 }
