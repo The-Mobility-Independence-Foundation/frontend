@@ -1,20 +1,13 @@
 "use client"
 
-import Image from "next/image";
-import Filters from "./components/Filters";
-import { useState } from "react";
-import { FilterTypes } from "./types/filterTypes";
+import PaginationComponent, { PageChangeEvent } from "./components/Pagination";
 
 export default function Home() {
-  const [filterValues, setFilterValues] = useState(new Map<string, any>([[FilterTypes.Active, true]]))
-
-  function updateFilterValues(key: string, val: any) {
-    let newFilterValues = new Map(filterValues);
-    newFilterValues.set(key, val);
-    setFilterValues(newFilterValues)
+  const onPageChange = (event: PageChangeEvent) => {
+    console.log(event);
   }
 
-  return (
-    <Filters partTypes={["Type 1", "Type 2", "Type 3", "Type 4"]} brands={["Brand 1", "Brand 2", "Brand 3", "Brand 4"]} selectedValues={filterValues} onValueChange={updateFilterValues}></Filters>
-  );
+  return <div className="w-screen h-screen">
+    <PaginationComponent count={50} total={1000} hasNext={true} nextToken={251} onPageChange={async (event) => onPageChange(event)} />
+  </div>
 }
