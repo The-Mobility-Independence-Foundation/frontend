@@ -36,20 +36,20 @@ export default function Filters({partTypes, brands, selectedValues, onValueChang
         <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Part Type" options={partTypes} onChange={(newSelected) => updateMultiSelect(FilterTypes.PartType, newSelected)}/>
         <MultiSelect className="px-7 mt-4 max-w-fit border-r-2 border-solid" title="Brand" options={brands} onChange={(newSelected) => updateMultiSelect(FilterTypes.Brand, newSelected)}/>
         <div id="dimensions" className="px-7 mt-4 max-w-fit">
-            <h1 className="font-[inter] font-semibold text-2xl mb-2">
+            <h1 className="font-sans font-semibold text-2xl mb-2">
                 Dimensions
             </h1>
             <div className="flex mb-6">
                 <Input placeholder="Width (in.)" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.Width, e.target.value)}/>
-                <p className="font-[inter] font-semibold text-2xl mb-2 px-0 mx-2">X</p>
+                <p className="font-sans font-semibold text-2xl mb-2 px-0 mx-2">X</p>
                 <Input placeholder="Height (in.)" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.Height, e.target.value)}/>
             </div>
-            <h1 className="font-[inter] font-semibold text-2xl mb-2">
+            <h1 className="font-sans font-semibold text-2xl mb-2">
                 Quantity
             </h1>
             <div className="flex mb-6">
                 <Input placeholder="Lower Bound" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.QuantityMin, e.target.value)}/>
-                <p className="font-[inter] font-semibold text-2xl mb-2 px-0 mx-2">-</p>
+                <p className="font-sans font-semibold text-2xl mb-2 px-0 mx-2">-</p>
                 <Input placeholder="Upper Bound" type="number" min={0} onChange={(e) => onValueChange(FilterTypes.QuantityMax, e.target.value)}/>
             </div>
             <RadioButton label1="Active" label2="Inactive" selected={activeStatusSelected} onChange={changeActiveStatus}></RadioButton>
