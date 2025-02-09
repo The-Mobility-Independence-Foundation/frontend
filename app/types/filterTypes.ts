@@ -1,4 +1,4 @@
-export enum FilterTypes {
+export enum FilterType {
     Active = "Active",
     PartType = "PartType",
     Brand = "Brand",

@@ -3,19 +3,22 @@
 import MultiSelect from "./MultiSelect"
 import RadioButton from "./RadioButton"
 import { useState } from "react";
-import { FilterTypes } from "../types/filterTypes";
+import { FilterType } from "../types/filterTypes";
 import { MultiInputInfo } from "../types/MultiInputInfo";
 import MultiInput from "./MultiInput";
+import { MultiSelectInfo } from "../types/MultiSelectInfo";
+import { RadioButtonInfo } from "../types/RadioButtonInfo";
 
 interface Props {
-    multiSelects: Map<string, string[]>
+    multiSelects: MultiSelectInfo[]
     multiInputs: MultiInputInfo[]
+    radioButtons: RadioButtonInfo[]
     selectedValues: Map<string, any>
     onValueChange: (field: string, newValue: any) => void
 }
 
-export default function Filters({multiSelects, multiInputs, selectedValues, onValueChange}: Props) {
-    const [activeStatusSelected, setActiveStatusSelected] = useState(1);
+export default function Filters({multiSelects, multiInputs, radioButtons, selectedValues, onValueChange}: Props) {
+    const [activeStatusSelectedList, setActiveStatusSelectedList] = useState(new Array(radioButtons.length).fill(1));
 
     function updateMultiSelect(key: string, selectedOption: string) {
         let selectedOptions : string[] = selectedValues.has(key) ? selectedValues.get(key) : [];
@@ -28,22 +31,24 @@ export default function Filters({multiSelects, multiInputs, selectedValues, onVa
         onValueChange(key, selectedOptions);
     }
 
-    function changeActiveStatus(newActiveStatus: number) {
-        setActiveStatusSelected(newActiveStatus);
-        onValueChange(FilterTypes.Active, newActiveStatus == 1);
+    function changeActiveStatus(index: number, newActiveStatus: number) {
+        setActiveStatusSelectedList([...activeStatusSelectedList.slice(0,index), newActiveStatus, ...activeStatusSelectedList.slice(index + 1)]);
+        onValueChange(FilterType.Active, newActiveStatus == 1);
     }
 
     return <div className="flex" id="filters">
-        {Array.from(multiSelects).map(([title, options]) => (
-           <MultiSelect key={title} className="px-7 mt-4 max-w-fit border-r-2 border-solid" title={title} options={options} onChange={
-                (newSelected) => updateMultiSelect(FilterTypes.PartType, newSelected)
+        {multiSelects.map((multiSelect) => (
+           <MultiSelect key={multiSelect.title} className="px-7 mt-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
+                (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
             }/>
         ))}
         <div className="px-7 mt-4 max-w-fit">
             {multiInputs.map((multiInputInfo) => (
                 <MultiInput key={multiInputInfo.title} title={multiInputInfo.title} inputs={multiInputInfo.inputs} divider={multiInputInfo.divider}></MultiInput>
             ))}
-            <RadioButton label1="Active" label2="Inactive" selected={activeStatusSelected} onChange={changeActiveStatus}></RadioButton>
+            {radioButtons.map((radioButtonInfo, index) => (
+                <RadioButton key={radioButtonInfo.filterType} label1={radioButtonInfo.label1} label2={radioButtonInfo.label2} selected={activeStatusSelectedList[index]} onChange={(newActiveStatus) => changeActiveStatus(index, newActiveStatus)}></RadioButton>
+            ))}
         </div>  
     </div>
 }
