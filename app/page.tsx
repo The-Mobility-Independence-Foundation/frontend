@@ -1,15 +1,18 @@
 "use client";
 
 import ImageCarousel from "./components/ImageCarousel";
+import {v4 as uuidv4} from "uuid";
 
 export default function Home() {
   const images = [
     {
-      url: "https://api.thecatapi.com/v1/images/search",
-      alt: "Random Cat"
+      url: "https://picsum.photos/300/200",
+      alt: "Random Pic",
+      id: uuidv4()
     },     {
-      url: "https://api.thecatapi.com/v1/images/search",
-      alt: "Another Random Cat"
+      url: "https://picsum.photos/500/700",
+      alt: "Another Random Pic",
+      id: uuidv4()
     }, 
   ]
 
@@ -17,3 +20,4 @@ export default function Home() {
     <ImageCarousel images={images}></ImageCarousel>
   </div>
 }
+
