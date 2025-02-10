@@ -13,7 +13,6 @@ export default function Header() {
   const basePath = usePathname();
   const params = useSearchParams();
   const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
-  // TODO: reformat view for tablet/phone
 
   const links: Link[] = [
     {route: "/listings", title: "Public Listings"},
@@ -24,7 +23,11 @@ export default function Header() {
   ]
 
   return <div className="bg-[#002856] p-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
-    <img src="/assets/Header Logo.png" alt="logo" className="w-[20%]"></img>
+    <Link
+      href="/listings"
+      className="w-[20%]"
+    ><img src="/assets/Header Logo.png" alt="logo"></img>
+    </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
         <Link 
