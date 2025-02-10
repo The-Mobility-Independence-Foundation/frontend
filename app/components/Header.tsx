@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import backendService from "../services/backend.service";
 
-interface Link {
+interface LinkReference {
   route: string;
   title: string;
 }
@@ -13,8 +15,9 @@ export default function Header() {
   const basePath = usePathname();
   const params = useSearchParams();
   const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
+  const [hasMessages, setHasMessages] = useState(false);
 
-  const links: Link[] = [
+  const links: LinkReference[] = [
     {route: "/listings", title: "Public Listings"},
     {route: "/forum", title: "Forum"},
     {route: `/messages?u_id=${userID}`, title: "Private Messages"},
@@ -22,7 +25,22 @@ export default function Header() {
     {route: `/listings?u_id=${userID}`, title: "My Listings"},
   ]
 
-  return <div className="bg-[#002856] p-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
+  const backendUnreadMessages = () => {
+    const apiRoute = `/conversations`;
+    const filters = ["read=null"];
+    // TODO: uncomment this when backend is hooked up
+    // backendService.get(apiRoute, filters)
+    //   .then(response => {
+    //     setHasMessages(response.data?.length > 0);
+    //   }
+    // )
+  };
+
+  setInterval(() => {
+    backendUnreadMessages();
+  }, 10000); // check for messages every 10 seconds
+
+  return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
     <Link
       href="/listings"
       className="w-[20%]"
