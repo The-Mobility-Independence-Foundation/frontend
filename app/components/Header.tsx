@@ -11,19 +11,28 @@ interface LinkReference {
 }
 
 export default function Header() {
-  const userID = 1;
+  const userID = 1; // TODO: replace with real User ID
+
+  // URLS
+  const PUBLIC_LISTINGS = "/listings";
+  const FORUM = "/forum";
+  const PRIVATE_MESSAGES = `/messages?u_id=${userID}`;
+  const INVENTORIES = `/inventories?u_id=${userID}`;
+  const MY_LISTINGS = `/listings?u_id=${userID}`;
+  const ACCOUNT = "/account";
+
+  const links: LinkReference[] = [
+    {route: PUBLIC_LISTINGS, title: "Public Listings"},
+    {route: FORUM, title: "Forum"},
+    {route: PRIVATE_MESSAGES, title: "Private Messages"},
+    {route: INVENTORIES, title: "My Inventories"},
+    {route: MY_LISTINGS, title: "My Listings"},
+  ];
+
   const basePath = usePathname();
   const params = useSearchParams();
   const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
   const [hasMessages, setHasMessages] = useState(false);
-
-  const links: LinkReference[] = [
-    {route: "/listings", title: "Public Listings"},
-    {route: "/forum", title: "Forum"},
-    {route: `/messages?u_id=${userID}`, title: "Private Messages"},
-    {route: `/inventories?u_id=${userID}`, title: "My Inventories"},
-    {route: `/listings?u_id=${userID}`, title: "My Listings"},
-  ]
 
   const backendUnreadMessages = () => {
     const apiRoute = `/conversations`;
@@ -48,16 +57,23 @@ export default function Header() {
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
+      <div 
+        key={link.route}
+        className="flex items-center"
+      >
         <Link 
           href={link.route}
-          className={`${path == link.route ? "text-[#009D4F]" : "text-white"} whitespace-nowrap lg:text-lg`}
-          key={link.route}
+          className={`${path == link.route ? "text-[#009D4F]" : ""} whitespace-nowrap lg:text-lg`}
         >{link.title}</Link>
+        <span
+          className={`text-red-600 ml-[0.2rem] text-xl lg:text-3xl ${link.route == PRIVATE_MESSAGES && hasMessages ? "opacity-100" : "opacity-0"}`}
+        >!</span>
+      </div>
       )}
     </nav>
     <Link 
-      href="/account"
-      className={`${path == "/account" ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
+      href={ACCOUNT}
+      className={`${path == ACCOUNT ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
     >Account</Link>
   </div>
 }
