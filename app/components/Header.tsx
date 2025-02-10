@@ -23,20 +23,20 @@ export default function Header() {
     {route: `/listings?u_id=${userID}`, title: "My Listings"},
   ]
 
-  return <div className="bg-[#002856] py-[0.5rem] w-full flex justify-around items-center font-bold text-white text-xs">
+  return <div className="bg-[#002856] p-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
     <img src="/assets/Header Logo.png" alt="logo" className="w-[20%]"></img>
-    <nav className="space-x-[1rem]">
+    <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
         <Link 
           href={link.route}
-          className={path == link.route ? "text-[#009D4F]" : "text-white"}
+          className={`${path == link.route ? "text-[#009D4F]" : "text-white"} whitespace-nowrap lg:text-lg`}
           key={link.route}
         >{link.title}</Link>
       )}
     </nav>
     <Link 
       href="/account"
-      className={path == "/account" ? "text-[#009D4F]" : "text-white"}
+      className={`${path == "/account" ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
     >Account</Link>
   </div>
 }
