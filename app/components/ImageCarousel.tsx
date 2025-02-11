@@ -1,4 +1,6 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import useEmblaCarousel from "embla-carousel-react";
+import { useCallback, useState } from "react";
 
 export interface ImageReference {
   url: string;
@@ -11,12 +13,14 @@ export interface Props {
 }
 
 export default function ImageCarousel({images}: Props) {
-  // TODO: add arrows
   // TODO: add full-screen mode
 
-
   return <div className="max-w-[25rem]">
-  <Carousel>
+  <Carousel 
+    className="flex items-center"
+    opts={{loop: true}}
+  >
+    <CarouselPrevious className="static" />
     <CarouselContent>
       {images.map(image => 
         <CarouselItem 
@@ -31,6 +35,7 @@ export default function ImageCarousel({images}: Props) {
         </CarouselItem>
       )}
     </CarouselContent>
+    <CarouselNext className="static" />
   </Carousel>
   </div>
 }
