@@ -53,7 +53,7 @@ export default function Header() {
     <Link
       href="/listings"
       className="w-[20%]"
-    ><img src="/assets/Header Logo.png" alt="logo"></img>
+    ><img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img>
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
