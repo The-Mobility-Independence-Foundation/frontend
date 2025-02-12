@@ -1,13 +1,19 @@
 "use client";
 
-import PaginationComponent, { PageChangeEvent } from "./components/Pagination";
+import { useState } from "react";
+import Search from "./components/Search";
 
 export default function Home() {
-  const onPageChange = (event: PageChangeEvent) => {
-    console.log(event);
-  }
+  const [data, setData] = useState([] as any[]);
+
+  const receiveData = (data: any[]) => {
+    // console.log(data)
+  };
+  const newButtonEvent = (clicked: boolean) => {
+    // console.log(clicked)
+  };
 
   return <div className="w-screen h-screen">
-    <PaginationComponent count={50} total={1000} hasNext={true} nextToken={251} onPageChange={async (event) => onPageChange(event)} />
-  </div>
+    <Search apiRoute="/posts" receiveData={receiveData} newButtonEvent={newButtonEvent} filter={true} />
+  </div>;
 }
