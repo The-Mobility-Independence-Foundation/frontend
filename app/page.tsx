@@ -13,7 +13,24 @@ export default function Home() {
     quantity: 30,
     latitude: -10,
     longitude: 30,
-    inventoryItemId: 1,
+    inventoryItem: {
+      id: 0,
+      name: "Inventory Item",
+      inventoryID: 0,
+      part: {
+        id: 0,
+        name: "Part 1",
+        model: "Model",
+        description: "Description",
+        partNumber: "Part Number",
+        partType: "Part Type"
+      },
+      modelID: 1,
+      quantity: 500000,
+      publicCount: 5000,
+      notes: "Notes",
+      attributes: "attributes"
+    },
     status: "ACTIVE"
   }
 

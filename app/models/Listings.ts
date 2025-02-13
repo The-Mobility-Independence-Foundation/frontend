@@ -1,5 +1,7 @@
 // GET
 
+import { InventoryItemData } from "./InventoryItem";
+
 export interface Listings {
   message: string;
   data: {
@@ -22,6 +24,6 @@ export interface ListingData {
   quantity: number;
   latitude: number;
   longitude: number;
-  inventoryItemId: number;
+  inventoryItem: InventoryItemData;
   status: string;
 }
