@@ -9,11 +9,11 @@ export interface ImageReference {
   id: any;
 }
 
-export interface Props {
+export interface ImageCarouselProps {
   images: ImageReference[]
 }
 
-export default function ImageCarousel({images}: Props) {
+export default function ImageCarousel({images}: ImageCarouselProps) {
   const [fullScreenImageStartIndex, setFullScreenImageStartIndex] = useState(-1);
 
   const closeFullScreen = () => setFullScreenImageStartIndex(-1);
@@ -34,7 +34,7 @@ export default function ImageCarousel({images}: Props) {
 
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  })
+  }, [])
 
   return <>
     <div  

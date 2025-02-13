@@ -21,7 +21,7 @@ interface Box {
   id: string;
 }
 
-interface Props {
+interface PaginationProps {
   count: number;
   total: number;
   hasNext: boolean;
@@ -29,7 +29,7 @@ interface Props {
   onPageChange: (event: PageChangeEvent) => {};
 }
 
-export default function PaginationComponent({count, total, hasNext, nextToken, onPageChange}: Props) {
+export default function PaginationComponent({count, total, hasNext, nextToken, onPageChange}: PaginationProps) {
   // default page data
   const [page, setPage] = useState(Math.floor((nextToken-1)/count));
   const numberOfPages = Math.ceil(total / count);

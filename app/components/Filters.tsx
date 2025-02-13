@@ -5,14 +5,14 @@ import { Input } from "@/components/ui/input"
 import RadioButton from "./RadioButton"
 import { useState } from "react";
 
-interface Props {
+interface FiltersProps {
     partTypes: string[]
     brands: string[]
     selectedValues: Map<string, any>
     onValueChange: (field: string, newValue: any) => void
 }
 
-export default function Filters({partTypes, brands, selectedValues, onValueChange}: Props) {
+export default function Filters({partTypes, brands, selectedValues, onValueChange}: FiltersProps) {
     const [activeStatusSelected, setActiveStatusSelected] = useState(1);
 
     function updateMultiSelect(key: string, selectedOption: string) {
