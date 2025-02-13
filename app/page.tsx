@@ -1,5 +1,8 @@
+"use client";
+
 export default function Home() {
-  
-  return <div>
+
+  return <div className="w-screen h-screen">
   </div>
 }
+

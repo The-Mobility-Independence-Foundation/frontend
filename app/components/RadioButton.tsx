@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 
-interface Props {
+interface RadioButtonProps {
     label1: string
     label2: string
     selected: number
     onChange: (newSelected: number) => void
 }
 
-export default function RadioButton({label1, label2, selected, onChange}: Props) {
+export default function RadioButton({label1, label2, selected, onChange}: RadioButtonProps) {
     const SELECTED_CSS = "text-black bg-[#D3E8FF] hover:bg-[#D3E8FF] disabled:opacity-100 flex-1 min-w-0";
     const UNSELECTED_CSS = "text-black bg-transparent shadow-none flex-1 min-w-0";
 

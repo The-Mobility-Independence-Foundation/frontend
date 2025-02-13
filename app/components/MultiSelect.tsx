@@ -3,14 +3,14 @@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-interface Props {
+interface MultiSelectProps {
     className: string
     title: string
     options: string[]
     onChange: (newSelected: string) => void
 }
 
-export default function MultiSelect({className, title, options, onChange}: Props) {
+export default function MultiSelect({className, title, options, onChange}: MultiSelectProps) {
     return <div className={className}>
         <h1 className="font-sans font-semibold text-2xl mb-2">{title}</h1>
         {options.map((option) => 
