@@ -24,7 +24,7 @@ class BackendService {
   }
 
   private async fetcher(method: string, endpoint: string, data: any = null) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api${endpoint}`, {
       method: method,
       body: data ? JSON.stringify(data) : null,
     });
