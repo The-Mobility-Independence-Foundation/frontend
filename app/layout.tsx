@@ -5,7 +5,7 @@ import Header from "./components/Header";
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
   variable: "--font-inter",
-  weight: "100 900"
+  weight: "100 600 900"
 })
 
 export default function RootLayout({

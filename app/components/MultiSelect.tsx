@@ -12,10 +12,10 @@ interface MultiSelectProps {
 
 export default function MultiSelect({className, title, options, onChange}: MultiSelectProps) {
     return <div className={className}>
-        <h1 className="font-[inter] font-semibold text-2xl mb-2">{title}</h1>
+        <h1 className="font-sans font-semibold text-2xl mb-2">{title}</h1>
         {options.map((option) => 
             <div key={option}>
-                <Label className="font-[inter] font-normal text-sm">
+                <Label className="font-sans font-normal text-sm">
                     <Checkbox className="mr-2" onClick={() => onChange(option)} />
                     {option}
                 </Label>
