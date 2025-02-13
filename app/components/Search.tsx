@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
 import Filters from "./Filters";
 
-interface Props {
+interface SearchProps {
   apiRoute: string;
   receiveData: (data: any[]) => void;
   filter?: boolean;
@@ -23,7 +23,7 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: Props) {  
+export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [partTypes, setPartTypes] = useState(["type1", "type2"]);
   const [brands, setBrands] = useState(["brand1", "brand2"]);

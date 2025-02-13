@@ -38,3 +38,4 @@ export default function Home() {
     <Listing listing={listing}></Listing>
   </div>
 }
+
