@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Header from "./components/Header";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -14,10 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${interRegular.variable} antialiased`}
-      >
-        {children}
+      <body className={`${interRegular.variable} antialiased`}>
+        <Header />
+
+        <main>{children}</main>
       </body>
     </html>
   );
