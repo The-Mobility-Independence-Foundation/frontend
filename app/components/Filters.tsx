@@ -9,7 +9,7 @@ import MultiInput from "./MultiInput";
 import { MultiSelectInfo } from "../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../types/RadioButtonInfo";
 
-interface Props {
+interface FiltersProps {
     multiSelects: MultiSelectInfo[]
     multiInputs: MultiInputInfo[]
     radioButtons: RadioButtonInfo[]
@@ -17,7 +17,7 @@ interface Props {
     onValueChange: (field: string, newValue: any) => void
 }
 
-export default function Filters({multiSelects, multiInputs, radioButtons, selectedValues, onValueChange}: Props) {
+export default function Filters({multiSelects, multiInputs, radioButtons, selectedValues, onValueChange}: FiltersProps) {
     const [activeStatusSelectedList, setActiveStatusSelectedList] = useState(new Array(radioButtons.length).fill(1));
 
     function updateMultiSelect(key: string, selectedOption: string) {
