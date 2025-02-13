@@ -1,6 +1,7 @@
+"use client"
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface ImageReference {
   url: string;
@@ -15,10 +16,25 @@ export interface Props {
 export default function ImageCarousel({images}: Props) {
   const [fullScreenImageStartIndex, setFullScreenImageStartIndex] = useState(-1);
 
+  const closeFullScreen = () => setFullScreenImageStartIndex(-1);
+
   const clickFullScreenBackground = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if(target.id == "background") setFullScreenImageStartIndex(-1);
+    if(target.id == "background") closeFullScreen();
   }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if(event.key === "Escape") {
+          closeFullScreen();
+        }
+      }
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  })
 
   return <>
     <div  
