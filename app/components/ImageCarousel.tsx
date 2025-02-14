@@ -37,9 +37,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
   }, [])
 
   return <>
-    <div  
-      className={`w-[25rem]`}
-    >
+    <div>
       <Carousel 
         className={`flex items-center`}
         opts={{loop: true}}

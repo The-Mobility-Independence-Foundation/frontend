@@ -18,8 +18,8 @@ export default function Listing({listing}: Props) {
   ];
 
 
-  return <div className="flex w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[0.2rem] py-[0.5rem]">
-    <div className="flex">
+  return <div className="flex w-full h-min bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[0.2rem] py-[0.5rem]">
+    <div className="flex h-min">
       <ImageCarousel images={images}></ImageCarousel>
       <div>
         <h4>{part.name}</h4>
@@ -27,6 +27,12 @@ export default function Listing({listing}: Props) {
         <p className="mt-[revert]">{part.model}</p>
         <p>{part.partType}</p>
       </div>
+      <ul className="ml-[2rem] max-h-[10rem] overflow-y-auto">
+        {Object.keys(listing.attributes).map(key => 
+        <li className="mb-[0.25rem]">
+          - {key}: {listing.attributes[key]}
+        </li>)}
+      </ul>
     </div>
   </div>
 }

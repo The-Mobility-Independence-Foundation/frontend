@@ -20,7 +20,7 @@ export interface Listing {
 export interface ListingData {
   id: string;
   title: string;
-  attributes: any;
+  attributes: {[key: string]: string};
   quantity: number;
   latitude: number;
   longitude: number;
