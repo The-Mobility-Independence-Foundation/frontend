@@ -31,7 +31,8 @@ export default function Home() {
       notes: "Notes",
       attributes: "attributes"
     },
-    status: "ACTIVE"
+    status: "ACTIVE",
+    attachment: "https://picsum.photos/300/200"
   }
 
   return <div>

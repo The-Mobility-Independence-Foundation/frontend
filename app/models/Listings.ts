@@ -26,4 +26,5 @@ export interface ListingData {
   longitude: number;
   inventoryItem: InventoryItemData;
   status: string;
+  attachment: string;
 }
