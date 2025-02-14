@@ -1,5 +1,6 @@
 // GET
 
+import { InventoryData } from "./Inventory";
 import { PartData } from "./Part";
 
 export interface InventoryItems {
@@ -15,7 +16,7 @@ export interface InventoryItems {
 export interface InventoryItemData {
   id: number;
   name: string;
-  inventoryID: number;
+  inventory: InventoryData;
   part: PartData;
   modelID: number;
   quantity: number;

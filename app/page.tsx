@@ -22,7 +22,13 @@ export default function Home() {
     inventoryItem: {
       id: 0,
       name: "Inventory Item",
-      inventoryID: 0,
+      inventory: {
+        id: 0,
+        name: "Inventory",
+        organizationID: 1,
+        description: "Inventory Description",
+        location: "City, State"
+      },
       part: {
         id: 0,
         name: "Part 1",

@@ -18,8 +18,8 @@ export default function Listing({listing}: Props) {
   ];
 
 
-  return <div className="flex w-full h-min bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[0.2rem] py-[0.5rem]">
-    <div className="flex h-min">
+  return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[0.2rem] py-[0.5rem]">
+    <div className="flex">
       <ImageCarousel images={images}></ImageCarousel>
       <div>
         <h4>{part.name}</h4>
@@ -33,6 +33,12 @@ export default function Listing({listing}: Props) {
           - {key}: {listing.attributes[key]}
         </li>)}
       </ul>
+    </div>
+    <div className="flex">
+        <div>
+          <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
+          <p>{inventoryItem.inventory.location}</p>
+        </div>
     </div>
   </div>
 }
