@@ -8,6 +8,8 @@ import { MultiInputInfo } from "../types/MultiInputInfo";
 import MultiInput from "./MultiInput";
 import { MultiSelectInfo } from "../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../types/RadioButtonInfo";
+import dynamic from "next/dynamic";
+const LocationRadius = dynamic(() => import('./LocationRadius'), { ssr: false })
 
 interface FiltersProps {
     multiSelects: MultiSelectInfo[]
@@ -37,6 +39,7 @@ export default function Filters({multiSelects, multiInputs, radioButtons, select
     }
 
     return <div className="flex" id="filters">
+        <LocationRadius></LocationRadius>
         {multiSelects.map((multiSelect) => (
            <MultiSelect key={multiSelect.title} className="px-7 mt-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
                 (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
