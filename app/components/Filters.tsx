@@ -39,7 +39,7 @@ export default function Filters({multiSelects, multiInputs, radioButtons, select
     }
 
     return <div className="flex" id="filters">
-        <LocationRadius></LocationRadius>
+        <LocationRadius className="w-[25%] px-7 mt-4 border-r-2 border-solid"></LocationRadius>
         {multiSelects.map((multiSelect) => (
            <MultiSelect key={multiSelect.title} className="px-7 mt-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
                 (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)

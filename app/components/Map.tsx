@@ -5,43 +5,71 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "@maplibre/maplibre-gl-leaflet";
 
 interface MapProps {
-  pos: LatLngExpression,
-  radius: number
+  pos: LatLngExpression;
+  radius: number;
+  className: string;
 }
 
-const Map = ({pos, radius}: MapProps) => {
-  const mapRef = useRef(null);
+const Map = ({ pos, radius, className }: MapProps) => {
+    const mapRef = useRef<HTMLDivElement>(null);
+    const mapInstance = useRef<L.Map | null>(null);
+    const markerRef = useRef<L.Marker | null>(null);
+    const circleRef = useRef<L.Circle | null>(null);
 
-  useEffect(() => {
-    if (!mapRef.current) return;
+    useEffect(() => {
+        if (!mapRef.current || mapInstance.current) {
+            return;
+        }
 
-    const map = L.map(mapRef.current).setView(pos, 13);
-    
-    const maplibreLayer = (L as any).maplibreGL({
-      style: "https://tiles.openfreemap.org/styles/liberty",
-      attribution: '&copy; <a href="https://openfreemap.org/">OpenFreeMap</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
-    map.addLayer(maplibreLayer);
+        const map = L.map(mapRef.current).setView(pos, 10);
+        mapInstance.current = map;
 
-    const customIcon = L.icon({
-      iconUrl: "/assets/map-marker.png",
-      iconSize: [30, 39],
-      iconAnchor: [14, 38]
-    });
+        const maplibreLayer = (L as any).maplibreGL({
+            style: "https://tiles.openfreemap.org/styles/liberty",
+            attribution: '<a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+        map.addLayer(maplibreLayer);
 
-    L.marker(pos, { icon: customIcon }).addTo(map);
-    
-    L.circle(pos, {
-        fillOpacity: 0.5,
-        radius: 500
-    }).addTo(map);
+        const customIcon = L.icon({
+            iconUrl: "/assets/map-marker.png",
+            iconSize: [30, 39],
+            iconAnchor: [14, 38]
+        });
 
-    return () => {
-      map.remove();
-    };
-  }, []);
+        const marker = L.marker(pos, { icon: customIcon }).addTo(map);
+        markerRef.current = marker;
 
-  return <div ref={mapRef} style={{ width: "100%", height: "500px" }} />;
+        const circle = L.circle(pos, {
+            fillOpacity: 0.5,
+            radius: radius
+        }).addTo(map);
+        circleRef.current = circle;
+
+        return () => {
+            map.remove();
+            mapInstance.current = null;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!mapInstance.current) {
+            return;
+        }
+
+        mapInstance.current.setView(pos);
+
+        if (markerRef.current) {
+            markerRef.current.setLatLng(pos);
+        }
+
+        if (circleRef.current) {
+            console.log(radius);
+            circleRef.current.setLatLng(pos);
+            circleRef.current.setRadius(radius);
+        }
+    }, [pos, radius]);
+
+    return <div ref={mapRef} className={className} />;
 };
 
 export default Map;
