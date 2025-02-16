@@ -1,31 +1,37 @@
 import React, { useEffect, useRef } from "react";
-import L from "leaflet";
+import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+import "@maplibre/maplibre-gl-leaflet";
 
-const LeafletMap = () => {
+interface MapProps {
+  pos: LatLngExpression,
+  radius: number
+}
+
+const Map = ({pos, radius}: MapProps) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
 
-    const map = L.map(mapRef.current).setView([51.505, -0.09], 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    const map = L.map(mapRef.current).setView(pos, 13);
+    
+    const maplibreLayer = (L as any).maplibreGL({
+      style: "https://tiles.openfreemap.org/styles/liberty",
+      attribution: '&copy; <a href="https://openfreemap.org/">OpenFreeMap</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+    map.addLayer(maplibreLayer);
 
     const customIcon = L.icon({
-      iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-      shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
+      iconUrl: "/assets/map-marker.png",
+      iconSize: [30, 39],
+      iconAnchor: [14, 38]
     });
 
-    L.marker([51.505, -0.09], { icon: customIcon }).addTo(map);
+    L.marker(pos, { icon: customIcon }).addTo(map);
     
-    L.circle([51.505, -0.09], {
+    L.circle(pos, {
         fillOpacity: 0.5,
         radius: 500
     }).addTo(map);
@@ -38,4 +44,4 @@ const LeafletMap = () => {
   return <div ref={mapRef} style={{ width: "100%", height: "500px" }} />;
 };
 
-export default LeafletMap;
+export default Map;
