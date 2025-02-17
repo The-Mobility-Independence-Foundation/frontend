@@ -6,14 +6,20 @@ import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { FormControl } from "@/components/ui/form";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 export interface Props {
   listing: ListingData;
+  myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
 }
 
-export default function Listing({listing, onCheckboxChange}: Props) {
+export default function Listing({listing, myListing, onCheckboxChange}: Props) {
   const userID = 1; // TODO: replace with real User ID
 
   const inventoryItem = listing.inventoryItem;
@@ -26,6 +32,25 @@ export default function Listing({listing, onCheckboxChange}: Props) {
     }
   ];
 
+  const quantityFormSchema = z.object({
+    quantity: z.coerce
+      .number()
+      .min(1, "Must list at least one item.")
+      .max(inventoryItem.publicCount, "Listing quantity cannot exceed public count")
+  })
+
+  const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
+    resolver: zodResolver(quantityFormSchema),
+    defaultValues: {
+      quantity: listing.quantity,
+    }
+  });
+
+  const onSubmit = (values: z.infer<typeof quantityFormSchema>) => {
+    // let quantity = parseInt(values.quantity);
+    console.log(values.quantity);
+  }
+
   return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                         max-xl:flex-col max-xl:w-max 
                         max-sm:pl-[2rem]"
@@ -35,9 +60,7 @@ export default function Listing({listing, onCheckboxChange}: Props) {
     >
       <div className="flex">
         {onCheckboxChange != null && 
-        // <FormControl>
           <Checkbox onCheckedChange={(checked) => onCheckboxChange(checked)} />
-        // </FormControl>
         }
         <ImageCarousel images={images}></ImageCarousel>
       </div>
@@ -84,6 +107,34 @@ export default function Listing({listing, onCheckboxChange}: Props) {
           </Link>
         </div>
       </div>
+      {myListing ? 
+      <div className="mt-auto">
+        <FormProvider {...quantityForm}>
+          <form onSubmit={quantityForm.handleSubmit(onSubmit)}>
+            <FormField
+              control={quantityForm.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel >Quantity Available:</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field}
+                      className="bg-white rounded-sm"
+                      type="number"
+                      min="1"
+                      max={listing.inventoryItem.publicCount}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            >
+            </FormField>
+          </form>
+        </FormProvider>
+      </div>
+      : 
       <div className="flex flex-col justify-between">
         <div className="mt-[1.5rem]">
           <p className="w-max mx-auto">Quantity Available:</p>
@@ -91,6 +142,7 @@ export default function Listing({listing, onCheckboxChange}: Props) {
         </div>
         <button>Create Order</button> {/**TODO: opens "Create Order" modal */}
       </div>
+      }
     </div>
   </div>
 }

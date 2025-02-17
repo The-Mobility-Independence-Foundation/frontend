@@ -46,7 +46,7 @@ export default function Home() {
       },
       modelID: 1,
       quantity: 500000,
-      publicCount: 5000,
+      publicCount: 40,
       notes: "Notes",
       attributes: "attributes"
     },
@@ -59,7 +59,7 @@ export default function Home() {
   }
 
   return <div>
-    <Listing listing={listing} onCheckboxChange={onCheckboxChange}></Listing>
+    <Listing listing={listing} myListing={true} onCheckboxChange={onCheckboxChange}></Listing>
   </div>
 }
 
