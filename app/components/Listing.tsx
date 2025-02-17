@@ -1,12 +1,15 @@
 import { ListingData } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import {v4 as uuidv4} from "uuid";
+import Link from "next/link";
 
 export interface Props {
   listing: ListingData
 }
 
 export default function Listing({listing}: Props) {
+  const userID = 1; // TODO: replace with real User ID
+
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
   const images: ImageReference[] = [
@@ -27,17 +30,32 @@ export default function Listing({listing}: Props) {
         <p className="mt-[revert]">{part.model}</p>
         <p>{part.partType}</p>
       </div>
-      <ul className="ml-[2rem] max-h-[10rem] overflow-y-auto">
+      <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
         {Object.keys(listing.attributes).map(key => 
-        <li className="mb-[0.25rem]">
+        <li className="mb-[0.25rem]" key={`${key}: ${listing.attributes[key]}`}>
           - {key}: {listing.attributes[key]}
         </li>)}
       </ul>
     </div>
     <div className="flex">
-        <div>
+        <div className="mr-[5rem]">
           <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
           <p>{inventoryItem.inventory.location}</p>
+        </div>
+        <div className="flex flex-col justify-between">
+          <h5>{inventoryItem.inventory.organization.name}</h5>
+          <div>
+            <p>{inventoryItem.inventory.organization.email}</p>
+            <p>{inventoryItem.inventory.organization.phoneNumber}</p>
+          </div>
+          <Link
+            href={`/messages?u_id=${userID}`}
+            className="w-full"
+          >
+            <button 
+              className="w-full"
+            >Message</button>
+          </Link>
         </div>
     </div>
   </div>

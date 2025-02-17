@@ -1,3 +1,5 @@
+import { OrganizationData } from "./Organization";
+
 export interface Inventory {
   message: string;
   data: InventoryData
@@ -6,7 +8,7 @@ export interface Inventory {
 export interface InventoryData {
   id: number;
   name: string;
-  organizationID: number;
+  organization: OrganizationData;
   description: string;
   location: string;
 }

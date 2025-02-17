@@ -25,7 +25,12 @@ export default function Home() {
       inventory: {
         id: 0,
         name: "Inventory",
-        organizationID: 1,
+        organization: {
+          id: "1",
+          name: "Organization",
+          email: "org@org.com",
+          phoneNumber: "(555) 555-5555"
+        },
         description: "Inventory Description",
         location: "City, State"
       },
