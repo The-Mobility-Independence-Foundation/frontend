@@ -1,13 +1,19 @@
+"use client"
+
 import { ListingData } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckedState } from "@radix-ui/react-checkbox";
+import { FormControl } from "@/components/ui/form";
 
 export interface Props {
-  listing: ListingData
+  listing: ListingData;
+  onCheckboxChange?: (checked: CheckedState) => void;
 }
 
-export default function Listing({listing}: Props) {
+export default function Listing({listing, onCheckboxChange}: Props) {
   const userID = 1; // TODO: replace with real User ID
 
   const inventoryItem = listing.inventoryItem;
@@ -20,7 +26,6 @@ export default function Listing({listing}: Props) {
     }
   ];
 
-
   return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                         max-xl:flex-col max-xl:w-max 
                         max-sm:pl-[2rem]"
@@ -28,9 +33,14 @@ export default function Listing({listing}: Props) {
     <div className="flex 
                     max-sm:flex-col"
     >
-      <ImageCarousel 
-        images={images}
-      ></ImageCarousel>
+      <div className="flex">
+        {onCheckboxChange != null && 
+        // <FormControl>
+          <Checkbox onCheckedChange={(checked) => onCheckboxChange(checked)} />
+        // </FormControl>
+        }
+        <ImageCarousel images={images}></ImageCarousel>
+      </div>
       <div className="flex max-sm:mt-[1rem]">
         <div>
           <h4>{part.name}</h4>

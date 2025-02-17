@@ -1,3 +1,5 @@
+"use client"
+import { CheckedState } from "@radix-ui/react-checkbox";
 import Listing from "./components/Listing";
 import { ListingData } from "./models/Listings";
 
@@ -52,8 +54,12 @@ export default function Home() {
     attachment: "https://picsum.photos/300/200"
   }
 
+  const onCheckboxChange = (checked: CheckedState) => {
+    console.log(checked)
+  }
+
   return <div>
-    <Listing listing={listing}></Listing>
+    <Listing listing={listing} onCheckboxChange={onCheckboxChange}></Listing>
   </div>
 }
 
