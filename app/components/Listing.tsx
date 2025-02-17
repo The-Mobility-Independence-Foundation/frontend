@@ -21,7 +21,7 @@ export default function Listing({listing}: Props) {
   ];
 
 
-  return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[0.2rem] py-[0.5rem]">
+  return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm pl-[0.2rem] pr-[1rem] py-[0.5rem]">
     <div className="flex">
       <ImageCarousel images={images}></ImageCarousel>
       <div>
@@ -38,25 +38,32 @@ export default function Listing({listing}: Props) {
       </ul>
     </div>
     <div className="flex">
-        <div className="mr-[5rem]">
-          <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
-          <p>{inventoryItem.inventory.location}</p>
+      <div className="mr-[5rem]">
+        <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
+        <p>{inventoryItem.inventory.location}</p>
+      </div>
+      <div className="flex flex-col justify-between mr-[5rem]">
+        <h5>{inventoryItem.inventory.organization.name}</h5>
+        <div>
+          <p>{inventoryItem.inventory.organization.email}</p>
+          <p>{inventoryItem.inventory.organization.phoneNumber}</p>
         </div>
-        <div className="flex flex-col justify-between">
-          <h5>{inventoryItem.inventory.organization.name}</h5>
-          <div>
-            <p>{inventoryItem.inventory.organization.email}</p>
-            <p>{inventoryItem.inventory.organization.phoneNumber}</p>
-          </div>
-          <Link
-            href={`/messages?u_id=${userID}`}
+        <Link
+          href={`/messages?u_id=${userID}`}
+          className="w-full"
+        >
+          <button 
             className="w-full"
-          >
-            <button 
-              className="w-full"
-            >Message</button>
-          </Link>
+          >Message</button>
+        </Link>
+      </div>
+      <div className="flex flex-col justify-between">
+        <div className="mt-[1.5rem]">
+          <p>Quantity Available:</p>
+          <h5 className="w-min mx-auto">{listing.quantity}</h5>
         </div>
+        <button>Create Order</button>
+      </div>
     </div>
   </div>
 }
