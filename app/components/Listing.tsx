@@ -1,6 +1,6 @@
 "use client"
 
-import { ListingData } from "../models/Listings";
+import { ListingData, PatchListing } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import backendService from "../services/backend.service";
 
 export interface Props {
   listing: ListingData;
@@ -46,9 +47,22 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
     }
   });
 
-  const onSubmit = (values: z.infer<typeof quantityFormSchema>) => {
-    // let quantity = parseInt(values.quantity);
-    console.log(values.quantity);
+  const patchListing = (body: PatchListing) => {
+    backendService.put(`/listings/${listing.id}`, body)
+      .then(response => {
+        // TODO: toastr with message
+      });
+  }
+
+  const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
+    patchListing({
+      title: listing.title,
+      description: "",
+      attributes: listing.attributes,
+      quantity: values.quantity,
+      inventoryItemId: inventoryItem.id,
+      status: listing.status
+    });
   }
 
   return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
@@ -110,7 +124,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
       {myListing ? 
       <div className="mt-auto">
         <FormProvider {...quantityForm}>
-          <form onSubmit={quantityForm.handleSubmit(onSubmit)}>
+          <form onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}>
             <FormField
               control={quantityForm.control}
               name="quantity"

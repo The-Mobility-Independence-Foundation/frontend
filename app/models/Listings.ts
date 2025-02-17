@@ -28,3 +28,12 @@ export interface ListingData {
   status: string;
   attachment: string;
 }
+
+export interface PatchListing {
+  title: string;
+  description: string;
+  attributes: {[key: string]: string}
+  quantity: number;
+  inventoryItemId: number;
+  status: string;
+}
