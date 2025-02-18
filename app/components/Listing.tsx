@@ -13,6 +13,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import backendService from "../services/backend.service";
+import RadioButton from "./RadioButton";
+import { statuses } from "../models/Status";
+import { useEffect, useState } from "react";
 
 export interface Props {
   listing: ListingData;
@@ -22,6 +25,8 @@ export interface Props {
 
 export default function Listing({listing, myListing, onCheckboxChange}: Props) {
   const userID = 1; // TODO: replace with real User ID
+
+  const [activeStatus, changeActiveStatus] = useState(statuses.indexOf(listing.status)+1);
 
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
@@ -37,7 +42,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
     quantity: z.coerce
       .number()
       .min(1, "Must list at least one item.")
-      .max(inventoryItem.publicCount, "Listing quantity cannot exceed public count")
+      .max(inventoryItem.publicCount, `Listing quantity cannot exceed public count (${inventoryItem.publicCount})`)
   })
 
   const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
@@ -62,6 +67,18 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
       quantity: values.quantity,
       inventoryItemId: inventoryItem.id,
       status: listing.status
+    });
+  }
+
+  const onActiveChange = (newSelected: number) => {
+    changeActiveStatus(newSelected);
+    patchListing({
+      title: listing.title,
+      description: "",
+      attributes: listing.attributes,
+      quantity: listing.quantity,
+      inventoryItemId: inventoryItem.id,
+      status: statuses[newSelected-1]
     });
   }
 
@@ -104,6 +121,14 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
           <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
           <p>{inventoryItem.inventory.location}</p>
         </div>
+        {myListing ? 
+        <RadioButton 
+          label1={"Active"} 
+          label2={"Inactive"} 
+          selected={activeStatus}
+          onChange={onActiveChange}
+        />
+        :
         <div className="flex flex-col justify-between mr-[5rem]
                         max-sm:mr-[0rem]">
           <h5>{inventoryItem.inventory.organization.name}</h5>
@@ -120,6 +145,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
             >Message</button> {/**TODO: routes to specified user pv */}
           </Link>
         </div>
+        }
       </div>
       {myListing ? 
       <div className="mt-auto">
