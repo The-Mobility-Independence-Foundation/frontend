@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +14,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
 import { ACTIVE, INACTIVE, statuses } from "../models/Status";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export interface Props {
   listing: ListingData;
