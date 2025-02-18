@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
-import { statuses } from "../models/Status";
+import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useEffect, useState } from "react";
 
 export interface Props {
@@ -122,12 +122,18 @@ export default function Listing({listing, myListing, onCheckboxChange}: Props) {
           <p>{inventoryItem.inventory.location}</p>
         </div>
         {myListing ? 
-        <RadioButton 
-          label1={"Active"} 
-          label2={"Inactive"} 
-          selected={activeStatus}
-          onChange={onActiveChange}
-        />
+        <div className="flex flex-col justify-between mr-[5rem]">
+          <Link
+            href={`/inventories/inventory?inventoryID=${inventoryItem.inventory.id}&inventoryItemID=${inventoryItem.id}`}
+            className="text-[#009D4F] text-center"
+          >View Part in Inventory</Link>
+          <RadioButton 
+            label1={ACTIVE} 
+            label2={INACTIVE} 
+            selected={activeStatus}
+            onChange={onActiveChange}
+          />
+        </div>
         :
         <div className="flex flex-col justify-between mr-[5rem]
                         max-sm:mr-[0rem]">
