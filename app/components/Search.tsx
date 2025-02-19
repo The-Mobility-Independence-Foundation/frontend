@@ -72,7 +72,7 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
       className="w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]"
     >
       {newButtonEvent ? 
-        <button onClick={handleNewButtonClick} className="bg-[#D3E8FF] text-black">
+        <button onClick={handleNewButtonClick} className="button bg-[#D3E8FF] text-black">
           + {newButtonText || "New"}
           </button>
       : ""}
@@ -103,7 +103,7 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
         </form>
       </FormProvider>
       {filterOptions &&
-        <button className="bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
+        <button className="button bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
           Filter
         </button>
       }
