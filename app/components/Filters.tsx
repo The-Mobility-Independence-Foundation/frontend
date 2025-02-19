@@ -9,15 +9,23 @@ import MultiInput from "./MultiInput";
 import { MultiSelectInfo } from "../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../types/RadioButtonInfo";
 
-interface FiltersProps {
-    multiSelects: MultiSelectInfo[]
-    multiInputs: MultiInputInfo[]
-    radioButtons: RadioButtonInfo[]
+export interface FiltersProps {
+    options: FilterOptions
     selectedValues: Map<string, any>
     onValueChange: (field: string, newValue: any) => void
 }
 
-export default function Filters({multiSelects, multiInputs, radioButtons, selectedValues, onValueChange}: FiltersProps) {
+export interface FilterOptions {
+    multiSelects: MultiSelectInfo[]
+    multiInputs: MultiInputInfo[]
+    radioButtons: RadioButtonInfo[]
+}
+
+export default function Filters({options, selectedValues, onValueChange}: FiltersProps) {
+    const multiSelects = options.multiSelects;
+    const multiInputs = options.multiInputs;
+    const radioButtons = options.radioButtons;
+
     const [activeStatusSelectedList, setActiveStatusSelectedList] = useState(new Array(radioButtons.length).fill(1));
 
     function updateMultiSelect(key: string, selectedOption: string) {
@@ -36,13 +44,13 @@ export default function Filters({multiSelects, multiInputs, radioButtons, select
         onValueChange(FilterType.Active, newActiveStatus == 1);
     }
 
-    return <div className="flex" id="filters">
+    return <div className="flex w-screen" id="filters">
         {multiSelects.map((multiSelect) => (
-           <MultiSelect key={multiSelect.title} className="px-7 mt-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
+           <MultiSelect key={multiSelect.title} className="px-7 my-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
                 (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
             }/>
         ))}
-        <div className="px-7 mt-4 max-w-fit">
+        <div className="px-7 my-4 max-w-fit">
             {multiInputs.map((multiInputInfo) => (
                 <MultiInput key={multiInputInfo.title} title={multiInputInfo.title} inputs={multiInputInfo.inputs} divider={multiInputInfo.divider}></MultiInput>
             ))}
