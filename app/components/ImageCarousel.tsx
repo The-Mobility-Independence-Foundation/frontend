@@ -37,14 +37,12 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
   }, [])
 
   return <>
-    <div  
-      className={`w-[25rem]`}
-    >
+    <div>
       <Carousel 
         className={`flex items-center`}
         opts={{loop: true}}
       >
-        <CarouselPrevious className="static" />
+        {images.length > 1 && <CarouselPrevious className="static" />}
         <CarouselContent>
           {images.map((image, index) => 
             <CarouselItem 
@@ -60,7 +58,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
             </CarouselItem>
           )}
         </CarouselContent>
-        <CarouselNext className="static" />
+        {images.length > 1 && <CarouselNext className="static" />}
       </Carousel>
     </div>
 
@@ -78,7 +76,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
             startIndex: fullScreenImageStartIndex
           }}
         >
-          <CarouselPrevious className="static" />
+          {images.length > 1 && <CarouselPrevious className="static" />}
           <CarouselContent>
             {images.map(image => 
               <CarouselItem 
@@ -93,7 +91,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
               </CarouselItem>
             )}
           </CarouselContent>
-          <CarouselNext className="static" />
+          {images.length > 1 && <CarouselNext className="static" />}
         </Carousel>
       </div>
     )}
