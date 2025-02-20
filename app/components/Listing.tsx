@@ -16,13 +16,13 @@ import RadioButton from "./RadioButton";
 import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
 
-export interface Props {
+export interface ListingProps {
   listing: ListingData;
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
 }
 
-export default function Listing({listing, myListing, onCheckboxChange}: Props) {
+export default function Listing({listing, myListing, onCheckboxChange}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
   const [activeStatus, changeActiveStatus] = useState(statuses.indexOf(listing.status)+1);
