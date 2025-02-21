@@ -5,7 +5,7 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   
-  button, .button {
+  .button {
     background-color: #002856;
     color: white;
     border-radius: 10px;
@@ -126,6 +126,17 @@ body {
 @layer base {
   * {
     @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
