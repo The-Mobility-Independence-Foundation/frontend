@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import backendService from "../services/backend.service";
 
 interface LinkReference {
   route: string;

@@ -1,68 +1,65 @@
 "use client"
-
-import Filters, { FilterOptions } from "./components/Filters";
-import { useState } from "react";
-import { FilterType } from "./types/filterTypes";
-import { MultiInputInfo } from "./types/MultiInputInfo";
-import { MultiSelectInfo } from "./types/MultiSelectInfo";
-import { RadioButtonInfo } from "./types/RadioButtonInfo";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import Listing from "./components/Listing";
+import { ListingData } from "./models/Listings";
 
 export default function Home() {
-  const [filterValues, setFilterValues] = useState(new Map<string, any>([[FilterType.Active, true]]))
-
-  function updateFilterValues(key: string, val: any) {
-    setFilterValues(prevFilterValues => {
-      const newFilterValues = new Map(prevFilterValues);
-      newFilterValues.set(key, val);
-      console.log(newFilterValues);
-      return newFilterValues;
-    });
+  const listing: ListingData = {
+    id: "1",
+    title: "Listing",
+    attributes: {
+      attr1: "attr1",
+      attr2: "attr2",
+      attr3: "attr3",
+      attr4: "attr4",
+      attr5: "attr5",
+      attr6: "attr6",
+      attr7: "attr7",
+      attr8: "attr8",
+      attr9: "attr9",
+    },
+    quantity: 30,
+    latitude: -10,
+    longitude: 30,
+    inventoryItem: {
+      id: 0,
+      name: "Inventory Item",
+      inventory: {
+        id: 0,
+        name: "Inventory",
+        organization: {
+          id: "1",
+          name: "Organization",
+          email: "org@org.com",
+          phoneNumber: "(555) 555-5555"
+        },
+        description: "Inventory Description",
+        location: "City, State"
+      },
+      part: {
+        id: 0,
+        name: "Part 1",
+        model: "Model",
+        description: "Description",
+        partNumber: "Part Number",
+        partType: "Part Type"
+      },
+      modelID: 1,
+      quantity: 500000,
+      publicCount: 40,
+      notes: "Notes",
+      attributes: "attributes"
+    },
+    status: "ACTIVE",
+    attachment: "https://picsum.photos/300/200"
   }
 
-  let partTypeInfo: MultiSelectInfo = {
-    title: "Part Type",
-    filterType: FilterType.PartType,
-    options: ["Type 1", "Type 2", "Type 3", "Type 4"]
-  }
-  let brandInfo: MultiSelectInfo = {
-    title: "Brand",
-    filterType: FilterType.Brand,
-    options: ["Brand 1", "Brand 2", "Brand 3", "Brand 4"]
-  }
-  let multiSelects = [partTypeInfo, brandInfo];
-
-  let dimensionsInfo: MultiInputInfo = {
-    title: "Dimensions",
-    inputs: [
-      {placeholder: "Width (in).", type:"number", minValue:"0", maxValue:"", onValueChange:(newValue) => {updateFilterValues(FilterType.Width, newValue)}},
-      {placeholder: "Height (in).", type:"number", minValue:"0", maxValue:"", onValueChange:(newValue) => {updateFilterValues(FilterType.Height, newValue)}}
-    ],
-    divider: "X"
-  };
-  let quantityInfo: MultiInputInfo = {
-    title: "Quantity",
-    inputs: [
-      {placeholder: "Lower Bound", type:"number", minValue:"0", maxValue:"", onValueChange:(newValue) => {updateFilterValues(FilterType.QuantityMin, newValue)}},
-      {placeholder: "Upper Bound", type:"number", minValue:"0", maxValue:"", onValueChange:(newValue) => {updateFilterValues(FilterType.QuantityMax, newValue)}}
-    ],
-    divider: "-"
-  };
-  let multiInputs = [dimensionsInfo, quantityInfo];
-
-  let activeStatusInfo: RadioButtonInfo = {
-    filterType: FilterType.Active,
-    label1: "Active",
-    label2: "Inactive"
-  }
-  let radioButtons = [activeStatusInfo];
-
-  let options: FilterOptions = {
-    multiSelects: multiSelects,
-    multiInputs: multiInputs,
-    radioButtons: radioButtons
+  const onCheckboxChange = (checked: CheckedState) => {
+    console.log(checked)
   }
 
-  return (
-    <Filters options={options} selectedValues={filterValues} onValueChange={updateFilterValues}></Filters>
-  );
+  return <div>
+    <Listing listing={listing} myListing={true} onCheckboxChange={onCheckboxChange}></Listing>
+  </div>
 }
+
