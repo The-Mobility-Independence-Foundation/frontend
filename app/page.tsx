@@ -1,6 +1,6 @@
 "use client"
 
-import Filters from "./components/Filters";
+import Filters, { FilterOptions } from "./components/Filters";
 import { useState } from "react";
 import { FilterType } from "./types/filterTypes";
 import { MultiInputInfo } from "./types/MultiInputInfo";
@@ -54,8 +54,13 @@ export default function Home() {
   }
   let radioButtons = [activeStatusInfo];
 
+  let options: FilterOptions = {
+    multiSelects: multiSelects,
+    multiInputs: multiInputs,
+    radioButtons: radioButtons
+  }
+
   return (
-    <Filters multiSelects={multiSelects} selectedValues={filterValues} multiInputs={multiInputs} radioButtons={radioButtons} onValueChange={updateFilterValues}></Filters>
+    <Filters options={options} selectedValues={filterValues} onValueChange={updateFilterValues}></Filters>
   );
 }
-
