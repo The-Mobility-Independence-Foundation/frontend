@@ -37,6 +37,7 @@ export default function PublicListings() {
         <Listing 
           listing={listing}
           className="mb-[1rem]"
+          key={listing.id}
         />
       )}
     </div>

@@ -186,7 +186,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
           <p className="w-max mx-auto">Quantity Available:</p>
           <h5 className="w-min mx-auto">{listing.quantity}</h5>
         </div>
-        <button>Create Order</button> {/**TODO: opens "Create Order" modal */}
+        <button className="button">Create Order</button> {/**TODO: opens "Create Order" modal */}
       </div>
       }
     </div>
