@@ -20,9 +20,10 @@ export interface ListingProps {
   listing: ListingData;
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
+  className?: string;
 }
 
-export default function Listing({listing, myListing, onCheckboxChange}: ListingProps) {
+export default function Listing({listing, myListing, onCheckboxChange, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
   const [activeStatus, changeActiveStatus] = useState(statuses.indexOf(listing.status)+1);
@@ -81,9 +82,9 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
     });
   }
 
-  return <div className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
+  return <div className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                         max-xl:flex-col max-xl:w-max 
-                        max-sm:pl-[2rem]"
+                        max-sm:pl-[2rem] ${className}`}
           >
     <div className="flex 
                     max-sm:flex-col"
@@ -146,7 +147,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
             className="w-full"
           >
             <button 
-              className="w-full"
+              className="w-full button"
             >Message</button> {/**TODO: routes to specified user pv */}
           </Link>
         </div>

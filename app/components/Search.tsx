@@ -9,10 +9,11 @@ import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
 import ListingFilters from "./ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
+import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: any[]) => void;
+  receiveData: (data: any) => void;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -32,12 +33,22 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
   // TODO: grab brands & types from DB
 
   const backendSearch = () => {
-    const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
-    const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
-    backendService.get(apiRoute, filters)
-      .then(response => {
-        receiveData(response);
-      });
+    // COMMENTED OUT FOR TESTING
+    // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
+    // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
+    // backendService.get(apiRoute, filters)
+    //   .then(response => {
+    //     receiveData(response);
+    //   });
+    receiveData({
+      message: "Test Message",
+      data: {
+        count: 1,
+        hasNext: false,
+        nextToken: "",
+        results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
+      }
+    })
   }
     
   const form = useForm<z.infer<typeof formSchema>>({
