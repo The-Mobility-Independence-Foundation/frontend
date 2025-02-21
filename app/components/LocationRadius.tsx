@@ -1,13 +1,21 @@
 "use client"
 
 import { Input } from "@/components/ui/input";
-import Map from "./Map";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { LatLngExpression } from "leaflet";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FilterType } from "../types/filterTypes";
+
+const Map = dynamic(() => import('./Map'), { 
+    ssr: false,
+    loading: () => <Skeleton className="w-[100%] h-[60%] mb-4 rounded-md" />
+})
 
 interface LocationRadiusProps {
-    className: string
+    className: string,
+    onValueChange: (field: string, newValue: any) => void
 }
 
 interface LocationData {
@@ -15,7 +23,7 @@ interface LocationData {
     lon: number;
 }
 
-export default function LocationRadius({className}: LocationRadiusProps) {
+export default function LocationRadius({className, onValueChange}: LocationRadiusProps) {
     const [location, setLocation] = useState("");
     const [radius, setRadius] = useState(8045)
     const [latLong, setLatLong] = useState<LatLngExpression>([43.1566, -77.6088]); // TODO get user's account lat long?
@@ -42,6 +50,8 @@ export default function LocationRadius({className}: LocationRadiusProps) {
 
             setRadius(radiusMeters);
             setRadiusError("");
+
+            onValueChange(FilterType.Radius, radiusMeters);
         } catch (error) {
             setRadiusError("Please enter a numeric value");
         }
@@ -69,6 +79,9 @@ export default function LocationRadius({className}: LocationRadiusProps) {
 
         setLatLong([response[0].lat, response[0].lon]);
         setLocationError("");
+
+        onValueChange(FilterType.LocationLat, response[0].lat);
+        onValueChange(FilterType.LocationLong, response[0].lon);
     }
 
     return <div className={className}>
@@ -78,7 +91,7 @@ export default function LocationRadius({className}: LocationRadiusProps) {
             <Button className="button" onClick={clickGo}>Go</Button>
         </div>
         <p className="text-red-600">{locationError}</p>
-        <Map pos={latLong} radius={radius} className="w-[100%] h-[60%] mb-4"></Map>
+        <Map pos={latLong} radius={radius} className="w-[100%] h-[150px] md:h-[60%] mb-4 rounded-md"></Map>
         <Input placeholder="Radius (mi.)" type="number" min="0" onChange={(e) => updateRadius(e.target.value)}
             className={radiusError != "" ? "placeholder:text-red-400 text-red-600 border-red-200" : ""}></Input>
         <p className="text-red-600">{radiusError}</p>

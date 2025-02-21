@@ -11,10 +11,12 @@ export default function Home() {
   const [filterValues, setFilterValues] = useState(new Map<string, any>([[FilterType.Active, true]]))
 
   function updateFilterValues(key: string, val: any) {
-    let newFilterValues = new Map(filterValues);
-    newFilterValues.set(key, val);
-    setFilterValues(newFilterValues);
-    console.log(newFilterValues);
+    setFilterValues(prevFilterValues => {
+      const newFilterValues = new Map(prevFilterValues);
+      newFilterValues.set(key, val);
+      console.log(newFilterValues);
+      return newFilterValues;
+    });
   }
 
   let partTypeInfo: MultiSelectInfo = {
