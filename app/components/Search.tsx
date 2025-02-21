@@ -7,12 +7,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
-import Filters, { FilterOptions } from "./Filters";
+import ListingFilters from "./ListingFilters";
 
 interface SearchProps {
   apiRoute: string;
   receiveData: (data: any[]) => void;
-  filterOptions?: FilterOptions;
+  filter?: boolean;
   placeholderText?: string;
   newButtonText?: string;
   defaultQuery?: string;
@@ -23,58 +23,12 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filterOptions, defaultQuery}: SearchProps) {  
+export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
-  const [partTypes, setPartTypes] = useState(["type1", "type2"]);
-  const [brands, setBrands] = useState(["brand1", "brand2"]);
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
 
   // TODO: grab brands & types from DB
-
-  const onWidthChange = (newValue: string) => {
-
-  }
-
-  const onHeightChange = (newValue: string) => {
-
-  }
-
-  // const listingFilterOptions: FilterOptions = {
-  //   multiSelects: [{
-  //     title: "Part Type",
-  //     filterType: FilterType.PartType,
-  //     options: ["Type 1", "Type 2", "Type 3", "Type 4"]
-  //   }, {
-  //     title: "Brand",
-  //     filterType: FilterType.Brand,
-  //     options: ["Brand 1", "Brand 2", "Brand 3", "Brand 4"]
-  //   }],
-  //   multiInputs: [{
-  //     title: "Dimensions",
-  //     inputs: [{
-  //       placeholder: "Width (in.)",
-  //       type: "number",
-  //       minValue: "0",
-  //       maxValue: "120"
-  //     }, {
-  //       placeholder: "Height (in.)",
-  //       type: "number",
-  //       minValue: "0",
-  //       maxValue: "120"
-  //     }]
-  //   }]
-  // }
-
-  const onFilterValueChange = (field: string, newValue: any) => {
-    let newSelectedValues = new Map(selectedValues);
-    if(newValue == null || newValue == "") {
-      newSelectedValues.delete(field);
-    } else {
-      newSelectedValues.set(field, newValue);
-    }
-    setSelectedValues(newSelectedValues);
-  }
 
   const backendSearch = () => {
     const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
@@ -96,6 +50,10 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
     if(newButtonEvent) {
       newButtonEvent(true);
     }
+  }
+
+  const onFilterValueChange = (values: Map<string, string>) => {
+    setSelectedValues(values);
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
@@ -136,20 +94,16 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
           </FormField>
         </form>
       </FormProvider>
-      {filterOptions &&
+      {filter &&
         <button className="button bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
           Filter
         </button>
       }
     </div>
 
-    {filterOptions &&
+    {filter &&
       <div className={`absolute ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
-        <Filters 
-          options={filterOptions}
-          selectedValues={selectedValues} 
-          onValueChange={onFilterValueChange} 
-        />
+        <ListingFilters onFilterValueChange={onFilterValueChange}/>
         <div className="w-full h-screen bg-black/20" />
       </div>
     }
