@@ -8,11 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
 import ListingFilters from "./ListingFilters";
+import { FilterComponentType } from "../types/FilterTypes";
 
 interface SearchProps {
   apiRoute: string;
   receiveData: (data: any[]) => void;
-  filter?: boolean;
+  filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
   defaultQuery?: string;
@@ -23,7 +24,7 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: SearchProps) {  
+export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filterType, defaultQuery}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
@@ -94,16 +95,18 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
           </FormField>
         </form>
       </FormProvider>
-      {filter &&
+      {filterType &&
         <button className="button bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
           Filter
         </button>
       }
     </div>
 
-    {filter &&
+    {filterType &&
       <div className={`absolute ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
-        <ListingFilters onFilterValueChange={onFilterValueChange}/>
+        {filterType == FilterComponentType.LISTINGS && 
+          <ListingFilters onFilterValueChange={onFilterValueChange}/>
+        }
         <div className="w-full h-screen bg-black/20" />
       </div>
     }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ACTIVE, INACTIVE } from "../models/Status";
-import { FilterType } from "../types/filterTypes";
+import { FilterType } from "../types/FilterTypes";
 import Filters, { FilterOptions } from "./Filters";
 
 export interface ListingFiltersProps {
