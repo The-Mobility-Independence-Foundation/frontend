@@ -6,14 +6,16 @@ import { useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
+import Pagination, { PageChangeEvent } from "../components/Pagination";
 
 export default function PublicListings() {
   const [listings, setListings] = useState<Listings>({
     message: "Default",
     data: {
       count: 0,
+      totalCount: 0,
       hasNext: false,
-      nextToken: "",
+      nextToken: null,
       results: []
     }
   });
@@ -25,6 +27,10 @@ export default function PublicListings() {
     setListings(data as Listings);
   }
 
+  const onPageChange = (event: PageChangeEvent) => {
+    console.log(event);
+  }
+
   return <>
     <Search 
       apiRoute={"/listings"} 
@@ -32,7 +38,7 @@ export default function PublicListings() {
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
-    <div className="px-[1rem] py-[1.5rem]">
+    <div className="px-[1rem] pt-[1.25rem]">
       {listings.data?.results.map(listing => 
         <Listing 
           listing={listing}
@@ -41,5 +47,12 @@ export default function PublicListings() {
         />
       )}
     </div>
+    <Pagination 
+      count={listings.data.count}
+      totalCount={listings.data.totalCount}
+      hasNext={listings.data.hasNext}
+      nextToken={listings.data.nextToken}
+      onPageChange={onPageChange}
+    />
   </>
 }

@@ -44,8 +44,9 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
       message: "Test Message",
       data: {
         count: 1,
-        hasNext: false,
-        nextToken: "",
+        totalCount: 2,
+        hasNext: true,
+        nextToken: "2",
         results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
       }
     })
