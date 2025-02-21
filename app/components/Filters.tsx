@@ -44,9 +44,9 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
         onValueChange(FilterType.Active, newActiveStatus == 1);
     }
 
-    return <div className="flex w-screen" id="filters">
+    return <div className="flex w-screen justify-around" id="filters">
         {multiSelects.map((multiSelect) => (
-           <MultiSelect key={multiSelect.title} className="px-7 my-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
+           <MultiSelect key={multiSelect.title} className="px-7 my-4 max-w-fit" title={multiSelect.title} options={multiSelect.options} onChange={
                 (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
             }/>
         ))}

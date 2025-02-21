@@ -32,6 +32,40 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
 
   // TODO: grab brands & types from DB
 
+  const onWidthChange = (newValue: string) => {
+
+  }
+
+  const onHeightChange = (newValue: string) => {
+
+  }
+
+  // const listingFilterOptions: FilterOptions = {
+  //   multiSelects: [{
+  //     title: "Part Type",
+  //     filterType: FilterType.PartType,
+  //     options: ["Type 1", "Type 2", "Type 3", "Type 4"]
+  //   }, {
+  //     title: "Brand",
+  //     filterType: FilterType.Brand,
+  //     options: ["Brand 1", "Brand 2", "Brand 3", "Brand 4"]
+  //   }],
+  //   multiInputs: [{
+  //     title: "Dimensions",
+  //     inputs: [{
+  //       placeholder: "Width (in.)",
+  //       type: "number",
+  //       minValue: "0",
+  //       maxValue: "120"
+  //     }, {
+  //       placeholder: "Height (in.)",
+  //       type: "number",
+  //       minValue: "0",
+  //       maxValue: "120"
+  //     }]
+  //   }]
+  // }
+
   const onFilterValueChange = (field: string, newValue: any) => {
     let newSelectedValues = new Map(selectedValues);
     if(newValue == null || newValue == "") {
