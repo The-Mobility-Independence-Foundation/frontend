@@ -28,7 +28,7 @@ export default function PublicListings() {
   }
 
   const onPageChange = (event: PageChangeEvent) => {
-    console.log(event);
+    // TODO: trigger search using new page
   }
 
   return <>
