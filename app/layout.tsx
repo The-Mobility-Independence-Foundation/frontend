@@ -16,7 +16,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
-        <Header />
 
         <main>{children}</main>
       </body>
