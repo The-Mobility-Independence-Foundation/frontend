@@ -27,6 +27,7 @@ const formSchema = z.object({
   query: z.string()
 })
 
+// TODO: grab offset and limit from URL (see Pagination.tsx line 32)
 export default function Search({apiRoute, receiveData, fetchOffset, fetchLimit, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());

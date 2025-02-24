@@ -27,9 +27,11 @@ interface PaginationProps {
   hasNext: boolean;
   nextToken: string | null;
   onPageChange: (event: PageChangeEvent) => void;
+  className?: string
 }
 
-export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange}: PaginationProps) {
+// TODO: changing the page changes the route in the URL
+export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange, className}: PaginationProps) {
   // default page data
   const calculateCurrentPage = () => {
     let currentPage;
@@ -80,7 +82,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
   }
   const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
 
-  return <Pagination className="w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start">
+  return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
     <PaginationContent className="w-full">
       <PaginationItem 
         onClick={() => setPage(page - 1)}

@@ -36,7 +36,7 @@ export default function PublicListings() {
     setPageOffset((event.currentPage-1) * PAGE_LIMIT);
   }
 
-  return <>
+  return <div className="overflow-y-hidden">
     <Search 
       apiRoute={"/listings"} 
       receiveData={receiveListings} 
@@ -45,7 +45,7 @@ export default function PublicListings() {
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
-    <div className="px-[1rem] pt-[1.25rem]">
+    <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
       {listings.data?.results.map(listing => 
         <Listing 
           listing={listing}
@@ -61,5 +61,5 @@ export default function PublicListings() {
       nextToken={listings.data.nextToken}
       onPageChange={onPageChange}
     />
-  </>
+  </div>
 }
