@@ -13,16 +13,16 @@ import { StateCode } from "../types/StateCode";
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 
 const formSchema = z.object({
-    firstName: z.string().min(1, "Please enter your first name"),
-    lastName: z.string().min(1, "Please enter your last name"),
+    firstName: z.string().nonempty("Please enter your first name"),
+    lastName: z.string().nonempty("Please enter your last name"),
     email: z.string(),
-    addressLine1: z.string().min(1, "Please enter your address"),
+    addressLine1: z.string().nonempty("Please enter your address"),
     addressLine2: z.string(),
-    city: z.string().min(1, "Please enter your city"),
-    state: z.string(),
-    zipCode: z.string().min(1, "Please enter your zip code"),
-    username: z.string().min(1, "Please enter your username"),
-    password: z.string().min(1, "Please enter your password").min(8, "Password must contain at least 8 characters")
+    city: z.string().nonempty("Please enter your city"),
+    state: z.string().nonempty("Please select a state"),
+    zipCode: z.string().nonempty("Please select a zip code").length(5, "Invalid zip code").regex(/^\d+$/, "Invalid zip code"),
+    username: z.string().nonempty("Please enter your username"),
+    password: z.string().nonempty("Please enter your password").min(8, "Password must contain at least 8 characters")
         .regex(PASSWORD_REGEX, "Password must contain at least one letter and one number or special character"),
     passwordConfirmation: z.string().min(1, "Please confirm your password")
 }).refine((data) => data.password === data.passwordConfirmation, {
@@ -56,9 +56,9 @@ export default function SignUpForm({email}: SignUpFormProps) {
         // TODO send email
     }
 
-    return <div className="w-[65%]">
+    return <div className= "w-[80%] lg:w-[65%]">
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 text-left">
                 <div className="flex w-full gap-8">
                     <FormField
                         control={form.control}
@@ -140,7 +140,7 @@ export default function SignUpForm({email}: SignUpFormProps) {
                         render={({ field }) => (
                             <FormItem className="min-w-[20%]">
                                 <FormControl>
-                                    <Select>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="bg-white text-black font-normal">
                                             <SelectValue placeholder="State" />
                                         </SelectTrigger>
@@ -199,14 +199,21 @@ export default function SignUpForm({email}: SignUpFormProps) {
                     name="passwordConfirmation"
                     render={({ field }) => (
                         <FormItem>
-                            <FormControl className="mb-3">
+                            <FormControl>
                                 <Input {...field} placeholder="Confirm your password" className="bg-white" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-            <Button type="submit">Sign Up</Button>
+                <div className="flex justify-between items-center pt-6 gap-[5vw]">
+                    <Button type="button" className="cancel w-1/4">Cancel</Button>
+
+                    <div className="flex items-center gap-2">
+                        <Button type="button" className="w-[40px]">G</Button> {/*TODO Replace with google button */}
+                        <Button type="submit" className="px-[2vw] flex-1">Sign Up</Button>
+                    </div>
+                </div>
             </form>
         </Form>
     </div>
