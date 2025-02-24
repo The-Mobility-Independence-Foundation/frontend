@@ -14,6 +14,8 @@ import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData"
 interface SearchProps {
   apiRoute: string;
   receiveData: (data: any) => void;
+  fetchOffset: number;
+  fetchLimit: number;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -25,18 +27,20 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filterType, defaultQuery}: SearchProps) {  
+export default function Search({apiRoute, receiveData, fetchOffset, fetchLimit, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
 
   // TODO: grab brands & types from DB
+  // TODO: grab filters from URL?
 
   const backendSearch = () => {
     // COMMENTED OUT FOR TESTING
+    // TODO: add radius, latitude and longitude after that's finished
     // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
     // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
-    // backendService.get(apiRoute, filters)
+    // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${fetchLimit}&offset=${fetchOffset}`, filters)
     //   .then(response => {
     //     receiveData(response);
     //   });
@@ -70,7 +74,7 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, fetchOffset, fetchLimit]);
 
   return <div className="relative">
     <div 

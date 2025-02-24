@@ -2,13 +2,15 @@
 
 import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import Pagination, { PageChangeEvent } from "../components/Pagination";
 
 export default function PublicListings() {
+  const PAGE_LIMIT = 10; // 10 listings per page
+
   const [listings, setListings] = useState<Listings>({
     message: "Default",
     data: {
@@ -19,22 +21,27 @@ export default function PublicListings() {
       results: []
     }
   });
+  const [pageOffset, setPageOffset] = useState(0);
 
   const params = useSearchParams();
   const userID = params.get("u_id");
 
-  const receiveListings = (data: any) => {
-    setListings(data as Listings);
+  const receiveListings = (listings: any) => {
+    // received from Search component
+    setListings(listings as Listings);
   }
 
   const onPageChange = (event: PageChangeEvent) => {
-    // TODO: trigger search using new page
+    // triggers search using new page
+    setPageOffset((event.currentPage-1) * PAGE_LIMIT);
   }
 
   return <>
     <Search 
       apiRoute={"/listings"} 
       receiveData={receiveListings} 
+      fetchLimit={PAGE_LIMIT}
+      fetchOffset={pageOffset}
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
