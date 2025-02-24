@@ -7,12 +7,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
-import Filters from "./Filters";
+import Filters, { FilterOptions } from "./Filters";
 
 interface SearchProps {
   apiRoute: string;
   receiveData: (data: any[]) => void;
-  filter?: boolean;
+  filterOptions?: FilterOptions;
   placeholderText?: string;
   newButtonText?: string;
   defaultQuery?: string;
@@ -23,7 +23,7 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filter, defaultQuery}: SearchProps) {  
+export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filterOptions, defaultQuery}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [partTypes, setPartTypes] = useState(["type1", "type2"]);
   const [brands, setBrands] = useState(["brand1", "brand2"]);
@@ -72,7 +72,7 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
       className="w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]"
     >
       {newButtonEvent ? 
-        <button onClick={handleNewButtonClick} className="bg-[#D3E8FF] text-black">
+        <button onClick={handleNewButtonClick} className="button bg-[#D3E8FF] text-black">
           + {newButtonText || "New"}
           </button>
       : ""}
@@ -102,17 +102,22 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
           </FormField>
         </form>
       </FormProvider>
-      {filter ?
-        <button className="bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
+      {filterOptions &&
+        <button className="button bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
           Filter
         </button>
-      : ""}
+      }
     </div>
 
-
-    <div className={`absolute ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
-      <Filters partTypes={partTypes} brands={brands} selectedValues={selectedValues} onValueChange={onFilterValueChange}></Filters>
-      <div className="w-full h-screen bg-black/20" />
-    </div>
+    {filterOptions &&
+      <div className={`absolute ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
+        <Filters 
+          options={filterOptions}
+          selectedValues={selectedValues} 
+          onValueChange={onFilterValueChange} 
+        />
+        <div className="w-full h-screen bg-black/20" />
+      </div>
+    }
   </div>
 }
