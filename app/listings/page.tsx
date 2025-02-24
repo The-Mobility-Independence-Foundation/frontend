@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
