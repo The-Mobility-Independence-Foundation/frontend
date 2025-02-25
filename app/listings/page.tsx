@@ -9,7 +9,6 @@ import Listing from "../components/Listing";
 import Pagination, { PageChangeEvent } from "../components/Pagination";
 
 export default function PublicListings() {
-  const PAGE_LIMIT = 10; // 10 listings per page
 
   const [listings, setListings] = useState<Listings>({
     message: "Default",
@@ -21,7 +20,6 @@ export default function PublicListings() {
       results: []
     }
   });
-  const [pageOffset, setPageOffset] = useState(0);
 
   const params = useSearchParams();
   const userID = params.get("u_id");
@@ -31,17 +29,10 @@ export default function PublicListings() {
     setListings(listings as Listings);
   }
 
-  const onPageChange = (event: PageChangeEvent) => {
-    // triggers search using new page
-    setPageOffset((event.currentPage-1) * PAGE_LIMIT);
-  }
-
   return <div className="overflow-y-hidden">
     <Search 
       apiRoute={"/listings"} 
       receiveData={receiveListings} 
-      fetchLimit={PAGE_LIMIT}
-      fetchOffset={pageOffset}
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
@@ -59,7 +50,6 @@ export default function PublicListings() {
       totalCount={listings.data.totalCount}
       hasNext={listings.data.hasNext}
       nextToken={listings.data.nextToken}
-      onPageChange={onPageChange}
     />
   </div>
 }

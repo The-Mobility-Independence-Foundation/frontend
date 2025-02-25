@@ -9,11 +9,17 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {v4 as uuidv4} from "uuid";
 
 export interface PageChangeEvent {
   currentPage: number;
+}
+
+export enum PaginationSearchParams {
+  OFFSET = "offset",
+  LIMIT = "limit"
 }
 
 interface Box {
@@ -26,11 +32,12 @@ interface PaginationProps {
   totalCount: number;
   hasNext: boolean;
   nextToken: string | null;
-  onPageChange: (event: PageChangeEvent) => void;
+  onPageChange?: (event: PageChangeEvent) => void;
   className?: string
 }
 
-// TODO: changing the page changes the route in the URL
+// Every time the page changes, the page reroutes with new query params "offset", and "limit"
+
 export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange, className}: PaginationProps) {
   // default page data
   const calculateCurrentPage = () => {
@@ -49,10 +56,19 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
 
   const [page, setPage] = useState(calculateCurrentPage());
   const numberOfPages = Math.ceil(totalCount / count);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const reroutePage = (offset: number, limit: number) => {
+    router.push(`${pathname}?${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`);
+  }
 
   useEffect(() => {
     setBoxes(getAllBoxes(page));
-    onPageChange({currentPage: page});
+    reroutePage((page - 1) * count, count);
+    if(onPageChange) {
+      onPageChange({currentPage: page});
+    }
   }, [page, totalCount, count]);
 
   const getAllBoxes = (currentPage: number): Box[] => {
