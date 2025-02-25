@@ -3,5 +3,4 @@ export type InputInfo = {
     type: string,
     minValue: string,
     maxValue: string,
-    onValueChange: (newValue: string) => void
 }

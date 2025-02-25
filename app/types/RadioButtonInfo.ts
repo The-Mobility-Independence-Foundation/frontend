@@ -1,4 +1,4 @@
-import { FilterType } from "./filterTypes"
+import { FilterType } from "./FilterTypes"
 
 export type RadioButtonInfo = {
     filterType: FilterType,

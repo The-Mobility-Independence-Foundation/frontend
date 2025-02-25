@@ -7,3 +7,7 @@ export enum FilterType {
     QuantityMin = "quantityMin",
     QuantityMax = "quantityMax"
 };
+
+export enum FilterComponentType {
+    LISTINGS = "LISTINGS"
+}
