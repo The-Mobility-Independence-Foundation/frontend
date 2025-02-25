@@ -10,12 +10,12 @@ import backendService from "../services/backend.service";
 import ListingFilters from "./ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
+import { useSearchParams } from "next/navigation";
+import { PaginationSearchParams } from "./Pagination";
 
 interface SearchProps {
   apiRoute: string;
   receiveData: (data: any) => void;
-  fetchOffset: number;
-  fetchLimit: number;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -27,11 +27,14 @@ const formSchema = z.object({
   query: z.string()
 })
 
-// TODO: grab offset and limit from URL (see Pagination.tsx line 32)
-export default function Search({apiRoute, receiveData, fetchOffset, fetchLimit, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
+export default function Search({apiRoute, receiveData, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
+
+  const queryParams = useSearchParams();
+  const offset = queryParams.get(PaginationSearchParams.OFFSET);
+  const limit = queryParams.get(PaginationSearchParams.LIMIT);
 
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
@@ -41,7 +44,7 @@ export default function Search({apiRoute, receiveData, fetchOffset, fetchLimit, 
     // TODO: add radius, latitude and longitude after that's finished
     // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
     // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
-    // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${fetchLimit}&offset=${fetchOffset}`, filters)
+    // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${limit}&offset=${offset}`, filters)
     //   .then(response => {
     //     receiveData(response);
     //   });
@@ -75,7 +78,7 @@ export default function Search({apiRoute, receiveData, fetchOffset, fetchLimit, 
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, fetchOffset, fetchLimit]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
 
   return <div className="relative">
     <div 

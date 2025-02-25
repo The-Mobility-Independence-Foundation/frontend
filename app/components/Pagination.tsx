@@ -17,6 +17,11 @@ export interface PageChangeEvent {
   currentPage: number;
 }
 
+export enum PaginationSearchParams {
+  OFFSET = "offset",
+  LIMIT = "limit"
+}
+
 interface Box {
   value: number | string;
   id: string;
@@ -27,7 +32,7 @@ interface PaginationProps {
   totalCount: number;
   hasNext: boolean;
   nextToken: string | null;
-  onPageChange: (event: PageChangeEvent) => void;
+  onPageChange?: (event: PageChangeEvent) => void;
   className?: string
 }
 
@@ -55,13 +60,15 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
   const pathname = usePathname();
 
   const reroutePage = (offset: number, limit: number) => {
-    router.push(`${pathname}?offset=${offset}&limit=${limit}`);
+    router.push(`${pathname}?${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`);
   }
 
   useEffect(() => {
     setBoxes(getAllBoxes(page));
-    onPageChange({currentPage: page});
     reroutePage((page - 1) * count, count);
+    if(onPageChange) {
+      onPageChange({currentPage: page});
+    }
   }, [page, totalCount, count]);
 
   const getAllBoxes = (currentPage: number): Box[] => {
