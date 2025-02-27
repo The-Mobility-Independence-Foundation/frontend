@@ -5,7 +5,7 @@ interface ModalHeaderProps {
 
 export default function ModalHeader({title, onClose}: ModalHeaderProps) {
   return (
-    <div className="w-full bg-[#002856] rounded-tl-lg rounded-tr-lg flex justify-between px-[0.5rem] items-center">
+    <div className="w-full bg-[#002856] rounded-tl-lg rounded-tr-lg border border-black flex justify-between px-[0.5rem] items-center">
       <h5 className="text-white text-ellipsis">{title}</h5>
       <svg
         color="white"

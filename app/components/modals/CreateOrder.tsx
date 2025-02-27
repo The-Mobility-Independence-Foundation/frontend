@@ -1,5 +1,6 @@
 import { ListingData } from "@/app/models/Listings"
 import ModalHeader from "./ModalHeader"
+import ModalBody from "./ModalBody";
 
 interface CreateOrderProps {
   listing: ListingData
@@ -15,5 +16,8 @@ export default function CreateOrder({listing, onClose}: CreateOrderProps) {
       title={`Create an Order For ${part.name}`}
       onClose={onClose}
     />
+    <ModalBody>
+      <div>Body!</div>
+    </ModalBody>
   </div>
 }
