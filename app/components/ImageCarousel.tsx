@@ -11,9 +11,10 @@ export interface ImageReference {
 
 export interface ImageCarouselProps {
   images: ImageReference[]
+  className?: string
 }
 
-export default function ImageCarousel({images}: ImageCarouselProps) {
+export default function ImageCarousel({images, className}: ImageCarouselProps) {
   const [fullScreenImageStartIndex, setFullScreenImageStartIndex] = useState(-1);
 
   const closeFullScreen = () => setFullScreenImageStartIndex(-1);
@@ -37,7 +38,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
   }, [])
 
   return <>
-    <div>
+    <div className={`${className}`}>
       <Carousel 
         className={`flex items-center`}
         opts={{loop: true}}

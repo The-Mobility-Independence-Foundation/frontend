@@ -212,6 +212,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
       >
         <CreateOrder 
           listing={listing} 
+          listingImages={images}
           onClose={() => setCreateOrderModalIsOpen(false)}
         />
       </Modal>
