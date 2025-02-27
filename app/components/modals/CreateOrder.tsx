@@ -2,7 +2,11 @@ import { ListingData } from "@/app/models/Listings"
 import ModalHeader from "./ModalHeader"
 import ModalBody from "./ModalBody";
 import ImageCarousel, { ImageReference } from "../ImageCarousel";
-import {v4 as uuidv4} from "uuid";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
 
 interface CreateOrderProps {
   listing: ListingData
@@ -13,6 +17,21 @@ interface CreateOrderProps {
 export default function CreateOrder({listing, listingImages, onClose}: CreateOrderProps) {
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
+
+  const orderFormSchema = z.object({
+    quantity: z.coerce
+      .number()
+      .min(1, "Must list at least one item.")
+      .max(inventoryItem.publicCount, `Listing quantity cannot exceed availability (${listing.quantity})`)
+  })
+
+  const orderForm = useForm<z.infer<typeof orderFormSchema>>({
+    resolver: zodResolver(orderFormSchema)
+  });
+
+  const onOrderSubmit = (values: z.infer<typeof orderFormSchema>) => {
+    console.log(values)
+  }
 
   return (
     <div>
@@ -39,21 +58,42 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
                 </li>
               ))}
             </ul>
-            <div
-                className="flex flex-col ml-[2.5rem] text-right"
-              >
-                <h5>{inventoryItem.inventory.organization.name}</h5>
-                <div>
-                  <p>{inventoryItem.inventory.organization.email}</p>
-                  <p>{inventoryItem.inventory.organization.phoneNumber}</p>
-                </div>
+            <div className="flex flex-col ml-[2.5rem] text-right">
+              <h5>{inventoryItem.inventory.organization.name}</h5>
+              <div>
+                <p>{inventoryItem.inventory.organization.email}</p>
+                <p>{inventoryItem.inventory.organization.phoneNumber}</p>
+              </div>
             </div>
           </div>
-          <ImageCarousel 
+          <ImageCarousel
             images={listingImages}
-            className="mx-auto my-[1rem] w-min"
+            className="mx-auto my-[1rem]"
           />
-
+          <span className="flex items-center"><p>Quantity Available: </p><h5 className="ml-[0.5rem]">{listing.quantity}</h5></span>
+          <FormProvider {...orderForm}>
+            <form onSubmit={orderForm.handleSubmit(onOrderSubmit)}>
+              <FormField
+                control={orderForm.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[#2D3748]">Enter the quantity you'd like to order:</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="bg-white rounded-sm w-[50%]"
+                        type="number"
+                        min="1"
+                        max={listing.quantity}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+            </form>
+          </FormProvider>
         </>
       </ModalBody>
     </div>
