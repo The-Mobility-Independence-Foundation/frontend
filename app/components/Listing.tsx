@@ -210,7 +210,10 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
         isOpen={createOrderModalIsOpen}
         onClose={() => setCreateOrderModalIsOpen(false)}
       >
-        <CreateOrder test={"Props works!"} />
+        <CreateOrder 
+          listing={listing} 
+          onClose={() => setCreateOrderModalIsOpen(false)}
+        />
       </Modal>
     </>
   );
