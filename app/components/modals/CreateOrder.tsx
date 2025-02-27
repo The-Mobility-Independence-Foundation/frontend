@@ -18,6 +18,8 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
 
+  // TODO: hitting "enter" submits form
+
   const orderFormSchema = z.object({
     quantity: z.coerce
       .number()
@@ -30,7 +32,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   });
 
   const onOrderSubmit = (values: z.infer<typeof orderFormSchema>) => {
-    console.log(values)
+    // TODO: API call for submitting order
   }
 
   return (
@@ -66,11 +68,11 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
               </div>
             </div>
           </div>
-          <ImageCarousel
-            images={listingImages}
-            className="mx-auto my-[1rem]"
-          />
-          <span className="flex items-center"><p>Quantity Available: </p><h5 className="ml-[0.5rem]">{listing.quantity}</h5></span>
+          <ImageCarousel images={listingImages} className="mx-auto my-[1rem]" />
+          <span className="flex items-center">
+            <p>Quantity Available: </p>
+            <h5 className="ml-[0.5rem]">{listing.quantity}</h5>
+          </span>
           <FormProvider {...orderForm}>
             <form onSubmit={orderForm.handleSubmit(onOrderSubmit)}>
               <FormField
@@ -78,7 +80,9 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
                 name="quantity"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#2D3748]">Enter the quantity you'd like to order:</FormLabel>
+                    <FormLabel className="text-[#2D3748]">
+                      Enter the quantity you'd like to order:
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -91,7 +95,13 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
                     <FormMessage />
                   </FormItem>
                 )}
-              ></FormField>
+              />
+              <div className="flex w-max ml-auto mt-[1.5rem]">
+                <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
+                <button type="submit" className="button ml-[1rem]">
+                  Create Order
+                </button>
+              </div>
             </form>
           </FormProvider>
         </>
