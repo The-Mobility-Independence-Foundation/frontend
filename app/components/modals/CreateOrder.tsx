@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
+import { useEffect } from "react";
 
 interface CreateOrderProps {
   listing: ListingData
@@ -19,7 +20,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
 
-  // TODO: hitting "enter" submits form
+  // TODO: hitting "enter" closes modal
 
   const orderFormSchema = z.object({
     quantity: z.coerce
@@ -34,16 +35,33 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
 
   const onOrderSubmit = (values: z.infer<typeof orderFormSchema>) => {
     // TODO: API call for submitting order -> Change once it's been created
-    const body = {
-      listingId: listing.id,
-      quantity: values.quantity
-    }
-    backendService.post(`/order`, body)
-      .then(response => {
-        // TODO: toastr with message
-      }
-    );
+    // const body = {
+    //   listingId: listing.id,
+    //   quantity: values.quantity
+    // }
+    // backendService.post(`/order`, body)
+    //   .then(response => {
+    //     // TODO: toastr with message
+    //   }
+    // );
+    onClose();
   }
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (orderForm.formState.isValid) {
+            orderForm.handleSubmit(onOrderSubmit)();
+          }
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, []);
 
   return (
     <div>
@@ -100,6 +118,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
                         type="number"
                         min="1"
                         max={listing.quantity}
+                        required={true}
                       />
                     </FormControl>
                     <FormMessage />
