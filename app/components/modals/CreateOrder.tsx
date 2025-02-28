@@ -7,6 +7,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import backendService from "@/app/services/backend.service";
 
 interface CreateOrderProps {
   listing: ListingData
@@ -32,7 +33,16 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   });
 
   const onOrderSubmit = (values: z.infer<typeof orderFormSchema>) => {
-    // TODO: API call for submitting order
+    // TODO: API call for submitting order -> Change once it's been created
+    const body = {
+      listingId: listing.id,
+      quantity: values.quantity
+    }
+    backendService.post(`/order`, body)
+      .then(response => {
+        // TODO: toastr with message
+      }
+    );
   }
 
   return (
