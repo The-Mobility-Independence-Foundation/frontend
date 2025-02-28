@@ -11,9 +11,10 @@ export interface ImageReference {
 
 export interface ImageCarouselProps {
   images: ImageReference[]
+  className?: string
 }
 
-export default function ImageCarousel({images}: ImageCarouselProps) {
+export default function ImageCarousel({images, className}: ImageCarouselProps) {
   const [fullScreenImageStartIndex, setFullScreenImageStartIndex] = useState(-1);
 
   const closeFullScreen = () => setFullScreenImageStartIndex(-1);
@@ -37,9 +38,9 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
   }, [])
 
   return <>
-    <div>
+    <div className={`${className}`}>
       <Carousel 
-        className={`flex items-center`}
+        className={`flex items-center justify-around`}
         opts={{loop: true}}
       >
         {images.length > 1 && <CarouselPrevious className="static" />}
@@ -70,7 +71,7 @@ export default function ImageCarousel({images}: ImageCarouselProps) {
         id="background"
       >
         <Carousel 
-          className={`flex items-center absolute w-[75%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+          className={`flex justify-around items-center absolute w-[75%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
           opts={{
             loop: true,
             startIndex: fullScreenImageStartIndex
