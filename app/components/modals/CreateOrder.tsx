@@ -20,8 +20,6 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
 
-  // TODO: hitting "enter" closes modal
-
   const orderFormSchema = z.object({
     quantity: z.coerce
       .number()
@@ -30,7 +28,10 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
   })
 
   const orderForm = useForm<z.infer<typeof orderFormSchema>>({
-    resolver: zodResolver(orderFormSchema)
+    resolver: zodResolver(orderFormSchema),
+    defaultValues: {
+      quantity: 1,
+    }
   });
 
   const onOrderSubmit = (values: z.infer<typeof orderFormSchema>) => {
