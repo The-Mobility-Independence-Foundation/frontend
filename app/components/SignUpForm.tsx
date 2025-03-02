@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StateCode } from "../types/StateCode";
+import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons"
+import { useState } from "react";
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 
@@ -35,6 +37,9 @@ interface SignUpFormProps {
 }
 
 export default function SignUpForm({email}: SignUpFormProps) {
+    const [showPassword, setShowPassword] = useState(false)
+    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -188,7 +193,23 @@ export default function SignUpForm({email}: SignUpFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <Input {...field} placeholder="Password" className="bg-white" />
+                                <div className="relative">
+                                    <Input {...field} type={!showPassword ? "password" : "text"} placeholder="Password" className="bg-white" />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowPassword((state) => !state)}
+                                    >
+                                        {showPassword ? (
+                                            <EyeNoneIcon className="h-4 w-4" aria-hidden="true" />
+                                        ) : (
+                                            <EyeOpenIcon className="h-4 w-4" aria-hidden="true" />
+                                        )}
+                                        <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
+                                    </Button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -200,18 +221,34 @@ export default function SignUpForm({email}: SignUpFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <Input {...field} placeholder="Confirm your password" className="bg-white" />
+                                <div className="relative">
+                                    <Input {...field} type={!showPasswordConfirmation ? "password" : "text"} placeholder="Confirm your password" className="bg-white" />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowPasswordConfirmation((state) => !state)}
+                                    >
+                                        {showPasswordConfirmation ? (
+                                            <EyeNoneIcon className="h-4 w-4" aria-hidden="true" />
+                                        ) : (
+                                            <EyeOpenIcon className="h-4 w-4" aria-hidden="true" />
+                                        )}
+                                        <span className="sr-only">{showPasswordConfirmation ? 'Hide password' : 'Show password'}</span>
+                                    </Button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
                 <div className="flex justify-between items-center pt-6 gap-[5vw]">
-                    <Button type="button" className="cancel w-1/4">Cancel</Button>
+                    <Button type="button" className="button cancel w-1/4">Cancel</Button>
 
                     <div className="flex items-center gap-2">
                         <Button type="button" className="w-[40px]">G</Button> {/*TODO Replace with google button */}
-                        <Button type="submit" className="px-[2vw] flex-1">Sign Up</Button>
+                        <Button type="submit" className="button px-[2vw] flex-1">Sign Up</Button>
                     </div>
                 </div>
             </form>
