@@ -8,6 +8,9 @@ import { MultiInputInfo } from "../types/MultiInputInfo";
 import MultiInput from "./MultiInput";
 import { MultiSelectInfo } from "../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../types/RadioButtonInfo";
+import LocationRadius from "./LocationRadius";
+import dynamic from "next/dynamic";
+
 
 export interface FiltersProps {
     options: FilterOptions
@@ -44,12 +47,16 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
         onValueChange(FilterType.Active, newActiveStatus == 1);
     }
 
-    return <div className="flex w-screen" id="filters">
-        {multiSelects.map((multiSelect) => (
-           <MultiSelect key={multiSelect.title} className="px-7 my-4 max-w-fit border-r-2 border-solid" title={multiSelect.title} options={multiSelect.options} onChange={
-                (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
-            }/>
-        ))}
+    return <div className="md:flex w-screen" id="filters">
+        <LocationRadius className="md:w-[25%] px-7 mt-4 border-r-2 border-solid" onValueChange={onValueChange}></LocationRadius>
+        <div className="flex md:flex-none">
+            {multiSelects.map((multiSelect, index) => (
+                    <MultiSelect key={multiSelect.title} className={"px-7 my-4 max-w-fit " + (index != multiSelects.length - 1 ? "border-r-2 border-solid" : "md:border-r-2 md:border-solid")} 
+                    title={multiSelect.title} options={multiSelect.options} onChange={
+                        (newSelected) => updateMultiSelect(multiSelect.filterType, newSelected)
+                    }/>
+            ))}
+        </div>
         <div className="px-7 my-4 max-w-fit">
             {multiInputs.map((multiInputInfo) => (
                 <MultiInput key={multiInputInfo.title} title={multiInputInfo.title} inputs={multiInputInfo.inputs} divider={multiInputInfo.divider}></MultiInput>
