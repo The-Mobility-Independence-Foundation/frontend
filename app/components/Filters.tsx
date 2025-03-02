@@ -3,7 +3,7 @@
 import MultiSelect from "./MultiSelect"
 import RadioButton from "./RadioButton"
 import { useState } from "react";
-import { FilterType } from "../types/filterTypes";
+import { FilterType } from "../types/FilterTypes";
 import { MultiInputInfo } from "../types/MultiInputInfo";
 import MultiInput from "./MultiInput";
 import { MultiSelectInfo } from "../types/MultiSelectInfo";
