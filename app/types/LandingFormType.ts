@@ -1,4 +1,6 @@
 export enum LandingFormType {
+    LoginForm,
     EmailCheckForm,
-    SignUpForm
+    SignUpForm,
+    RequestAccessForm
 };

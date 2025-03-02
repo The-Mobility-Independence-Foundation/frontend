@@ -1,16 +1,17 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import backendService from "../services/backend.service";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StateCode } from "../types/StateCode";
-import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons"
+import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { LandingFormType } from "../types/LandingFormType";
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 
@@ -34,9 +35,10 @@ const formSchema = z.object({
 
 interface SignUpFormProps {
     email: string
+    setCurrentForm: (newForm: LandingFormType) => void
 }
 
-export default function SignUpForm({email}: SignUpFormProps) {
+export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
 
@@ -54,7 +56,7 @@ export default function SignUpForm({email}: SignUpFormProps) {
             username: "",
             password: "",
             passwordConfirmation: ""
-        },
+        }
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -244,7 +246,7 @@ export default function SignUpForm({email}: SignUpFormProps) {
                     )}
                 />
                 <div className="flex justify-between items-center pt-6 gap-[5vw]">
-                    <Button type="button" className="button cancel w-1/4">Cancel</Button>
+                    <Button type="button" className="button cancel w-1/4" onClick={() => setCurrentForm(LandingFormType.LoginForm)}>Cancel</Button>
 
                     <div className="flex items-center gap-2">
                         <Button type="button" className="w-[40px]">G</Button> {/*TODO Replace with google button */}

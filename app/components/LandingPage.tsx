@@ -1,10 +1,12 @@
 import { LandingFormType } from "../types/LandingFormType";
 import EmailCheckForm from "./EmailCheckForm";
+import LoginForm from "./LoginForm";
+import RequestAccessForm from "./RequestAccessForm";
 import SignUpForm from "./SignUpForm";
 import { useState } from "react";
 
 export default function LandingPage() {
-    const [currentForm, setCurrentForm] = useState(LandingFormType.EmailCheckForm);
+    const [currentForm, setCurrentForm] = useState(LandingFormType.LoginForm);
     const [email, setEmail] = useState("");
     
     function onEmailVerified(email: string) {
@@ -12,12 +14,21 @@ export default function LandingPage() {
         setCurrentForm(LandingFormType.SignUpForm);
     }
 
+    function onRequestAccess(email: string) {
+        setEmail(email);
+        setCurrentForm(LandingFormType.RequestAccessForm);
+    }
+
     function getCurrentForm() {
         switch(currentForm) {
+            case LandingFormType.LoginForm:
+                return <LoginForm setCurrentForm={setCurrentForm}></LoginForm>
             case LandingFormType.EmailCheckForm:
-                return <EmailCheckForm onEmailVerified={onEmailVerified}></EmailCheckForm>
+                return <EmailCheckForm onEmailVerified={onEmailVerified} onRequestAccess={onRequestAccess} setCurrentForm={setCurrentForm}></EmailCheckForm>
             case LandingFormType.SignUpForm:
-                return <SignUpForm email={email}></SignUpForm>
+                return <SignUpForm email={email} setCurrentForm={setCurrentForm}></SignUpForm>
+            case LandingFormType.RequestAccessForm:
+                return <RequestAccessForm email={email} setCurrentForm={setCurrentForm}></RequestAccessForm>
         }
     }
 
