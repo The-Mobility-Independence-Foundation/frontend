@@ -2,7 +2,6 @@
 import { CheckedState } from "@radix-ui/react-checkbox";
 import Listing from "./components/Listing";
 import { ListingData } from "./models/Listings";
-import LandingPage from "./components/LandingPage";
 
 export default function Home() {
   const listing: ListingData = {
@@ -60,7 +59,6 @@ export default function Home() {
   }
 
   return <div>
-    <LandingPage></LandingPage>
+    <Listing listing={listing} myListing={true} onCheckboxChange={onCheckboxChange}></Listing>
   </div>
 }
-
