@@ -56,7 +56,7 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
               <img 
                 src={image.url} 
                 alt={image.alt} 
-                className="h-full mx-auto cursor-pointer"
+                className="h-full mx-auto cursor-pointer rounded"
                 onClick={() => setFullScreenImageStartIndex(index)}
               />
             </CarouselItem>
