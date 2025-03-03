@@ -15,6 +15,8 @@ import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
 import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
+import Modal from "./modals/Modal";
+import CreateOrder from "./modals/CreateOrder";
 
 export interface ListingProps {
   listing: ListingData;
@@ -26,7 +28,8 @@ export interface ListingProps {
 export default function Listing({listing, myListing, onCheckboxChange, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
-  const [activeStatus, changeActiveStatus] = useState(statuses.indexOf(listing.status)+1);
+  const [activeStatus, setActiveStatus] = useState(statuses.indexOf(listing.status)+1);
+  const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
@@ -71,7 +74,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
   }
 
   const onActiveChange = (newSelected: number) => {
-    changeActiveStatus(newSelected);
+    setActiveStatus(newSelected);
     patchListing({
       title: listing.title,
       description: "",
@@ -82,113 +85,138 @@ export default function Listing({listing, myListing, onCheckboxChange, className
     });
   }
 
-  return <div className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
-                        max-xl:flex-col max-xl:w-max 
-                        max-sm:pl-[2rem] ${className}`}
-          >
-    <div className="flex 
+  return (
+    <>
+      <div
+        className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
+                  max-xl:flex-col max-xl:w-max 
+                  max-sm:pl-[2rem]"
+      >
+        <div
+          className="flex 
                     max-sm:flex-col"
-    >
-      <div className="flex">
-        {onCheckboxChange != null && 
-          <Checkbox onCheckedChange={(checked) => onCheckboxChange(checked)} />
-        }
-        <ImageCarousel images={images}></ImageCarousel>
-      </div>
-      <div className="flex max-sm:mt-[1rem]">
-        <div>
-          <h4>{part.name}</h4>
-          <h5>{part.partNumber}</h5>
-          <p className="mt-[revert]">{part.model}</p>
-          <p>{part.partType}</p>
+        >
+          <div className="flex">
+            {onCheckboxChange != null && (
+              <Checkbox
+                onCheckedChange={(checked) => onCheckboxChange(checked)}
+              />
+            )}
+            <ImageCarousel images={images}></ImageCarousel>
+          </div>
+          <div className="flex max-sm:mt-[1rem]">
+            <div>
+              <h4>{part.name}</h4>
+              <h5>{part.partNumber}</h5>
+              <p className="mt-[revert]">{part.model}</p>
+              <p>{part.partType}</p>
+            </div>
+            <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
+              {Object.keys(listing.attributes).map((key) => (
+                <li
+                  className="mb-[0.25rem]"
+                  key={`${key}: ${listing.attributes[key]}`}
+                >
+                  - {key}: {listing.attributes[key]}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
-          {Object.keys(listing.attributes).map(key => 
-          <li className="mb-[0.25rem]" key={`${key}: ${listing.attributes[key]}`}>
-            - {key}: {listing.attributes[key]}
-          </li>)}
-        </ul>
-      </div>
-    </div>
-    <div className="flex 
+        <div
+          className="flex 
                     max-xl:mt-[1rem]
                     max-sm:flex-col"
-    >
-      <div className="flex
+        >
+          <div
+            className="flex
                       max-sm:justify-between"
-      >
-        <div className="mr-[5rem]">
-          <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
-          <p>{inventoryItem.inventory.location}</p>
-        </div>
-        {myListing ? 
-        <div className="flex flex-col justify-between mr-[5rem]">
-          <Link
-            href={`/inventories/inventory?inventoryID=${inventoryItem.inventory.id}&inventoryItemID=${inventoryItem.id}`}
-            className="text-[#009D4F] text-center"
-          >View Part in Inventory</Link>
-          <RadioButton 
-            label1={ACTIVE} 
-            label2={INACTIVE} 
-            selected={activeStatus}
-            onChange={onActiveChange}
-          />
-        </div>
-        :
-        <div className="flex flex-col justify-between mr-[5rem]
-                        max-sm:mr-[0rem]">
-          <h5>{inventoryItem.inventory.organization.name}</h5>
-          <div>
-            <p>{inventoryItem.inventory.organization.email}</p>
-            <p>{inventoryItem.inventory.organization.phoneNumber}</p>
-          </div>
-          <Link
-            href={`/messages?u_id=${userID}`}
-            className="w-full"
           >
-            <button 
-              className="w-full button"
-            >Message</button> {/**TODO: routes to specified user pv */}
-          </Link>
+            <div className="mr-[5rem]">
+              <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
+              <p>{inventoryItem.inventory.location}</p>
+            </div>
+            {myListing ? (
+              <div className="flex flex-col justify-between mr-[5rem]">
+                <Link
+                  href={`/inventories/inventory?inventoryID=${inventoryItem.inventory.id}&inventoryItemID=${inventoryItem.id}`}
+                  className="text-[#009D4F] text-center"
+                >
+                  View Part in Inventory
+                </Link>
+                <RadioButton
+                  label1={ACTIVE}
+                  label2={INACTIVE}
+                  selected={activeStatus}
+                  onChange={onActiveChange}
+                />
+              </div>
+            ) : (
+              <div
+                className="flex flex-col justify-between mr-[5rem]
+                          max-sm:mr-[0rem]"
+              >
+                <h5>{inventoryItem.inventory.organization.name}</h5>
+                <div>
+                  <p>{inventoryItem.inventory.organization.email}</p>
+                  <p>{inventoryItem.inventory.organization.phoneNumber}</p>
+                </div>
+                <Link href={`/messages?u_id=${userID}`} className="w-full">
+                  <button className="w-full button">Message</button>{" "}
+                  {/**TODO: routes to specified user pv */}
+                </Link>
+              </div>
+            )}
+          </div>
+          {myListing ? (
+            <div className="mt-auto">
+              <FormProvider {...quantityForm}>
+                <form onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}>
+                  <FormField
+                    control={quantityForm.control}
+                    name="quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity Available:</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="bg-white rounded-sm"
+                            type="number"
+                            min="1"
+                            max={listing.inventoryItem.publicCount}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  ></FormField>
+                </form>
+              </FormProvider>
+            </div>
+          ) : (
+            <div className="flex flex-col justify-between">
+              <div className="mt-[1.5rem]">
+                <p className="w-max mx-auto">Quantity Available:</p>
+                <h5 className="w-min mx-auto">{listing.quantity}</h5>
+              </div>
+              <button className="button" onClick={() => setCreateOrderModalIsOpen(true)}>
+                Create Order
+              </button>{" "}
+            </div>
+          )}
         </div>
-        }
       </div>
-      {myListing ? 
-      <div className="mt-auto">
-        <FormProvider {...quantityForm}>
-          <form onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}>
-            <FormField
-              control={quantityForm.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel >Quantity Available:</FormLabel>
-                  <FormControl>
-                    <Input 
-                      {...field}
-                      className="bg-white rounded-sm"
-                      type="number"
-                      min="1"
-                      max={listing.inventoryItem.publicCount}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            >
-            </FormField>
-          </form>
-        </FormProvider>
-      </div>
-      : 
-      <div className="flex flex-col justify-between">
-        <div className="mt-[1.5rem]">
-          <p className="w-max mx-auto">Quantity Available:</p>
-          <h5 className="w-min mx-auto">{listing.quantity}</h5>
-        </div>
-        <button className="button">Create Order</button> {/**TODO: opens "Create Order" modal */}
-      </div>
-      }
-    </div>
-  </div>
+      <Modal
+        isOpen={createOrderModalIsOpen}
+        onClose={() => setCreateOrderModalIsOpen(false)}
+      >
+        <CreateOrder 
+          listing={listing} 
+          listingImages={images}
+          onClose={() => setCreateOrderModalIsOpen(false)}
+        />
+      </Modal>
+    </>
+  );
 }

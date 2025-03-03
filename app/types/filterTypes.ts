@@ -5,7 +5,10 @@ export enum FilterType {
     Width = "Width",
     Height = "Height",
     QuantityMin = "quantityMin",
-    QuantityMax = "quantityMax"
+    QuantityMax = "quantityMax",
+    LocationLat = "locationLat",
+    LocationLong = "locationLong",
+    Radius = "radius"
 };
 
 export enum FilterComponentType {
