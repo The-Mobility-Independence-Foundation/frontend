@@ -34,7 +34,7 @@ export default function Modal({isOpen, onClose, children}: ModalProps) {
       onClick={closeModal}
     >
       {children && React.isValidElement(children) ?
-      <div className="mt-[25%]">
+      <div className="mt-[10vh]">
         {React.cloneElement(children)}
       </div>
       : "Error parsing Modal"  
