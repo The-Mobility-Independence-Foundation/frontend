@@ -88,9 +88,9 @@ export default function Listing({listing, myListing, onCheckboxChange, className
   return (
     <>
       <div
-        className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
+        className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                   max-xl:flex-col max-xl:w-max 
-                  max-sm:pl-[2rem]"
+                  max-sm:pl-[2rem] ${className}`}
       >
         <div
           className="flex 
