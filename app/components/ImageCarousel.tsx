@@ -15,6 +15,8 @@ export interface ImageCarouselProps {
   className?: string
 }
 
+const BACKGROUND_ID = "image-carousel-background"
+
 export default function ImageCarousel({images, className}: ImageCarouselProps) {
   const [fullScreenImageStartIndex, setFullScreenImageStartIndex] = useState(-1);
 
@@ -22,7 +24,7 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
 
   const clickFullScreenBackground = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if(target.id == "background") closeFullScreen();
+    if(target.id == BACKGROUND_ID) closeFullScreen();
   }
 
   useEffect(() => {
@@ -65,37 +67,53 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
     </div>
 
     {/** FULL SCREEN */}
-    {fullScreenImageStartIndex >= 0 && (
-      <div 
-        className={`fixed inset-0 z-100 bg-black/50 w-screen h-screen ease-in-out duration-200`}
-        onClick={clickFullScreenBackground} 
-        id="background"
-      >
-        <Carousel 
-          className={`flex justify-around items-center absolute w-[75%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-          opts={{
-            loop: true,
-            startIndex: fullScreenImageStartIndex
-          }}
-        >
-          {images.length > 1 && <CarouselPrevious className="static" />}
-          <CarouselContent>
-            {images.map(image => 
-              <CarouselItem 
-                key={image.id}
-                className="w-auto flex items-center"
-              >
-                <img 
-                  src={image.url} 
-                  alt={image.alt} 
-                  className="h-auto w-auto mx-auto"
-                />
-              </CarouselItem>
-            )}
-          </CarouselContent>
-          {images.length > 1 && <CarouselNext className="static" />}
-        </Carousel>
-      </div>
-    )}
+    {fullScreenImageStartIndex >= 0 && 
+      <FullScreenImage 
+        clickFullScreenBackground={clickFullScreenBackground}
+        images={images}
+        fullScreenImageStartIndex={fullScreenImageStartIndex}
+      />
+    }
   </>
 }
+
+interface FullScreenImageProps {
+  clickFullScreenBackground: (e: React.MouseEvent<HTMLDivElement>) => void,
+  images: ImageReference[]
+  fullScreenImageStartIndex: number
+}
+
+function FullScreenImage({clickFullScreenBackground, images, fullScreenImageStartIndex}: FullScreenImageProps) {  
+  return createPortal(
+    <div 
+      className={`fixed inset-0 z-[100] bg-black/50 ease-in-out duration-200`}
+      onClick={clickFullScreenBackground} 
+      id={BACKGROUND_ID}
+    >
+      <Carousel 
+        className={`flex items-center justify-center absolute w-[75%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+        opts={{
+          loop: true,
+          startIndex: fullScreenImageStartIndex
+        }}
+      >
+        {images.length > 1 && <CarouselPrevious className="static" />}
+        <CarouselContent>
+          {images.map(image => 
+            <CarouselItem 
+              key={image.id}
+              className="w-auto flex items-center"
+            >
+              <img 
+                src={image.url} 
+                alt={image.alt} 
+                className="h-auto w-auto mx-auto"
+              />
+            </CarouselItem>
+          )}
+        </CarouselContent>
+        {images.length > 1 && <CarouselNext className="static" />}
+      </Carousel>
+    </div>,
+    document.body
+  )}
