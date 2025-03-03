@@ -59,7 +59,11 @@ export default function Home() {
   }
 
   return <div>
-    <Listing listing={listing} myListing={true} onCheckboxChange={onCheckboxChange}></Listing>
+    <Listing 
+      listing={listing} 
+      // myListing={true} 
+      onCheckboxChange={onCheckboxChange} 
+    />
   </div>
 }
 
