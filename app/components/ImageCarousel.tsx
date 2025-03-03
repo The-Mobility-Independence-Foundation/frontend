@@ -21,7 +21,6 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
   const closeFullScreen = () => setFullScreenImageStartIndex(-1);
 
   const clickFullScreenBackground = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log("clickFullScreenBackground")
     const target = e.target as HTMLElement;
     if(target.id == "background") closeFullScreen();
   }
