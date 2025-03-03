@@ -6,8 +6,9 @@ export interface Listings {
   message: string;
   data: {
     count: number;
+    totalCount: number;
     hasNext: boolean;
-    nextToken: string;
+    nextToken: string | null;
     results: ListingData[]
   }
 }

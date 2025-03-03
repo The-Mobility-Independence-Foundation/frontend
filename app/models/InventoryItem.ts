@@ -7,8 +7,9 @@ export interface InventoryItems {
   message: string;
   data: {
     count: number;
+    totalCount: number;
     hasNext: boolean;
-    nextToken: string;
+    nextToken: string | null;
     results: InventoryItemData[]
   }
 }

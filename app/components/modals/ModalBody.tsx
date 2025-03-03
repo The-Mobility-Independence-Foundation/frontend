@@ -6,7 +6,7 @@ interface ModalBodyProps {
 
 export default function ModalBody({children}: ModalBodyProps) {
   return <div>
-    <div className="w-full bg-white rounded-bl-lg rounded-br-lg p-[0.5rem]">
+    <div className="w-full bg-white rounded-bl-lg rounded-br-lg p-[1rem]">
       {children && React.isValidElement(children) 
       ? React.cloneElement(children)
       : "Error parsing Modal Body"  

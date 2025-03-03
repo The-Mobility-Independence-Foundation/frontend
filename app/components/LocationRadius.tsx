@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { LatLngExpression } from "leaflet";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FilterType } from "../types/filterTypes";
+import { FilterType } from "../types/FilterTypes";
 
 const Map = dynamic(() => import('./Map'), { 
     ssr: false,

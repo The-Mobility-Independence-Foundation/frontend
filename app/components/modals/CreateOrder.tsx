@@ -64,8 +64,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
     }
   }, []);
 
-  return (
-    <div>
+  return <>
       <ModalHeader
         title={`Create an Order For ${part.name}`}
         onClose={onClose}
@@ -136,6 +135,5 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
           </FormProvider>
         </>
       </ModalBody>
-    </div>
-  );
+    </>
 }
