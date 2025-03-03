@@ -18,6 +18,10 @@ body {
       background-color: #35B254;
     }
 
+    &.cancel {
+      background-color: #BBBBBB;
+    }
+
     &:hover {
       transition: 0.3s;
       filter: brightness(1.05);
