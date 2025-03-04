@@ -10,3 +10,7 @@ export enum FilterType {
     LocationLong = "locationLong",
     Radius = "radius"
 };
+
+export enum FilterComponentType {
+    LISTINGS = "LISTINGS"
+}
