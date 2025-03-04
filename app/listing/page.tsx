@@ -9,11 +9,13 @@ import Modal from "../components/modals/Modal";
 import CreateOrder from "../components/modals/CreateOrder";
 import ImageCarousel, { ImageReference } from "../components/ImageCarousel";
 import {v4 as uuidv4} from "uuid";
+import Listing from "../components/Listing";
 
 export default function ListingPage() {
   const [listing, setListing] = useState<ListingData>();
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
   const [images, setImages] = useState<ImageReference[]>();
+  const [recommendedListings, setRecommendedListings] = useState<ListingData[]>([]);
 
   const params = useSearchParams();
   const listingID = params.get("listing_id");
@@ -33,6 +35,8 @@ export default function ListingPage() {
         id: uuidv4()
       }
     ]);
+    // TODO: api call for recommended listings
+    setRecommendedListings([testListingData]);
   }, [listingID])
 
   return (
@@ -104,7 +108,13 @@ export default function ListingPage() {
             {/** RECOMMENDED LISTINGS */}
             <div className="bg-[#D8EAF6] w-full flex-1 p-[0.65rem]">
               <h4 className="mb-[1rem]">Recommended Listings</h4>
-              
+              {recommendedListings.map(listing => 
+                <Listing 
+                  listing={listing}
+                  className="mt-[1rem] mx-auto bg-[#EFFBFF]"
+                  key={listing.id}
+                />
+              )}
             </div>
           </div>
           {/** ETC */}
