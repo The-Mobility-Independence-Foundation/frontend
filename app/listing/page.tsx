@@ -21,7 +21,40 @@ export default function ListingPage() {
     setListing(testListingData)
   }, [listingID])
 
-  return <>
-  {listingID}
-  </>
+  return (
+    <>
+      {listing && (
+        <>
+          {/** TOP BAR */}
+          <div className="w-full flex p-[0.65rem] bg-[#F4F4F5] drop-shadow-md overflow-hidden">
+            <div>
+              <h2>{listing.title}</h2>
+              <p className="max-w-[20rem] text-sm">{listing.inventoryItem.part.description}</p>
+              <div className="flex mt-[1rem]">
+                <div>
+                  <h5>{listing.inventoryItem.part.partNumber}</h5>
+                  <p className="mt-[revert]">
+                    {listing.inventoryItem.part.model}
+                  </p>
+                  <p>{listing.inventoryItem.part.partType}</p>
+                </div>
+                <ul className="ml-[3rem] max-h-[6rem] overflow-y-auto">
+                  {Object.keys(listing.attributes).map((key) => (
+                    <li
+                      className="mb-[0.25rem]"
+                      key={`${key}: ${listing.attributes[key]}`}
+                    >
+                      - {key}: {listing.attributes[key]}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+          {/** RECOMMENDED LISTINGS */}
+          <div></div>
+        </>
+      )}
+    </>
+  );
 }

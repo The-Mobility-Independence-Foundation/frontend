@@ -74,7 +74,7 @@ export const testListingData: ListingData = {
       id: 0,
       name: "Part 1",
       model: "Model",
-      description: "Description",
+      description: "Description that is so extraordinarily long that i dont really know what to write and this is just random words at this pointS",
       partNumber: "Part Number",
       partType: "Part Type"
     },

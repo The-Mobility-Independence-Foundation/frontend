@@ -22,9 +22,10 @@ export interface ListingProps {
   listing: ListingData;
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
+  className?: string;
 }
 
-export default function Listing({listing, myListing, onCheckboxChange}: ListingProps) {
+export default function Listing({listing, myListing, onCheckboxChange, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
   const [activeStatus, setActiveStatus] = useState(statuses.indexOf(listing.status)+1);
@@ -87,9 +88,9 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
   return (
     <>
       <div
-        className="flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
+        className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                   max-xl:flex-col max-xl:w-max 
-                  max-sm:pl-[2rem]"
+                  max-sm:pl-[2rem] ${className}`}
       >
         <div
           className="flex 
@@ -105,7 +106,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
           </div>
           <div className="flex max-sm:mt-[1rem]">
             <div>
-              <Link href={`/listing?listing_id=${listing.id}`}><h4>{part.name}</h4></Link>
+              <Link href={`/listing?listing_id=${listing.id}`}><h4 className="hover:underline">{listing.title}</h4></Link>
               <h5>{part.partNumber}</h5>
               <p className="mt-[revert]">{part.model}</p>
               <p>{part.partType}</p>
