@@ -4,9 +4,16 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
 import { ListingData, testListingData } from "../models/Listings";
+import Link from "next/link";
+import Modal from "../components/modals/Modal";
+import CreateOrder from "../components/modals/CreateOrder";
+import ImageCarousel, { ImageReference } from "../components/ImageCarousel";
+import {v4 as uuidv4} from "uuid";
 
 export default function ListingPage() {
   const [listing, setListing] = useState<ListingData>();
+  const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
+  const [images, setImages] = useState<ImageReference[]>();
 
   const params = useSearchParams();
   const listingID = params.get("listing_id");
@@ -18,7 +25,14 @@ export default function ListingPage() {
     //     const data = response?.data;
     //     setListing(data as ListingData);
     //   });
-    setListing(testListingData)
+    setListing(testListingData);
+    setImages([
+      {
+        url: testListingData.attachment,
+        alt: `Attachment for ${testListingData.title}`,
+        id: uuidv4()
+      }
+    ]);
   }, [listingID])
 
   return (
@@ -26,7 +40,7 @@ export default function ListingPage() {
       {listing && (
         <>
           {/** TOP BAR */}
-          <div className="w-full flex p-[0.65rem] bg-[#F4F4F5] drop-shadow-md overflow-hidden">
+          <div className="w-full flex justify-between p-[0.65rem] bg-[#F4F4F5] drop-shadow-md overflow-hidden">
             <div>
               <h2>{listing.title}</h2>
               <p className="max-w-[20rem] text-sm">{listing.inventoryItem.part.description}</p>
@@ -50,9 +64,44 @@ export default function ListingPage() {
                 </ul>
               </div>
             </div>
+            <div className="flex flex-col my-[1rem] justify-between">
+              <div>
+              <h5>{listing.inventoryItem.inventory.organization.name}</h5>
+                <p>{listing.inventoryItem.inventory.organization.email}</p>
+                <p>{listing.inventoryItem.inventory.organization.phoneNumber}</p>
+              </div>
+              <Link href={`/messages?u_id=${listing.inventoryItem.inventory.organization.id}`} className="w-full">
+                <button className="w-full button">Message</button>{" "}
+                {/**TODO: routes to specified user pv */}
+              </Link>
+            </div>
+            <div className="flex flex-col my-[1rem] justify-between">
+              <div>
+                <h5 >{listing.inventoryItem.inventory.name}</h5>
+                <p>{listing.inventoryItem.inventory.location}</p>
+              </div>
+              <div>
+                <p className="w-max mx-auto">Quantity Available:</p>
+                <h5 className="w-min mx-auto">{listing.quantity}</h5>
+              </div>
+              <button className="button" onClick={() => setCreateOrderModalIsOpen(true)}>
+                Create Order
+              </button>
+            </div>
+            {images && <ImageCarousel className="my-auto" images={images} />}
           </div>
           {/** RECOMMENDED LISTINGS */}
           <div></div>
+          <Modal
+            isOpen={createOrderModalIsOpen}
+            onClose={() => setCreateOrderModalIsOpen(false)}
+          >
+            <CreateOrder 
+              listing={listing} 
+              listingImages={images}
+              onClose={() => setCreateOrderModalIsOpen(false)}
+            />
+          </Modal>
         </>
       )}
     </>

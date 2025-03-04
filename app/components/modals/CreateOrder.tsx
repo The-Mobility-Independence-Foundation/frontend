@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 interface CreateOrderProps {
   listing: ListingData
-  listingImages: ImageReference[]
+  listingImages?: ImageReference[]
   onClose: () => void
 }
 
@@ -97,7 +97,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
               </div>
             </div>
           </div>
-          <ImageCarousel images={listingImages} className="mx-auto my-[1rem]" />
+          {listingImages && <ImageCarousel images={listingImages} className="mx-auto my-[1rem]" />}
           <span className="flex items-center">
             <p>Quantity Available: </p>
             <h5 className="ml-[0.5rem]">{listing.quantity}</h5>
