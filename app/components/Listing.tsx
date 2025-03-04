@@ -105,7 +105,7 @@ export default function Listing({listing, myListing, onCheckboxChange}: ListingP
           </div>
           <div className="flex max-sm:mt-[1rem]">
             <div>
-              <h4>{part.name}</h4>
+              <Link href={`/listing?listing_id=${listing.id}`}><h4>{part.name}</h4></Link>
               <h5>{part.partNumber}</h5>
               <p className="mt-[revert]">{part.model}</p>
               <p>{part.partType}</p>
