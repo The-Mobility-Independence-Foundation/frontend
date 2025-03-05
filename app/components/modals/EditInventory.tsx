@@ -6,14 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
+import { InventoryData } from "@/app/models/Inventory";
 
-interface CreateInventoryModalProps {
+interface EditInventoryModalProps {
   organizationID: number,
+  inventoryData: InventoryData,
   onClose: () => void
 }
 
-export default function CreateInventoryModal({organizationID, onClose}: CreateInventoryModalProps) {
-  const createInventoryFormSchema = z.object({
+export default function EditInventoryModal({organizationID, inventoryData, onClose}: EditInventoryModalProps) {
+  const editInventoryFormSchema = z.object({
     title: z
       .string()
       .min(1, "Title is required"),
@@ -21,23 +23,22 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
       .string()
       .regex(/(\d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\.)?/, "Must be in the format \"2014 Forrest Hills Dr.\"")
   });
-  const createInventoryForm = useForm<z.infer<typeof createInventoryFormSchema>>({
-    resolver: zodResolver(createInventoryFormSchema),
+  const editInventoryForm = useForm<z.infer<typeof editInventoryFormSchema>>({
+    resolver: zodResolver(editInventoryFormSchema),
     defaultValues: {
-      title: "",
-      address: ""
+      title: inventoryData.name,
+      address: inventoryData.location
     }
   })
   
-  const onInventorySubmit = (values: z.infer<typeof createInventoryFormSchema>) => {
+  const onInventorySubmit = (values: z.infer<typeof editInventoryFormSchema>) => {
     // TODO: Uncomment when backend is hooked up
     // const body = {
     //   name: values.title,
-    //   organizationID: organizationID,
     //   description: "",
     //   location: values.address
     // };
-    // backendService.post(`/organizations/${organizationID}/inventories`, body)
+    // backendService.patch(`/organizations/${organizationID}/inventories/${inventoryData.id}`, body)
     //   .then(response => {
     //     // TODO: toastr with message
     //   }
@@ -47,15 +48,15 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title="Create a New Inventory" onClose={onClose} />
+      <ModalHeader title={`Edit ${inventoryData.name}`} onClose={onClose} />
       <ModalBody>
         <>
-          <FormProvider {...createInventoryForm}>
+          <FormProvider {...editInventoryForm}>
             <form
-              onSubmit={createInventoryForm.handleSubmit(onInventorySubmit)}
+              onSubmit={editInventoryForm.handleSubmit(onInventorySubmit)}
             >
               <FormField
-                control={createInventoryForm.control}
+                control={editInventoryForm.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
@@ -72,7 +73,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                 )}
               />
               <FormField
-                control={createInventoryForm.control}
+                control={editInventoryForm.control}
                 name="address"
                 render={({ field }) => (
                   <FormItem>
@@ -89,7 +90,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
               <div className="flex w-max ml-auto mt-[1.5rem]">
                 <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
                 <button type="submit" className="button ml-[1rem]">
-                  Create
+                  Save
                 </button>
               </div>
             </form>
