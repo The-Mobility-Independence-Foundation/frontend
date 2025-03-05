@@ -16,6 +16,7 @@ export default function ListingPage() {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
   const [images, setImages] = useState<ImageReference[]>();
   const [recommendedListings, setRecommendedListings] = useState<ListingData[]>([]);
+  const [listingsFromOrg, setListingsFromOrg] = useState<ListingData[]>([]);
 
   const params = useSearchParams();
   const listingID = params.get("listing_id");
@@ -35,8 +36,21 @@ export default function ListingPage() {
         id: uuidv4()
       }
     ]);
-    // TODO: api call for recommended listings
-    setRecommendedListings([testListingData]);
+    // TODO: uncomment when backend is hooked up
+    // backendService.get(`/listings/${listing.inventoryItem.inventory.organization.id}/listings`)
+    //   .then(response => {
+    //     const data = response?.data;
+    //     setListingsFromOrg(data as ListingData[]);
+    //   });
+    setListingsFromOrg([testListingData, testListingData]);
+
+    // TODO: uncomment when backend is hooked up
+    // backendService.get(`/orgs/${listing.}/recommended`)
+    //   .then(response => {
+    //     const data = response?.data;
+    //     setRecommendedListings(data as ListingData[]);
+    //   });
+    setRecommendedListings([testListingData, testListingData]);
   }, [listingID])
 
   return (
@@ -105,16 +119,33 @@ export default function ListingPage() {
               </div>
               {images && <ImageCarousel className="my-auto mx-[0.25rem]" images={images} />}
             </div>
-            {/** RECOMMENDED LISTINGS */}
             <div className="bg-[#D8EAF6] w-full flex-1 p-[0.65rem]">
-              <h4 className="mb-[1rem]">Recommended Listings</h4>
-              {recommendedListings.map(listing => 
-                <Listing 
-                  listing={listing}
-                  className="mt-[1rem] mx-auto bg-[#EFFBFF]"
-                  key={listing.id}
-                />
-              )}
+              {/** LISTINGS FROM ORG */}
+              <div className="mb-[2rem]">
+                <h5 className="mb-[1rem]">Listings from Organization</h5>
+                <div className="flex flex-nowrap overflow-x-scroll">
+                {listingsFromOrg.map(listing => 
+                  <Listing 
+                    listing={listing}
+                    className="mr-[1rem] bg-[#EFFBFF]"
+                    key={listing.id}
+                  />
+                )}
+                </div>
+              </div>
+              {/** RECOMMENDED LISTINGS */}
+              <div>
+                <h5 className="mb-[1rem]">Recommended Listings</h5>
+                <div className="flex flex-nowrap overflow-x-scroll">
+                {recommendedListings.map(listing => 
+                  <Listing 
+                    listing={listing}
+                    className="mr-[1rem] bg-[#EFFBFF]"
+                    key={listing.id}
+                  />
+                )}
+                </div>
+              </div>
             </div>
           </div>
           {/** ETC */}
