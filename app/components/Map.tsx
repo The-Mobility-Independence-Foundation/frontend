@@ -63,7 +63,7 @@ const Map = ({ pos, radius, className }: MapProps) => {
         }
 
         if (circleRef.current) {
-            console.log(radius);
+            // console.log(radius);
             circleRef.current.setLatLng(pos);
             circleRef.current.setRadius(radius);
         }
