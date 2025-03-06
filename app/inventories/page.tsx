@@ -5,6 +5,9 @@ import { Inventory, InventoryData } from "../models/Inventory";
 import backendService from "../services/backend.service";
 import { testInventory } from "../testData/TestInventoryData";
 
+// TODO: set up ellipsis drop down component
+// TODO: connect with create inventory modal
+// TODO: connect with edit inventory modal
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
 
