@@ -36,7 +36,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
   const images: ImageReference[] = [
     {
       url: listing.attachment,
-      alt: `Attachment for ${part.name}`,
+      alt: `Attachment for ${listing.title}`,
       id: uuidv4()
     }
   ];
@@ -106,7 +106,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
           </div>
           <div className="flex max-sm:mt-[1rem]">
             <div>
-              <h4>{part.name}</h4>
+              <Link href={`/listing?listing_id=${listing.id}`}><h4 className="hover:underline">{listing.title}</h4></Link>
               <h5>{part.partNumber}</h5>
               <p className="mt-[revert]">{part.model}</p>
               <p>{part.partType}</p>
@@ -161,7 +161,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
                   <p>{inventoryItem.inventory.organization.email}</p>
                   <p>{inventoryItem.inventory.organization.phoneNumber}</p>
                 </div>
-                <Link href={`/messages?u_id=${userID}`} className="w-full">
+                <Link href={`/messages?u_id=${inventoryItem.inventory.organization.id}`} className="w-full">
                   <button className="w-full button">Message</button>{" "}
                   {/**TODO: routes to specified user pv */}
                 </Link>
@@ -202,7 +202,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
               </div>
               <button className="button" onClick={() => setCreateOrderModalIsOpen(true)}>
                 Create Order
-              </button>{" "}
+              </button>
             </div>
           )}
         </div>
