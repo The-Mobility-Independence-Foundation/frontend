@@ -55,7 +55,7 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
     onValueChange(FilterType.Active, newActiveStatus == 1);
   }
 
-  return <div className="md:flex w-screen" id="filters">
+  return <div className="md:flex w-screen bg-white pb-5" id="filters">
     <LocationRadius className="md:w-[25%] px-7 mt-4 border-r-2 border-solid" onValueChange={onValueChange}></LocationRadius>
     <div className="flex md:flex-none">
         {multiSelects.map((multiSelect, index) => (
