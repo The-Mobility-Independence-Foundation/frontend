@@ -1,8 +1,10 @@
+"use client"
+
 import { LandingFormType } from "../types/LandingFormType";
-import EmailCheckForm from "./EmailCheckForm";
-import LoginForm from "./LoginForm";
-import RequestAccessForm from "./RequestAccessForm";
-import SignUpForm from "./SignUpForm";
+import EmailCheckForm from "../components/EmailCheckForm";
+import LoginForm from "../components/LoginForm";
+import RequestAccessForm from "../components/RequestAccessForm";
+import SignUpForm from "../components/SignUpForm";
 import { useState } from "react";
 
 export default function LandingPage() {

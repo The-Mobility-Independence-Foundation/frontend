@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z.string().nonempty("Please enter your email"),
     password: z.string().nonempty("Please enter your password")
-}).refine((data) => false, { //TODO add auth check
-
 });
 
 interface LoginFormProps {
@@ -23,14 +24,25 @@ interface LoginFormProps {
 }
 
 export default function SignUpForm({setCurrentForm}: LoginFormProps) {
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+    const [invalidLogin, setInvalidLogin] = useState(false);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema)
-    })
+    });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // TODO login
+        backendService.post("login", {
+            "email":  values.email,
+            "password": values.password
+        }).then(response => {
+            setInvalidLogin(false);
+            sessionStorage.setItem('accessToken', response.accessToken);
+            router.push('/listings');
+        }).catch(error => {
+            setInvalidLogin(true);
+        })
     }
 
     return <div className= "w-[80%] lg:w-[65%]">
@@ -76,7 +88,14 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                         </FormItem>
                     )}
                 />
-                <div className="flex justify-between items-center pt-6 gap-[5vw]">
+                {invalidLogin && <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="text-left text-sm font-semibold text-red-500">Login Invalid</AlertTitle>
+                    <AlertDescription className="text-left">
+                        Your login is invalid, please try again.
+                    </AlertDescription>
+                </Alert>}
+                <div className="flex justify-between items-center gap-[5vw] pt-3">
                     <Button type="button" variant="secondary" className="w-1/4" onClick={() => setCurrentForm(LandingFormType.EmailCheckForm)}>Sign Up</Button>
 
                     <div className="flex items-center gap-2">

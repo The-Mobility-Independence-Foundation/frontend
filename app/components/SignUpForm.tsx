@@ -60,7 +60,13 @@ export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // TODO send email
+        backendService.post("register", {
+            "firstName": values.firstName,
+            "lastName": values.lastName,
+            "displayName": values.username,
+            "email": values.email,
+            "password": values.password
+        })
     }
 
     return <div className= "w-[80%] lg:w-[65%]">
