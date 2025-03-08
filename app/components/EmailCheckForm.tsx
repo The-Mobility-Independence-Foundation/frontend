@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
 interface EmailCheckFormProps {
     onEmailVerified: (email: string) => void
     onRequestAccess: (email: string) => void
@@ -20,7 +22,7 @@ export default function EmailCheckForm({onEmailVerified, onRequestAccess, setCur
     const [submitClicked, setSubmitClicked] = useState(false);
 
     const formSchema = z.object({
-        email: z.string().nonempty("Please enter your email address").includes("@", {message: "Please enter a valid email address"})
+        email: z.string().nonempty("Please enter your email address").regex(EMAIL_REGEX, {message: "Please enter a valid email address"})
     }).refine((data) => !submitClicked || true, { //TODO call endpoint to check if email is invited
         message: "Email does not have a pending invitation",
         path: ["email"]

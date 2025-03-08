@@ -8,14 +8,18 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { toast } from "sonner"
 import { LandingFormType } from "../types/LandingFormType";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 const formSchema = z.object({
     firstName: z.string().nonempty("Please enter your first name"),
     lastName: z.string().nonempty("Please enter your last name"),
     email: z.string(),
-    organization: z.string().nonempty("Please enter your organization name"),
-    requestBody: z.string()
+    ein: z.string().nonempty("Please enter your EIN"),
+    phoneNumber: z.string().nonempty("Please enter your phone number").refine(isValidPhoneNumber, { message: "Please enter a valid phone number" }),
+    requestBody: z.string().nonempty("Please enter a request description")
 });
 
 interface RequestAccessFormProps {
@@ -30,13 +34,25 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
             firstName: "",
             lastName: "",
             email: email,
-            organization: "",
+            ein: "",
+            phoneNumber: "",
             requestBody: ""
-        },
-    })
+        }
+    });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        //TODO call endpoint to request access
+        backendService.post("requests", {
+            "ein": values.ein,
+            "firstName": values.firstName,
+            "lastName": values.lastName,
+            "email": values.email,
+            "description": values.requestBody,
+            "phone": values.phoneNumber
+        }).then(() => {
+            setCurrentForm(LandingFormType.RequestSubmitted);
+        }).catch(() => {
+            toast.error("There was an issue processing your request. Please try again.");
+        })
     }
 
     return <div className= "w-[80%] lg:w-[65%]">
@@ -82,11 +98,23 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
                 />
                 <FormField
                     control={form.control}
-                    name="organization"
+                    name="ein"
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <Input {...field} placeholder="Organization Name" className="bg-white" />
+                                <Input {...field} placeholder="Employer Identification Number" className="bg-white" />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <PhoneInput {...field} placeholder="Phone Number" className="bg-white rounded-md" defaultCountry="US" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

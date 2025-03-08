@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
 import { usePathname } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -22,6 +23,7 @@ export default function RootLayout({
         {!usePathname().endsWith("/landing") && <Header />}
 
         <main>{children}</main>
+        <Toaster richColors />
       </body>
     </html>
   );

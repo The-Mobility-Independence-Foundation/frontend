@@ -6,6 +6,7 @@ import LoginForm from "../components/LoginForm";
 import RequestAccessForm from "../components/RequestAccessForm";
 import SignUpForm from "../components/SignUpForm";
 import { useState } from "react";
+import RequestSubmitted from "../components/RequestSubmitted";
 
 export default function LandingPage() {
     const [currentForm, setCurrentForm] = useState(LandingFormType.LoginForm);
@@ -31,6 +32,8 @@ export default function LandingPage() {
                 return <SignUpForm email={email} setCurrentForm={setCurrentForm}></SignUpForm>
             case LandingFormType.RequestAccessForm:
                 return <RequestAccessForm email={email} setCurrentForm={setCurrentForm}></RequestAccessForm>
+            case LandingFormType.RequestSubmitted:
+                return <RequestSubmitted></RequestSubmitted>
         }
     }
 

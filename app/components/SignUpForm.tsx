@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import backendService from "../services/backend.service";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,6 +12,8 @@ import { StateCode } from "../types/StateCode";
 import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 
@@ -59,6 +61,8 @@ export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
         }
     })
 
+    const router = useRouter();
+
     function onSubmit(values: z.infer<typeof formSchema>) {
         backendService.post("register", {
             "firstName": values.firstName,
@@ -66,6 +70,19 @@ export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
             "displayName": values.username,
             "email": values.email,
             "password": values.password
+        }).then(() => {
+            backendService.post("login", {
+                "email":  values.email,
+                "password": values.password
+            }).then(response => {
+                sessionStorage.setItem('accessToken', response.accessToken);
+                router.push('/listings');
+            }).catch(error => {
+                toast.error("There was an issue during sign up. Please log in with your new credentials to continue.");
+                setCurrentForm(LandingFormType.LoginForm);
+            })
+        }).catch(() => {
+            toast.error("There was an issue signing you up. Please try again.");
         })
     }
 
@@ -255,7 +272,7 @@ export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
                     <Button type="button" className="button cancel w-1/4" onClick={() => setCurrentForm(LandingFormType.LoginForm)}>Cancel</Button>
 
                     <div className="flex items-center gap-2">
-                        <Button type="button" className="w-[40px]">G</Button> {/*TODO Replace with google button */}
+                        <Button type="button" className="w-[40px]" size="icon"><img src="/assets/google.svg" alt="Sign Up with Google"></img></Button>
                         <Button type="submit" className="button px-[2vw] flex-1">Sign Up</Button>
                     </div>
                 </div>
