@@ -7,12 +7,16 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
-import Filters, { FilterOptions } from "./Filters";
+import ListingFilters from "./ListingFilters";
+import { FilterComponentType } from "../types/FilterTypes";
+import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
+import { useSearchParams } from "next/navigation";
+import { PaginationSearchParams } from "./Pagination";
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: any[]) => void;
-  filterOptions?: FilterOptions;
+  receiveData: (data: any) => void;
+  filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
   defaultQuery?: string;
@@ -23,32 +27,37 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, placeholderText, newButtonText, newButtonEvent, filterOptions, defaultQuery}: SearchProps) {  
+export default function Search({apiRoute, receiveData, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
-  const [partTypes, setPartTypes] = useState(["type1", "type2"]);
-  const [brands, setBrands] = useState(["brand1", "brand2"]);
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
 
-  // TODO: grab brands & types from DB
+  const queryParams = useSearchParams();
+  const offset = queryParams.get(PaginationSearchParams.OFFSET);
+  const limit = queryParams.get(PaginationSearchParams.LIMIT);
 
-  const onFilterValueChange = (field: string, newValue: any) => {
-    let newSelectedValues = new Map(selectedValues);
-    if(newValue == null || newValue == "") {
-      newSelectedValues.delete(field);
-    } else {
-      newSelectedValues.set(field, newValue);
-    }
-    setSelectedValues(newSelectedValues);
-  }
+  // TODO: grab brands & types from DB
+  // TODO: grab filters from URL?
 
   const backendSearch = () => {
-    const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
-    const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
-    backendService.get(apiRoute, filters)
-      .then(response => {
-        receiveData(response);
-      });
+    // COMMENTED OUT FOR TESTING
+    // TODO: add radius, latitude and longitude after that's finished
+    // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
+    // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
+    // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${limit}&offset=${offset}`, filters)
+    //   .then(response => {
+    //     receiveData(response);
+    //   });
+    receiveData({
+      message: "Test Message",
+      data: {
+        count: 1,
+        totalCount: 2,
+        hasNext: true,
+        nextToken: "2",
+        results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
+      }
+    })
   }
     
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,8 +73,12 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
     }
   }
 
+  const onFilterValueChange = (values: Map<string, string>) => {
+    setSelectedValues(values);
+  }
+
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
 
   return <div className="relative">
     <div 
@@ -102,21 +115,19 @@ export default function Search({apiRoute, receiveData, placeholderText, newButto
           </FormField>
         </form>
       </FormProvider>
-      {filterOptions &&
+      {filterType &&
         <button className="button bg-[#D3E8FF] text-black" onClick={() => setShowFilter(!showFilter)}>
           Filter
         </button>
       }
     </div>
 
-    {filterOptions &&
-      <div className={`absolute ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
-        <Filters 
-          options={filterOptions}
-          selectedValues={selectedValues} 
-          onValueChange={onFilterValueChange} 
-        />
-        <div className="w-full h-screen bg-black/20" />
+    {filterType &&
+      <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
+        {filterType == FilterComponentType.LISTINGS && 
+          <ListingFilters onFilterValueChange={onFilterValueChange}/>
+        }
+        <div className="w-full h-screen bg-black/20" onClick={() => setShowFilter(false)} />
       </div>
     }
   </div>
