@@ -9,14 +9,18 @@ import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
 import Search from "../components/Search";
 import Menu from "../components/Menu";
+import Dialog from "../components/modals/Dialog";
 
 const EDIT = "Edit";
 const DELETE = "Delete";
 
+// TODO: delete dialog
+// TODO: delete API call
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
+  const [deleteInventoryIsOpen, setDeleteInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
 
   const organizationID = 1; // TODO: fetch ORG ID
@@ -37,7 +41,7 @@ export default function Inventories() {
         setEditInventoryIsOpen(true);
         break;
       case DELETE:
-        // TODO: open dialogue
+        setDeleteInventoryIsOpen(true);
         break;
     }
   }
@@ -46,8 +50,15 @@ export default function Inventories() {
     if(open) {
       setEditInventoryIsOpen(false);
       setCreateInventoryIsOpen(false);
+      setDeleteInventoryIsOpen(false);
       setSelectedInventory(inventory);
     }
+  }
+
+  const onDeleteDialogClose = (confirm: boolean) => {
+    console.log(confirm);
+    // TODO: api call
+    setDeleteInventoryIsOpen(false);
   }
 
   return <>
@@ -99,5 +110,15 @@ export default function Inventories() {
         onClose={() => setCreateInventoryIsOpen(false)}
         />
     </Modal>
+    {selectedInventory && <Modal
+      isOpen={deleteInventoryIsOpen}
+      onClose={() => setDeleteInventoryIsOpen(false)}
+    >
+      <Dialog
+        text={"Are you sure you would like to delete this inventory? Deleting the inventory will also delete all of its store parts."}
+        onClose={onDeleteDialogClose}
+        header={`Delete ${selectedInventory.name}?`}
+      />
+    </Modal>}
   </>
 }
