@@ -8,9 +8,11 @@ import Modal from "../components/modals/Modal";
 import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
 import Search from "../components/Search";
+import Menu from "../components/Menu";
 
-// TODO: set up ellipsis drop down component
-// TODO: connect with edit inventory modal
+const EDIT = "Edit";
+const DELETE = "Delete";
+
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
@@ -18,6 +20,7 @@ export default function Inventories() {
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
 
   const organizationID = 1; // TODO: fetch ORG ID
+  const menuItems = [EDIT, DELETE];
 
   useEffect(() => {
     // TODO: uncomment when backend is hooked up
@@ -27,6 +30,25 @@ export default function Inventories() {
     //   })
     setInventories(testInventory.data.results)
   }, [organizationID]);
+
+  const onMenuItemClick = (item: string) => {
+    switch(item) {
+      case EDIT:
+        setEditInventoryIsOpen(true);
+        break;
+      case DELETE:
+        // TODO: open dialogue
+        break;
+    }
+  }
+
+  const onOpenChange = (open: boolean, inventory: InventoryData) => {
+    if(open) {
+      setEditInventoryIsOpen(false);
+      setCreateInventoryIsOpen(false);
+      setSelectedInventory(inventory);
+    }
+  }
 
   return <>
     <Search 
@@ -47,6 +69,12 @@ export default function Inventories() {
             <p className="text-white">XX Different Parts</p>
             <p className="text-white">XXX Total Inventory</p>
           </div>
+          <Menu 
+            onOpenChange={open => onOpenChange(open, inventory)}
+            items={menuItems}
+            onItemClick={item => onMenuItemClick(item)}
+            className="text-white text-lg"
+          />
         </div>
       )}
     </div>

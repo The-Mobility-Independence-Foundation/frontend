@@ -5,32 +5,34 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { createHash } from "crypto";
 
 interface MenuProps {
-  isOpen: boolean;
   items: string[];
-  onClose: (itemClicked: string | null) => void;
+  onItemClick: (itemClicked: string) => void;
+  onOpenChange?: (open: boolean) => void
   triggerText?: string;
   className?: string;
 }
 
-export default function Menu({isOpen, items, onClose, triggerText, className}: MenuProps) {
-  return <>
-      {isOpen && (
-        <div className={`${className}`}>
-          <DropdownMenu>
-            <DropdownMenuTrigger>{triggerText || "..."}</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                {items.map((item) => (
-                  <DropdownMenuItem onClick={() => onClose(item)}>
-                    {item}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )}
-    </>
+export default function Menu({items, onItemClick, onOpenChange, triggerText, className}: MenuProps) {
+  return (
+    <div className={`${className}`}>
+      <DropdownMenu onOpenChange={open => {if(onOpenChange)onOpenChange(open)}}>
+        <DropdownMenuTrigger>{triggerText || "•••"}</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            {items.map((item) => (
+              <DropdownMenuItem 
+                onClick={() => onItemClick(item)}
+                key={createHash("sha256").update(item).digest("hex")}
+              >
+                {item}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 }
