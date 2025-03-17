@@ -7,9 +7,9 @@ import { testInventory } from "../testData/TestInventoryData";
 import Modal from "../components/modals/Modal";
 import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
+import Search from "../components/Search";
 
 // TODO: set up ellipsis drop down component
-// TODO: connect with create inventory modal
 // TODO: connect with edit inventory modal
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
@@ -29,6 +29,11 @@ export default function Inventories() {
   }, [organizationID]);
 
   return <>
+    <Search 
+      apiRoute={`/organizations/${organizationID}/inventories`}
+      receiveData={(data) => setInventories(data)}
+      newButtonEvent={() => setCreateInventoryIsOpen(true)}
+    />
     <div className="px-[1rem] py-[2rem]">
       {inventories.map((inventory, index) => 
         <div
