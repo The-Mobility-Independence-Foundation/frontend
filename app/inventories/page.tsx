@@ -14,8 +14,6 @@ import Dialog from "../components/modals/Dialog";
 const EDIT = "Edit";
 const DELETE = "Delete";
 
-// TODO: delete dialog
-// TODO: delete API call
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
