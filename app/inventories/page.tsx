@@ -9,6 +9,8 @@ import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
 import Search from "../components/Search";
 import Menu from "../components/Menu";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const EDIT = "Edit";
 const DELETE = "Delete";
@@ -19,17 +21,18 @@ export default function Inventories() {
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
 
-  const organizationID = 1; // TODO: fetch ORG ID
+  const params = useSearchParams();
+  const orgID = Number(params.get("org_id")) || -1;
   const menuItems = [EDIT, DELETE];
 
   useEffect(() => {
     // TODO: uncomment when backend is hooked up
-    // backendService.get(`organizations/${organizationID}/inventories`)
+    // backendService.get(`organizations/${orgID}/inventories`)
     //   .then(response => {
     //     setInventories(response.results as Inventory[]);
     //   })
     setInventories(testInventory.data.results)
-  }, [organizationID]);
+  }, [orgID]);
 
   const onMenuItemClick = (item: string) => {
     switch(item) {
@@ -52,7 +55,7 @@ export default function Inventories() {
 
   return <>
     <Search 
-      apiRoute={`/organizations/${organizationID}/inventories`}
+      apiRoute={`/organizations/${orgID}/inventories`}
       receiveData={(data) => setInventories(data)}
       newButtonEvent={() => setCreateInventoryIsOpen(true)}
     />
@@ -62,7 +65,9 @@ export default function Inventories() {
           key={inventory.id}
           className={`flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"}`}
         >
-          <h3 className="text-white">{inventory.name}</h3>
+          <h3 className="text-white hover:underline">
+            <Link href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}>{inventory.name}</Link>
+          </h3>
           <p className="text-white">{inventory.location}</p>
           <div>
             {/** TODO: change once fields have been established */}
@@ -84,7 +89,7 @@ export default function Inventories() {
       onClose={() => setEditInventoryIsOpen(false)}
     >
       <EditInventoryModal
-        organizationID={organizationID}
+        organizationID={orgID}
         inventoryData={selectedInventory}
         onClose={() => setEditInventoryIsOpen(false)}
         />
@@ -95,7 +100,7 @@ export default function Inventories() {
       onClose={() => setCreateInventoryIsOpen(false)}
     >
       <CreateInventoryModal
-        organizationID={organizationID}
+        organizationID={orgID}
         onClose={() => setCreateInventoryIsOpen(false)}
         />
     </Modal>
