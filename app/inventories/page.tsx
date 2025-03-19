@@ -19,6 +19,7 @@ export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
+  const [deleteInventoryIsOpen, setDeleteInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
 
   const params = useSearchParams();
@@ -51,6 +52,7 @@ export default function Inventories() {
     if(open) {
       setEditInventoryIsOpen(false);
       setCreateInventoryIsOpen(false);
+      setDeleteInventoryIsOpen(false);
       setSelectedInventory(inventory);
     }
   }
@@ -110,5 +112,15 @@ export default function Inventories() {
         onClose={() => setCreateInventoryIsOpen(false)}
         />
     </Modal>
+    {selectedInventory && <Modal
+      isOpen={deleteInventoryIsOpen}
+      onClose={() => setDeleteInventoryIsOpen(false)}
+    >
+      <Dialog
+        text={"Are you sure you would like to delete this inventory? Deleting the inventory will also delete all of its store parts."}
+        onClose={onDeleteDialogClose}
+        header={`Delete ${selectedInventory.name}?`}
+      />
+    </Modal>}
   </>
 }
