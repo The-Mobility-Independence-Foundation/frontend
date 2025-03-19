@@ -4,6 +4,9 @@ import ModalBody from "./ModalBody"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import backendService from "@/app/services/backend.service";
+import { useEffect, useState } from "react";
+import { PartData } from "@/app/models/Part";
+import { ModelData } from "@/app/models/Model";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
@@ -12,6 +15,21 @@ interface CreateInventoryItemModalProps {
 }
 
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
+  const [parts, setParts] = useState<PartData[]>([]);
+  const [models, setModels] = useState<ModelData[]>([]);
+
+  useEffect(() => {
+    // TODO: comment out when backend is hooked up
+    // backendService.get("/part")
+    //   .then(response => {
+    //     setParts(response.data);
+    //   });
+    // backendService.get("/model")
+    //   .then(response => {
+    //     setModels(response.data);
+    //   });
+  })
+  
   const createInventoryItemFormSchema = z.object({
     name: z
       .string({
