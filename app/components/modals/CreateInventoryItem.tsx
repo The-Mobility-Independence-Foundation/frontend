@@ -7,9 +7,10 @@ import backendService from "@/app/services/backend.service";
 import { useEffect, useState } from "react";
 import { PartData } from "@/app/models/Part";
 import { ModelData } from "@/app/models/Model";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
@@ -17,9 +18,13 @@ interface CreateInventoryItemModalProps {
   inventoryID: string | number
 }
 
+// TODO: test form, any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
   const [parts, setParts] = useState<PartData[]>([]);
   const [models, setModels] = useState<ModelData[]>([]);
+
+  const attributesRegex = /(.+:.+\n)*(.+:.+)/;
+  const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
 
   useEffect(() => {
     // TODO: comment out when backend is hooked up
@@ -51,9 +56,10 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
         required_error: "Quantity is required"
       })
       .min(0),
-    notes: z
-      .string(),
     attributes: z
+      .string()
+      .regex(attributesRegex),
+    notes: z
       .string()
   });
   const createInventoryItemForm = useForm<z.infer<typeof createInventoryItemFormSchema>>({
@@ -161,7 +167,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
                   onValueChange={value => field.onChange(value)}
                   required={true}
                 >
-                  <SelectTrigger className="mb-[0.75rem]">
+                  <SelectTrigger className="mb-[1.5rem]">
                     <SelectValue placeholder="Select a Model" />
                   </SelectTrigger>
                   <SelectContent>
@@ -182,8 +188,44 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
               </FormItem>
             )}
           />
+          <FormField
+            control={createInventoryItemForm.control}
+            name="attributes"
+            render={({ field }) => (
+              <FormItem className="mb-[1.5rem]">
+                <FormLabel>Attributes</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field}
+                    placeholder={attributesPlaceholder}
+                    className="h-[10rem]"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={createInventoryItemForm.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field}
+                    placeholder="Insert any notes about the item here"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <div className="flex w-max ml-auto mt-[1.5rem]">
+            <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
+            <button type="submit" className="button ml-[1rem]">
+              Create
+            </button>
+          </div>
         </form>
-        
       </FormProvider>
     </ModalBody>
   </div>
