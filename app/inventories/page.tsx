@@ -11,6 +11,7 @@ import Search from "../components/Search";
 import Menu from "../components/Menu";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Dialog from "../components/modals/Dialog";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
@@ -19,7 +20,7 @@ export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
-  const [deleteInventoryIsOpen, setDeleteInventoryIsOpen] = useState(false);
+  const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
 
   const params = useSearchParams();
@@ -41,9 +42,7 @@ export default function Inventories() {
         setEditInventoryIsOpen(true);
         break;
       case ARCHIVE:
-        if(selectedInventory) {
-          archiveInventory(selectedInventory.id);
-        }
+        setArchiveInventoryIsOpen(true);
         break;
     }
   }
@@ -52,12 +51,13 @@ export default function Inventories() {
     if(open) {
       setEditInventoryIsOpen(false);
       setCreateInventoryIsOpen(false);
-      setDeleteInventoryIsOpen(false);
+      setArchiveInventoryIsOpen(false);
       setSelectedInventory(inventory);
     }
   }
 
-  const archiveInventory = (inventoryID: number) => {
+  const archiveSelectedInventory = (confirm: boolean) => {
+    setArchiveInventoryIsOpen(false);
     //TODO
   }
 
@@ -113,13 +113,13 @@ export default function Inventories() {
         />
     </Modal>
     {selectedInventory && <Modal
-      isOpen={deleteInventoryIsOpen}
-      onClose={() => setDeleteInventoryIsOpen(false)}
+      isOpen={archiveInventoryIsOpen}
+      onClose={() => setArchiveInventoryIsOpen(false)}
     >
       <Dialog
-        text={"Are you sure you would like to delete this inventory? Deleting the inventory will also delete all of its store parts."}
-        onClose={onDeleteDialogClose}
-        header={`Delete ${selectedInventory.name}?`}
+        text={"Are you sure you would like to archive this inventory?"}
+        onClose={archiveSelectedInventory}
+        header={`Archive ${selectedInventory.name}?`}
       />
     </Modal>}
   </>
