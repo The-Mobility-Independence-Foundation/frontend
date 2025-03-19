@@ -1,4 +1,5 @@
 import { Inventory, InventoryData } from "../models/Inventory"
+import { InventoryItems } from "../models/InventoryItem"
 
 export const testInventoryData1: InventoryData = {
   id: 1,
@@ -10,7 +11,8 @@ export const testInventoryData1: InventoryData = {
     phoneNumber: "(555) 555-5555"
   },
   description: "",
-  location: "1 Lomb Memorial Dr."
+  location: "1 Lomb Memorial Dr.",
+  archived: false
 }
 
 export const testInventoryData2: InventoryData = {
@@ -23,7 +25,8 @@ export const testInventoryData2: InventoryData = {
     phoneNumber: "(555) 555-5555"
   },
   description: "",
-  location: "1 Lomb Memorial Dr."
+  location: "1 Lomb Memorial Dr.",
+  archived: false
 }
 
 export const testInventory: Inventory = {

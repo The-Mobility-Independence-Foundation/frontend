@@ -9,6 +9,7 @@ interface ModalProps {
 
 const BACKGROUND_ID = "modal-background"
 
+//TODO: bug where clicking in modal and lifting outside closes modal
 export default function Modal({isOpen, onClose, children}: ModalProps) {
   const closeModal = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;

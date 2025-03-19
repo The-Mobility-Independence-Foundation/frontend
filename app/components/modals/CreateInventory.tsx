@@ -49,52 +49,50 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
     <div className="min-w-[25rem]">
       <ModalHeader title="Create a New Inventory" onClose={onClose} />
       <ModalBody>
-        <>
-          <FormProvider {...createInventoryForm}>
-            <form
-              onSubmit={createInventoryForm.handleSubmit(onInventorySubmit)}
-            >
-              <FormField
-                control={createInventoryForm.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="string"
-                        required={true}
-                        placeholder="Title"
-                        className="mb-[0.75rem]"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={createInventoryForm.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        type="string" 
-                        placeholder="Address" 
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <div className="flex w-max ml-auto mt-[1.5rem]">
-                <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
-                <button type="submit" className="button ml-[1rem]">
-                  Create
-                </button>
-              </div>
-            </form>
-          </FormProvider>
-        </>
+        <FormProvider {...createInventoryForm}>
+          <form
+            onSubmit={createInventoryForm.handleSubmit(onInventorySubmit)}
+          >
+            <FormField
+              control={createInventoryForm.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="string"
+                      required={true}
+                      placeholder="Title"
+                      className="mb-[0.75rem]"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createInventoryForm.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      type="string" 
+                      placeholder="Address" 
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex w-max ml-auto mt-[1.5rem]">
+              <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
+              <button type="submit" className="button ml-[1rem]">
+                Create
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </ModalBody>
     </div>
   );
