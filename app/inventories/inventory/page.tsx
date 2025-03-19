@@ -69,10 +69,14 @@ export default function Inventory() {
             newButtonEvent={() => setNewItemModalIsOpen(true)}
             filterType={FilterComponentType.INVENTORY_ITEMS}
           />
-          <div className="w-full bg-[#F4F4F5] p-[1rem]">
+          <div className="w-full bg-[#F4F4F5] p-[1rem] flex items-center">
             <Checkbox
+              className="bg-white w-[1.5rem] h-[1.5rem]"
               onCheckedChange={(checked) => toggleCheckAllItems(checked)}
             />
+            <button className="button !bg-[#FF6C6C] ml-[4rem]">
+              Delete Selected
+            </button>
           </div>
         </div>
       )}
