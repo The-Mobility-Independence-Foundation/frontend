@@ -16,18 +16,18 @@ const DELETE = "Delete";
 export default function InventoryItem({inventoryItem, onCheckboxChange, className}: InventoryItemProps) {
   const userID = 1; // TODO: grab user id
   const menuItems = [EDIT, DELETE];
-
+  
   const onMenuItemClick = (item: string) => {
     switch(item) {
       case EDIT:
-        // TODO: edit inventory modal open
+        // TODO: open edit inventry item modal
         break;
       case DELETE:
-        // TODO: open modal "are you sure"
+        // TODO: open dialogue
         break;
     }
   }
-  
+
   return <div
     className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
       flex-wrap
@@ -56,14 +56,14 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
       <div className="flex flex-col justify-between items-center">
         <span className="flex items-center h-min mt-[1rem]"><p className="mr-[0.5rem]">Quantity Listed: </p><h5>{inventoryItem.publicCount}</h5></span>
         <Link href={`/listings?u_id=${userID}`}>
-        <p className="text-[#00A028] italic underline">View Listings</p>
+          <p className="text-[#00A028] italic underline">View Listings</p>
         </Link>
       </div>
     </div>
     <Menu 
       items={menuItems}
       onItemClick={onMenuItemClick}
-      className="absolute"
+      className="absolute right-2.5"
     />
   </div>
 }

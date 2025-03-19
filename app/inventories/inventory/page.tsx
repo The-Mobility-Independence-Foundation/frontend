@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox"
 import Pagination from "@/app/components/Pagination";
 import InventoryItem from "@/app/components/InventoryItem";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 export interface DisplayedInventoryItem extends InventoryItemData {
-  checked: boolean
+  checked: CheckedState
 }
 
 export default function Inventory() {
@@ -46,6 +47,17 @@ export default function Inventory() {
     setInventoryItemsDisplaying(inventoryItemsDisplaying);
   }
 
+  const toggleInventoryItemCheck = (checked: CheckedState, inventoryItemID: number) => {
+    for(let item of inventoryItemsDisplaying) {
+      if(item.id == inventoryItemID) {
+        item.checked = checked;
+        break;
+      }
+    }
+    console.log(inventoryItemsDisplaying)
+    setInventoryItemsDisplaying(inventoryItemsDisplaying);
+  }
+
   return (
     <div className="flex flex-col">
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
@@ -71,10 +83,13 @@ export default function Inventory() {
               Delete Selected
             </button>
           </div>
-          <div className="px-[1rem] pt-[1.25rem] h-[50vh] min-h-0 overflow-y-auto">
+          <div className="px-[1rem] pt-[1.25rem] h-[60vh] min-h-0 overflow-y-auto">
             {inventoryItemsDisplaying.map(item => 
-              <InventoryItem
-                
+              <InventoryItem 
+                inventoryItem={item}
+                key={item.id}
+                className="mb-[1rem] mx-auto"
+                onCheckboxChange={(checked) => toggleInventoryItemCheck(checked, item.id)}
               />
             )}
           </div>
