@@ -1,25 +1,24 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { DisplayedInventoryItem } from "../inventories/inventory/page"
 import { CheckedState } from "@radix-ui/react-checkbox";
 import Link from "next/link";
 import Menu from "./Menu";
 import { useEffect, useState } from "react";
 import Modal from "./modals/Modal";
-import { attributesToString } from "../models/InventoryItem";
+import { attributesToString, InventoryItemData } from "../models/InventoryItem";
 import EditInventoryItem from "./modals/EditInventoryItem";
+import Dialog from "./modals/Dialog";
 
 interface InventoryItemProps {
-  inventoryItem: DisplayedInventoryItem
-  onCheckboxChange: (checked: CheckedState) => void;
+  inventoryItem: InventoryItemData
   className?: string;
 }
 
 const EDIT = "Edit";
 const DELETE = "Delete";
 
-export default function InventoryItem({inventoryItem, onCheckboxChange, className}: InventoryItemProps) {  
+export default function InventoryItem({inventoryItem, className}: InventoryItemProps) {  
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
-  
+
   const userID = 1; // TODO: grab user id
   const menuItems = [EDIT, DELETE];
   const attributesAsString = attributesToString(inventoryItem.attributes);
@@ -28,9 +27,6 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
     switch(item) {
       case EDIT:
         setEditItemModalIsOpen(true);
-        break;
-      case DELETE:
-        // TODO: open dialogue
         break;
     }
   }
@@ -44,11 +40,6 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
         className="flex w-full
                   max-sm:flex-col"
       >
-        <Checkbox
-          className="bg-white w-[1.5rem] h-[1.5rem]"
-          onCheckedChange={(checked) => onCheckboxChange(checked)}
-          checked={inventoryItem.checked}
-        />
       <div className="flex max-sm:mt-[1rem] ml-[1.5rem]">
         <div>
           <h4>{inventoryItem.name} ({inventoryItem.quantity})</h4>

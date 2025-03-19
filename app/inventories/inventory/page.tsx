@@ -12,16 +12,12 @@ import InventoryItem from "@/app/components/InventoryItem";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
-
-export interface DisplayedInventoryItem extends InventoryItemData {
-  checked: CheckedState
-}
+import Dialog from "@/app/components/modals/Dialog";
 
 // TODO: filter
-// TODO: delete selected
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
-  const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<DisplayedInventoryItem[]>([]);
+  const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<InventoryItemData[]>([]);
   const [newItemModalIsOpen, setNewItemModalIsOpen] = useState(false);
 
   const params = useSearchParams();
@@ -46,23 +42,6 @@ export default function Inventory() {
     setInventoryItems(inventoryItemData);
   }
 
-  const toggleCheckAllItems = (checked: CheckedState) => {
-    const copy = [...inventoryItemsDisplaying];
-    copy.forEach(item => item.checked = checked);
-    setInventoryItemsDisplaying(copy);
-  }
-
-  const toggleInventoryItemCheck = (checked: CheckedState, inventoryItemID: number) => {
-    const copy = [...inventoryItemsDisplaying];
-    for(let item of copy) {
-      if(item.id == inventoryItemID) {
-        item.checked = checked;
-        break;
-      }
-    }
-    setInventoryItemsDisplaying(copy);
-  }
-
   return <>
     <div className="flex flex-col">
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
@@ -79,33 +58,21 @@ export default function Inventory() {
       />
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
         <>
-          <div className="w-full bg-[#F4F4F5] p-[1rem] flex items-center">
-            <Checkbox
-              className="bg-white w-[1.5rem] h-[1.5rem]"
-              onCheckedChange={(checked) => toggleCheckAllItems(checked)}
-            />
-            {!inventoryItems.data.results[0].inventory.archived &&
-            <button className="button !bg-[#FF6C6C] ml-[4rem]">
-              Delete Selected
-            </button>}
-          </div>
           <div className="px-[1rem] pt-[1.25rem] h-[60vh] min-h-0 overflow-y-auto">
             {inventoryItemsDisplaying.map(item => 
               <InventoryItem 
                 inventoryItem={item}
                 key={item.id}
                 className="mb-[1rem] mx-auto"
-                onCheckboxChange={(checked) => toggleInventoryItemCheck(checked, item.id)}
               />
             )}
           </div>
-          {/* commented out for testing */}
-          {/* <Pagination
+          <Pagination
             count={inventoryItems.data.count}
             totalCount={inventoryItems.data.totalCount}
             hasNext={inventoryItems.data.hasNext}
             nextToken={inventoryItems.data.nextToken}
-          /> */}
+          />
         </>
       )}
     </div>
