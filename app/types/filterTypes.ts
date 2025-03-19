@@ -12,5 +12,6 @@ export enum FilterType {
 };
 
 export enum FilterComponentType {
-    LISTINGS = "LISTINGS"
+    LISTINGS = "LISTINGS",
+    INVENTORY_ITEMS = "INVENTORY_ITEMS"
 }

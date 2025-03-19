@@ -7,11 +7,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
-import ListingFilters from "./ListingFilters";
+import ListingFilters from "./filters/ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
+import InventoryItemFilters from "./filters/InventoryItemFilters";
 
 interface SearchProps {
   apiRoute: string;
@@ -126,6 +127,9 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
       <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
         {filterType == FilterComponentType.LISTINGS && 
           <ListingFilters onFilterValueChange={onFilterValueChange}/>
+        }
+        {filterType == FilterComponentType.INVENTORY_ITEMS && 
+          <InventoryItemFilters onFilterValueChange={onFilterValueChange}/>
         }
         <div className="w-full h-screen bg-black/20" onClick={() => setShowFilter(false)} />
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ACTIVE, INACTIVE } from "../models/Status";
-import { FilterType } from "../types/FilterTypes";
+import { ACTIVE, INACTIVE } from "../../models/Status";
+import { FilterType } from "../../types/FilterTypes";
 import Filters, { FilterOptions } from "./Filters";
 
 export interface ListingFiltersProps {
@@ -68,6 +68,7 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
         label2: INACTIVE,
       },
     ],
+    map: true
   };
 
   const onValueChange = (field: string, newValue: any) => {
