@@ -13,7 +13,7 @@ import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData"
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
-import { TEST_INVENTORY_ITEM_1, TEST_INVENTORY_ITEM_2 } from "../testData/TestInventoryItemData";
+import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
 
 interface SearchProps {
   apiRoute: string;
@@ -50,16 +50,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     //   .then(response => {
     //     receiveData(response);
     //   });
-    receiveData({
-      message: "Test Message",
-      data: {
-        count: 1,
-        totalCount: 2,
-        hasNext: true,
-        nextToken: "2",
-        results: [TEST_INVENTORY_ITEM_1, TEST_INVENTORY_ITEM_2]
-      }
-    })
+    receiveData(testInventoryItems)
   }
     
   const form = useForm<z.infer<typeof formSchema>>({

@@ -14,23 +14,11 @@ export interface InventoryItems {
   }
 }
 
-export interface InventoryItemJoinedData {
+export interface InventoryItemData {
   id: number;
   name: string;
   inventory: InventoryData;
   part: PartData;
-  modelID: number;
-  quantity: number;
-  publicCount: number;
-  notes: string;
-  attributes: string;
-}
-
-export interface InventoryItemData {
-  id: number;
-  name: string;
-  inventoryID: number;
-  partID: number;
   modelID: number;
   quantity: number;
   publicCount: number;

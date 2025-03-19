@@ -1,6 +1,6 @@
 // GET
 
-import { InventoryItemJoinedData } from "./InventoryItem";
+import { InventoryItemData } from "./InventoryItem";
 
 export interface Listings {
   message: string;
@@ -25,7 +25,7 @@ export interface ListingData {
   quantity: number;
   latitude: number;
   longitude: number;
-  inventoryItem: InventoryItemJoinedData;
+  inventoryItem: InventoryItemData;
   status: string;
   attachment: string;
 }
