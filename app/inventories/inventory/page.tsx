@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import Pagination from "@/app/components/Pagination";
 import InventoryItem from "@/app/components/InventoryItem";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import Modal from "@/app/components/modals/Modal";
+import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
 
 export interface DisplayedInventoryItem extends InventoryItemData {
   checked: CheckedState
@@ -62,7 +64,7 @@ export default function Inventory() {
     setInventoryItemsDisplaying(copy);
   }
 
-  return (
+  return <>
     <div className="flex flex-col">
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
         <div className="w-full bg-[#F4F4F5] p-[1rem]">
@@ -98,14 +100,27 @@ export default function Inventory() {
               />
             )}
           </div>
-          <Pagination
+          {/* commented out for testing */}
+          {/* <Pagination
             count={inventoryItems.data.count}
             totalCount={inventoryItems.data.totalCount}
             hasNext={inventoryItems.data.hasNext}
             nextToken={inventoryItems.data.nextToken}
-          />
+          /> */}
         </>
       )}
     </div>
-  );
+    {orgID && inventoryID && 
+    <Modal
+      isOpen={newItemModalIsOpen}
+      onClose={() => setNewItemModalIsOpen(false)}
+    >
+      <CreateInventoryItem
+        onClose={() => setNewItemModalIsOpen(false)}
+        organizationID={orgID}
+        inventoryID={inventoryID}
+      />
+    </Modal>
+    }
+  </>;
 }

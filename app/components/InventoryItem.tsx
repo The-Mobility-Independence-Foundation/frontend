@@ -45,7 +45,7 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
         />
       <div className="flex max-sm:mt-[1rem] ml-[1.5rem]">
         <div>
-          <h4>{inventoryItem.name}</h4>
+          <h4>{inventoryItem.name} ({inventoryItem.quantity})</h4>
           <h5>{inventoryItem.part.partNumber}</h5>
           <p className="mt-[revert]">{inventoryItem.part.model}</p>
           <p>{inventoryItem.part.partType}</p>
