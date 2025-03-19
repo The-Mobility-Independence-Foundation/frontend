@@ -73,7 +73,9 @@ export default function Inventory() {
           </div>
           <div className="px-[1rem] pt-[1.25rem] h-[50vh] min-h-0 overflow-y-auto">
             {inventoryItemsDisplaying.map(item => 
-              <InventoryItem></InventoryItem>
+              <InventoryItem
+                
+              />
             )}
           </div>
           <Pagination

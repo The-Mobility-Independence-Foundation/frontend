@@ -13,7 +13,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const EDIT = "Edit";
-const DELETE = "Delete";
+const ARCHIVE = "Archive";
 
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
@@ -23,7 +23,7 @@ export default function Inventories() {
 
   const params = useSearchParams();
   const orgID = Number(params.get("org_id")) || -1;
-  const menuItems = [EDIT, DELETE];
+  const menuItems = [EDIT, ARCHIVE];
 
   useEffect(() => {
     // TODO: uncomment when backend is hooked up
@@ -39,8 +39,10 @@ export default function Inventories() {
       case EDIT:
         setEditInventoryIsOpen(true);
         break;
-      case DELETE:
-        // TODO: open dialogue
+      case ARCHIVE:
+        if(selectedInventory) {
+          archiveInventory(selectedInventory.id);
+        }
         break;
     }
   }
@@ -51,6 +53,10 @@ export default function Inventories() {
       setCreateInventoryIsOpen(false);
       setSelectedInventory(inventory);
     }
+  }
+
+  const archiveInventory = (inventoryID: number) => {
+    //TODO
   }
 
   return <>
