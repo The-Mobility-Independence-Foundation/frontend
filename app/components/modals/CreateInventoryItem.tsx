@@ -39,15 +39,18 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
         required_error: "Name is required"
       }),
     partID: z
-      .number({
+      .string({ // This and modelID would both be numbers but the value in SelectItem has to be a string
         required_error: "Please select from the list of parts"
       }),
     modelID: z
-      .number({
+      .string({
         required_error: "Please select from the list of models"
       }),
     quantity: z
-      .number(),
+      .number({
+        required_error: "Quantity is required"
+      })
+      .min(0),
     notes: z
       .string(),
     attributes: z
@@ -82,23 +85,41 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
     <ModalBody>
       <FormProvider {...createInventoryItemForm}>
         <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
-          <FormField
-            control={createInventoryItemForm.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input 
-                    {...field}
-                    type="string"
-                    required={true}
-                    placeholder="Name"
-                    className="mb-[0.75rem]"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div className="w-full flex mb-[0.75rem]">
+            <FormField
+              control={createInventoryItemForm.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="w-[48%] mr-auto">
+                  <FormControl>
+                    <Input 
+                      {...field}
+                      type="string"
+                      required={true}
+                      placeholder="Name"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createInventoryItemForm.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem className="w-[48%]">
+                  <FormControl>
+                    <Input 
+                      {...field}
+                      type="number"
+                      required={true}
+                      placeholder="Quantity"
+                      min="0"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={createInventoryItemForm.control}
             name="partID"
