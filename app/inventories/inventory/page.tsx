@@ -5,16 +5,12 @@ import { InventoryItemData, InventoryItems } from "@/app/models/InventoryItem";
 import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox"
+import { useState } from "react";
 import Pagination from "@/app/components/Pagination";
 import InventoryItem from "@/app/components/InventoryItem";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
-import Dialog from "@/app/components/modals/Dialog";
 
-// TODO: filter
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
   const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<InventoryItemData[]>([]);

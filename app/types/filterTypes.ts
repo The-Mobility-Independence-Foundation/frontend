@@ -1,7 +1,7 @@
 export enum FilterType {
     Active = "Active",
-    PartType = "PartType",
-    Brand = "Brand",
+    Part = "Part",
+    Model = "Model",
     Width = "Width",
     Height = "Height",
     QuantityMin = "quantityMin",

@@ -10,16 +10,17 @@ export interface ListingFiltersProps {
 export default function ListingFilters({onFilterValueChange}: ListingFiltersProps) {
   const [selectedValues, setSelectedValues] = useState(new Map());
 
+  // TODO: grab parts and models from DB
   const listingFilterOptions: FilterOptions = {
     multiSelects: [
       {
         title: "Part Type",
-        filterType: FilterType.PartType,
+        filterType: FilterType.Part,
         options: ["Type 1", "Type 2", "Type 3", "Type 4"],
       },
       {
-        title: "Brand",
-        filterType: FilterType.Brand,
+        title: "Model",
+        filterType: FilterType.Model,
         options: ["Brand 1", "Brand 2", "Brand 3", "Brand 4"],
       },
     ],
