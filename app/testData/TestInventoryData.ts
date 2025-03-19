@@ -12,7 +12,7 @@ export const testInventoryData1: InventoryData = {
   },
   description: "",
   location: "1 Lomb Memorial Dr.",
-  archived: true
+  archived: false
 }
 
 export const testInventoryData2: InventoryData = {
@@ -26,7 +26,7 @@ export const testInventoryData2: InventoryData = {
   },
   description: "",
   location: "1 Lomb Memorial Dr.",
-  archived: true
+  archived: false
 }
 
 export const testInventory: Inventory = {

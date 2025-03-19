@@ -4,24 +4,30 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import Link from "next/link";
 import Menu from "./Menu";
 import { useEffect, useState } from "react";
+import Modal from "./modals/Modal";
+import { attributesToString } from "../models/InventoryItem";
+import EditInventoryItem from "./modals/EditInventoryItem";
 
 interface InventoryItemProps {
   inventoryItem: DisplayedInventoryItem
   onCheckboxChange: (checked: CheckedState) => void;
-  className?: string
+  className?: string;
 }
 
 const EDIT = "Edit";
 const DELETE = "Delete";
 
 export default function InventoryItem({inventoryItem, onCheckboxChange, className}: InventoryItemProps) {  
+  const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
+  
   const userID = 1; // TODO: grab user id
   const menuItems = [EDIT, DELETE];
+  const attributesAsString = attributesToString(inventoryItem.attributes);
   
   const onMenuItemClick = (item: string) => {
     switch(item) {
       case EDIT:
-        // TODO: open edit inventry item modal
+        setEditItemModalIsOpen(true);
         break;
       case DELETE:
         // TODO: open dialogue
@@ -51,7 +57,7 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
           <p>{inventoryItem.part.partType}</p>
         </div>
         <ul className="ml-[3rem] mr-[1rem] max-h-[10rem] min-w-[15rem] overflow-y-auto">
-          <li className="mb-[0.25rem]">{inventoryItem.attributes}</li>
+          <li className="mb-[0.25rem]">{attributesAsString}</li>
           <li>{inventoryItem.notes}</li>
         </ul>
       </div>
@@ -67,5 +73,15 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
       onItemClick={onMenuItemClick}
       className="absolute right-2.5"
     />}
+
+    <Modal
+      isOpen={editItemModalIsOpen}
+      onClose={() => setEditItemModalIsOpen(false)}
+    >
+      <EditInventoryItem 
+        onClose={() => setEditItemModalIsOpen(false)}
+        inventoryItem={inventoryItem}
+      />
+    </Modal>
   </div>
 }

@@ -18,7 +18,6 @@ export interface DisplayedInventoryItem extends InventoryItemData {
 }
 
 // TODO: filter
-// TODO: new item
 // TODO: delete selected
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
@@ -110,7 +109,7 @@ export default function Inventory() {
         </>
       )}
     </div>
-    {orgID && inventoryID && 
+    {orgID && inventoryID && <>
     <Modal
       isOpen={newItemModalIsOpen}
       onClose={() => setNewItemModalIsOpen(false)}
@@ -121,6 +120,6 @@ export default function Inventory() {
         inventoryID={inventoryID}
       />
     </Modal>
-    }
+    </>}
   </>;
 }

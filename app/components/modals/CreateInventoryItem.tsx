@@ -86,23 +86,120 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
     onClose();
   }
   
-  return <div className="max-w-[35rem] w-[35rem]">
-    <ModalHeader title="Create a New Inventory Item" onClose={onClose} />
-    <ModalBody>
-      <FormProvider {...createInventoryItemForm}>
-        <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
-          <div className="w-full flex mb-[0.75rem]">
+  return (
+    <>
+      <ModalHeader title="Create a New Inventory Item" onClose={onClose} />
+      <ModalBody>
+        <FormProvider {...createInventoryItemForm}>
+          <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
+            <div className="w-full flex mb-[0.75rem]">
+              <FormField
+                control={createInventoryItemForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="w-[48%] mr-auto">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="string"
+                        required={true}
+                        placeholder="Name"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={createInventoryItemForm.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem className="w-[48%]">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        required={true}
+                        placeholder="Quantity"
+                        min="0"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={createInventoryItemForm.control}
-              name="name"
+              name="partID"
               render={({ field }) => (
-                <FormItem className="w-[48%] mr-auto">
+                <FormItem>
                   <FormControl>
-                    <Input 
-                      {...field}
-                      type="string"
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
                       required={true}
-                      placeholder="Name"
+                    >
+                      <SelectTrigger className="mb-[0.75rem]">
+                        <SelectValue placeholder="Select a Part" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Parts</SelectLabel>
+                          {parts.map((part) => (
+                            <SelectItem
+                              key={part.id}
+                              value={part.id.toString()}
+                            >
+                              {part.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createInventoryItemForm.control}
+              name="modelID"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => field.onChange(value)}
+                      required={true}
+                    >
+                      <SelectTrigger className="mb-[1.5rem]">
+                        <SelectValue placeholder="Select a Model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Models</SelectLabel>
+                          {models.map((model) => (
+                            <SelectItem
+                              key={model.id}
+                              value={model.id.toString()}
+                            >
+                              {model.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createInventoryItemForm.control}
+              name="attributes"
+              render={({ field }) => (
+                <FormItem className="mb-[1.5rem]">
+                  <FormLabel>Attributes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder={attributesPlaceholder}
+                      className="h-[10rem]"
                     />
                   </FormControl>
                 </FormItem>
@@ -110,123 +207,30 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
             />
             <FormField
               control={createInventoryItemForm.control}
-              name="quantity"
+              name="notes"
               render={({ field }) => (
-                <FormItem className="w-[48%]">
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Textarea
                       {...field}
-                      type="number"
-                      required={true}
-                      placeholder="Quantity"
-                      min="0"
+                      placeholder="Insert any notes about the item here"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
-          </div>
-          <FormField
-            control={createInventoryItemForm.control}
-            name="partID"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                <Select
-                  onValueChange={value => field.onChange(value)}
-                  required={true}
-                >
-                  <SelectTrigger className="mb-[0.75rem]">
-                    <SelectValue placeholder="Select a Part" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Parts</SelectLabel>
-                      {parts.map(part => 
-                        <SelectItem 
-                          key={part.id}
-                          value={part.id.toString()}
-                        >
-                          {part.name}
-                        </SelectItem>
-                      )}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={createInventoryItemForm.control}
-            name="modelID"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                <Select
-                  onValueChange={value => field.onChange(value)}
-                  required={true}
-                >
-                  <SelectTrigger className="mb-[1.5rem]">
-                    <SelectValue placeholder="Select a Model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Models</SelectLabel>
-                      {models.map(model => 
-                        <SelectItem 
-                          key={model.id}
-                          value={model.id.toString()}
-                        >
-                          {model.name}
-                        </SelectItem>
-                      )}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={createInventoryItemForm.control}
-            name="attributes"
-            render={({ field }) => (
-              <FormItem className="mb-[1.5rem]">
-                <FormLabel>Attributes</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field}
-                    placeholder={attributesPlaceholder}
-                    className="h-[10rem]"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={createInventoryItemForm.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field}
-                    placeholder="Insert any notes about the item here"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <div className="flex w-max ml-auto mt-[1.5rem]">
-            <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
-            <button type="submit" className="button ml-[1rem]">
-              Create
-            </button>
-          </div>
-        </form>
-      </FormProvider>
-    </ModalBody>
-  </div>
+            <div className="flex w-max ml-auto mt-[1.5rem]">
+              <button onClick={onClose} className="button !bg-[#BBBBBB]">
+                Cancel
+              </button>
+              <button type="submit" className="button ml-[1rem]">
+                Create
+              </button>
+            </div>
+          </form>
+        </FormProvider>
+      </ModalBody>
+    </>
+  );
 }
