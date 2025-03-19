@@ -42,20 +42,21 @@ export default function Inventory() {
     setInventoryItems(inventoryItemData);
   }
 
-  const toggleCheckAllItems = (checked: any) => {
-    inventoryItemsDisplaying.forEach(item => item.checked = typeof checked === "boolean" && checked);
-    setInventoryItemsDisplaying(inventoryItemsDisplaying);
+  const toggleCheckAllItems = (checked: CheckedState) => {
+    const copy = [...inventoryItemsDisplaying];
+    copy.forEach(item => item.checked = checked);
+    setInventoryItemsDisplaying(copy);
   }
 
   const toggleInventoryItemCheck = (checked: CheckedState, inventoryItemID: number) => {
-    for(let item of inventoryItemsDisplaying) {
+    const copy = [...inventoryItemsDisplaying];
+    for(let item of copy) {
       if(item.id == inventoryItemID) {
         item.checked = checked;
         break;
       }
     }
-    console.log(inventoryItemsDisplaying)
-    setInventoryItemsDisplaying(inventoryItemsDisplaying);
+    setInventoryItemsDisplaying(copy);
   }
 
   return (
@@ -79,9 +80,10 @@ export default function Inventory() {
               className="bg-white w-[1.5rem] h-[1.5rem]"
               onCheckedChange={(checked) => toggleCheckAllItems(checked)}
             />
+            {!inventoryItems.data.results[0].inventory.archived &&
             <button className="button !bg-[#FF6C6C] ml-[4rem]">
               Delete Selected
-            </button>
+            </button>}
           </div>
           <div className="px-[1rem] pt-[1.25rem] h-[60vh] min-h-0 overflow-y-auto">
             {inventoryItemsDisplaying.map(item => 

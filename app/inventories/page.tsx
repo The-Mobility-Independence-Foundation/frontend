@@ -73,9 +73,12 @@ export default function Inventories() {
           key={inventory.id}
           className={`flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"}`}
         >
-          <h3 className="text-white hover:underline">
-            <Link href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}>{inventory.name}</Link>
-          </h3>
+          <div className="flex items-center h-min">
+            <h3 className="text-white hover:underline">
+              <Link href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}>{inventory.name}</Link>
+            </h3>
+            {inventory.archived && <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem]">Archived</span>}
+          </div>
           <p className="text-white">{inventory.location}</p>
           <div>
             {/** TODO: change once fields have been established */}

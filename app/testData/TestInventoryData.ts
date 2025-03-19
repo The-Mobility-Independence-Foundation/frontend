@@ -11,7 +11,8 @@ export const testInventoryData1: InventoryData = {
     phoneNumber: "(555) 555-5555"
   },
   description: "",
-  location: "1 Lomb Memorial Dr."
+  location: "1 Lomb Memorial Dr.",
+  archived: true
 }
 
 export const testInventoryData2: InventoryData = {
@@ -24,7 +25,8 @@ export const testInventoryData2: InventoryData = {
     phoneNumber: "(555) 555-5555"
   },
   description: "",
-  location: "1 Lomb Memorial Dr."
+  location: "1 Lomb Memorial Dr.",
+  archived: true
 }
 
 export const testInventory: Inventory = {

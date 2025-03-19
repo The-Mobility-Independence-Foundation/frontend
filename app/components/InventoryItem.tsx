@@ -3,6 +3,7 @@ import { DisplayedInventoryItem } from "../inventories/inventory/page"
 import { CheckedState } from "@radix-ui/react-checkbox";
 import Link from "next/link";
 import Menu from "./Menu";
+import { useEffect, useState } from "react";
 
 interface InventoryItemProps {
   inventoryItem: DisplayedInventoryItem
@@ -13,7 +14,7 @@ interface InventoryItemProps {
 const EDIT = "Edit";
 const DELETE = "Delete";
 
-export default function InventoryItem({inventoryItem, onCheckboxChange, className}: InventoryItemProps) {
+export default function InventoryItem({inventoryItem, onCheckboxChange, className}: InventoryItemProps) {  
   const userID = 1; // TODO: grab user id
   const menuItems = [EDIT, DELETE];
   
@@ -34,12 +35,13 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
       max-sm:pl-[2rem] ${className}`}
     >
       <div
-        className="flex justify-between w-full
+        className="flex w-full
                   max-sm:flex-col"
       >
         <Checkbox
           className="bg-white w-[1.5rem] h-[1.5rem]"
           onCheckedChange={(checked) => onCheckboxChange(checked)}
+          checked={inventoryItem.checked}
         />
       <div className="flex max-sm:mt-[1rem] ml-[1.5rem]">
         <div>
@@ -48,7 +50,7 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
           <p className="mt-[revert]">{inventoryItem.part.model}</p>
           <p>{inventoryItem.part.partType}</p>
         </div>
-        <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
+        <ul className="ml-[3rem] mr-[1rem] max-h-[10rem] min-w-[15rem] overflow-y-auto">
           <li className="mb-[0.25rem]">{inventoryItem.attributes}</li>
           <li>{inventoryItem.notes}</li>
         </ul>
@@ -60,10 +62,10 @@ export default function InventoryItem({inventoryItem, onCheckboxChange, classNam
         </Link>
       </div>
     </div>
-    <Menu 
+    {!inventoryItem.inventory.archived && <Menu 
       items={menuItems}
       onItemClick={onMenuItemClick}
       className="absolute right-2.5"
-    />
+    />}
   </div>
 }
