@@ -15,6 +15,8 @@ export interface DisplayedInventoryItem extends InventoryItemData {
   checked: CheckedState
 }
 
+// TODO: filter
+// TODO: new item
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
   const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<DisplayedInventoryItem[]>([]);
