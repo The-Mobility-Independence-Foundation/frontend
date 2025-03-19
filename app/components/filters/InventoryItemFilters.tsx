@@ -6,8 +6,9 @@ interface InventoryItemFilterProps {
 }
 
 export default function InventoryItemFilters({onFilterValueChange}: InventoryItemFilterProps) {
-    const [selectedValues, setSelectedValues] = useState(new Map());
+  const [selectedValues, setSelectedValues] = useState(new Map());
   
+  // TODO: filter options
   const inventoryItemFilterOptions: FilterOptions = {
     multiSelects: [],
     multiInputs: [],

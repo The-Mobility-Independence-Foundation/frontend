@@ -8,10 +8,15 @@ import { testInventory, testInventoryData1 } from "@/app/testData/TestInventoryD
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox"
+
+interface DisplayedInventoryItem extends InventoryItemData {
+  checked: boolean
+}
 
 export default function Inventory() {
   const [inventory, setInventory] = useState<InventoryData>();
-  const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>();
+  const [inventoryItems, setInventoryItems] = useState<DisplayedInventoryItem[]>([]);
   const [newItemModalIsOpen, setNewItemModalIsOpen] = useState(false);
 
   const params = useSearchParams();
@@ -30,7 +35,25 @@ export default function Inventory() {
   }, [orgID, inventoryID]);
 
   const receiveInventoryItems = (data: any) => {
-    setInventoryItems(data.results as InventoryItemData[]);
+    const inventoryItemResults = data.data.results as InventoryItemData[];
+    setInventoryItems(inventoryItemResults.map(item => {
+      return {
+      id: item.id,
+      name: item.name,
+      inventoryID: item.inventoryID,
+      partID: item.partID,
+      modelID: item.modelID,
+      quantity: item.quantity,
+      publicCount: item.publicCount,
+      notes: item.notes,
+      attributes: item.attributes,
+      checked: false
+    }}));
+  }
+
+  const toggleCheckAllItems = (checked: any) => {
+    inventoryItems.forEach(item => item.checked = typeof checked === "boolean" && checked);
+    setInventoryItems(inventoryItems);
   }
 
   return <>
@@ -46,6 +69,11 @@ export default function Inventory() {
             newButtonEvent={() => setNewItemModalIsOpen(true)}
             filterType={FilterComponentType.INVENTORY_ITEMS}
           />
+          <div className="w-full bg-[#F4F4F5] p-[1rem]">
+            <Checkbox
+              onCheckedChange={(checked) => toggleCheckAllItems(checked)}
+            />
+          </div>
         </div>
       )}
     </>;

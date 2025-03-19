@@ -13,6 +13,7 @@ import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData"
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
+import { TEST_INVENTORY_ITEM_1, TEST_INVENTORY_ITEM_2 } from "../testData/TestInventoryItemData";
 
 interface SearchProps {
   apiRoute: string;
@@ -56,7 +57,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
         totalCount: 2,
         hasNext: true,
         nextToken: "2",
-        results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
+        results: [TEST_INVENTORY_ITEM_1, TEST_INVENTORY_ITEM_2]
       }
     })
   }
