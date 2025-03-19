@@ -17,6 +17,7 @@ export interface DisplayedInventoryItem extends InventoryItemData {
 
 // TODO: filter
 // TODO: new item
+// TODO: delete selected
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
   const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<DisplayedInventoryItem[]>([]);
