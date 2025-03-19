@@ -11,20 +11,20 @@ import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/for
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ATTRIBUTES_STRING_REGEX } from "@/app/models/InventoryItem";
+import { ATTRIBUTES_STRING_REGEX, attributesToString, InventoryItemData } from "@/app/models/InventoryItem";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
-  organizationID: string | number,
-  inventoryID: string | number
+  inventoryItem: InventoryItemData
 }
 
 // TODO: test form, any changes here should be made to the EditInventoryItemModal as well
-export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
+export default function EditInventoryItemModal({onClose, inventoryItem}: CreateInventoryItemModalProps) {
   const [parts, setParts] = useState<PartData[]>([]);
   const [models, setModels] = useState<ModelData[]>([]);
 
   const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
+  const attributesAsString = attributesToString(inventoryItem.attributes);
 
   useEffect(() => {
     // TODO: comment out when backend is hooked up
@@ -63,7 +63,15 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       .string()
   });
   const createInventoryItemForm = useForm<z.infer<typeof createInventoryItemFormSchema>>({
-    resolver: zodResolver(createInventoryItemFormSchema)
+    resolver: zodResolver(createInventoryItemFormSchema),
+    defaultValues: {
+      name: inventoryItem.name,
+      partID: inventoryItem.part.id.toString(),
+      modelID: inventoryItem.modelID.toString(),
+      quantity: inventoryItem.quantity,
+      attributes: attributesAsString,
+      notes: inventoryItem.notes
+    }
   });
 
   const onFormSubmit = (values: z.infer<typeof createInventoryItemFormSchema>) => {
@@ -74,11 +82,11 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
     //   partID: values.partID,
     //   modelID: values.modelID,
     //   quantity: values.quantity,
-    //   publicCount: 0,
+    //   publicCount: inventoryItem.publicCount,
     //   notes: values.notes,
     //   attributes: values.attributes
     // }
-    // backendService.post(`/organizations/${organizationID}/inventories/${inventoryID}/items`, body)
+    // backendService.put(`/organizations/${organizationID}/inventories/${inventoryID}/items`, body)
     //   .then(response => {
     //     // TODO: toastr with message
     //     onClose();
@@ -87,7 +95,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
   }
   
   return <div className="max-w-[35rem] w-[35rem]">
-    <ModalHeader title="Create a New Inventory Item" onClose={onClose} />
+    <ModalHeader title={`Edit ${inventoryItem.name}`} onClose={onClose} />
     <ModalBody>
       <FormProvider {...createInventoryItemForm}>
         <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
@@ -222,7 +230,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
           <div className="flex w-max ml-auto mt-[1.5rem]">
             <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
             <button type="submit" className="button ml-[1rem]">
-              Create
+              Save
             </button>
           </div>
         </form>

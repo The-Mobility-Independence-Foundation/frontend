@@ -17,7 +17,7 @@ export const TEST_INVENTORY_ITEM_DATA_1: InventoryItemData = {
   quantity: 50,
   publicCount: 25,
   notes: "Notes",
-  attributes: "attributes"
+  attributes: {"color": "red", "size": 100}
 }
 
 export const TEST_INVENTORY_ITEM_DATA_2: InventoryItemData = {
@@ -36,7 +36,7 @@ export const TEST_INVENTORY_ITEM_DATA_2: InventoryItemData = {
   quantity: 100,
   publicCount: 50,
   notes: "Notes again",
-  attributes: "More attributes"
+  attributes: {"color": "red", "size": 100}
 }
 
 export const testInventoryItems: InventoryItems = {
