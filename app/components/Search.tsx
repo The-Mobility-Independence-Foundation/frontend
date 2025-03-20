@@ -36,28 +36,31 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   const offset = queryParams.get(PaginationSearchParams.OFFSET);
   const limit = queryParams.get(PaginationSearchParams.LIMIT);
 
-  // TODO: grab brands & types from DB
-  // TODO: grab filters from URL?
-
   const backendSearch = () => {
     // COMMENTED OUT FOR TESTING
     // TODO: add radius, latitude and longitude after that's finished
+    // TODO: add filters
     // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
     // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
     // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${limit}&offset=${offset}`, filters)
-    //   .then(response => {
-    //     receiveData(response);
-    //   });
-    receiveData({
-      message: "Test Message",
-      data: {
-        count: 1,
-        totalCount: 2,
-        hasNext: true,
-        nextToken: "2",
-        results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
-      }
-    })
+    backendService.get(`${apiRoute}`)
+      .then(response => {
+        receiveData(response);
+      })
+      .catch(error => {
+        console.error(error);
+        // TODO: toastr message
+      });
+    // receiveData({
+    //   message: "Test Message",
+    //   data: {
+    //     count: 1,
+    //     totalCount: 2,
+    //     hasNext: true,
+    //     nextToken: "2",
+    //     results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
+    //   }
+    // })
   }
     
   const form = useForm<z.infer<typeof formSchema>>({
