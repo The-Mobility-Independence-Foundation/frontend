@@ -23,7 +23,6 @@ export interface ListingProps {
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
   className?: string;
-  className?: string;
 }
 
 export default function Listing({listing, myListing, onCheckboxChange, className}: ListingProps) {

@@ -9,7 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import {v4 as uuidv4} from "uuid";
 
@@ -58,9 +58,17 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
   const numberOfPages = Math.ceil(totalCount / count);
   const router = useRouter();
   const pathname = usePathname();
+  const params = useSearchParams();
 
   const reroutePage = (offset: number, limit: number) => {
-    router.push(`${pathname}?${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`);
+    let paramsAsString = `${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`;
+    params.forEach((value, key) => {
+      if(key != PaginationSearchParams.OFFSET && key != PaginationSearchParams.LIMIT) {
+        paramsAsString += `&${key}=${value}`;
+      }
+    });
+    console.log(paramsAsString)
+    router.push(`${pathname}?${paramsAsString}`);
   }
 
   useEffect(() => {
