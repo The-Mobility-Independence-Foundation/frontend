@@ -56,33 +56,35 @@ export default function Listing({listing, myListing, onCheckboxChange, className
   });
 
   const patchListing = (body: PatchListing) => {
-    backendService.put(`/listings/${listing.id}`, body)
+    backendService.put(`/listing/${listing.id}`, body)
       .then(response => {
         // TODO: toastr with message
       });
   }
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
-    patchListing({
-      title: listing.title,
-      description: "",
-      attributes: listing.attributes,
-      quantity: values.quantity,
-      inventoryItemId: inventoryItem.id,
-      status: listing.status
-    });
+    // patchListing({
+    //   title: listing.title,
+    //   description: "",
+    //   attributes: listing.attributes,
+    //   quantity: values.quantity,
+    //   inventoryItemId: inventoryItem.id,
+    //   status: listing.status
+    // });
+    // TODO: change once patch is established
   }
 
   const onActiveChange = (newSelected: number) => {
     setActiveStatus(newSelected);
-    patchListing({
-      title: listing.title,
-      description: "",
-      attributes: listing.attributes,
-      quantity: listing.quantity,
-      inventoryItemId: inventoryItem.id,
-      status: statuses[newSelected-1]
-    });
+    // patchListing({
+    //   title: listing.title,
+    //   description: "",
+    //   attributes: listing.attributes,
+    //   quantity: listing.quantity,
+    //   inventoryItemId: inventoryItem.id,
+    //   status: statuses[newSelected-1]
+    // });
+    // TODO: change once patch is established
   }
 
   return (
