@@ -56,6 +56,9 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
     }
 
     return <div className= "w-[80%] lg:w-[65%]">
+        <p className="text-white text-md mb-6">The MIF DME Parts Exchange Portal is currently operating on an <b>invite only</b> basis.
+            You can request access to the site using the form below.</p>
+
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 text-left">
             <div className="flex w-full gap-8">
@@ -133,7 +136,7 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
                     )}
                 />
                 <div className="flex justify-between items-center pt-6 gap-[5vw]">
-                    <Button type="button" className="button cancel" onClick={() => setCurrentForm(LandingFormType.EmailCheckForm)}>Back</Button>
+                    <Button type="button" className="button cancel" onClick={() => setCurrentForm(LandingFormType.SignUpForm)}>Back</Button>
                     <Button type="submit" className="button px-[2vw]">Submit</Button>
                 </div>
             </form>

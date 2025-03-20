@@ -7,8 +7,6 @@ import backendService from "../services/backend.service";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { StateCode } from "../types/StateCode";
 import { EyeOpenIcon, EyeNoneIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
@@ -20,12 +18,7 @@ const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 const formSchema = z.object({
     firstName: z.string().nonempty("Please enter your first name"),
     lastName: z.string().nonempty("Please enter your last name"),
-    email: z.string(),
-    addressLine1: z.string().nonempty("Please enter your address"),
-    addressLine2: z.string(),
-    city: z.string().nonempty("Please enter your city"),
-    state: z.string().nonempty("Please select a state"),
-    zipCode: z.string().nonempty("Please select a zip code").length(5, "Invalid zip code").regex(/^\d+$/, "Invalid zip code"),
+    email: z.string().nonempty("Please enter your email"),
     username: z.string().nonempty("Please enter your username"),
     password: z.string().nonempty("Please enter your password").min(8, "Password must contain at least 8 characters")
         .regex(PASSWORD_REGEX, "Password must contain at least one letter and one number or special character"),
@@ -36,51 +29,42 @@ const formSchema = z.object({
 });
 
 interface SignUpFormProps {
-    email: string
     setCurrentForm: (newForm: LandingFormType) => void
+    onRequestAccess: (email: string) => void
 }
 
-export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
+export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            firstName: "",
-            lastName: "",
-            email: email,
-            addressLine1: "",
-            addressLine2: "",
-            city: "",
-            state: "",
-            zipCode: "",
-            username: "",
-            password: "",
-            passwordConfirmation: ""
-        }
-    })
+    });
 
     const router = useRouter();
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        backendService.post("register", {
+        backendService.post("/auth/register", {
             "firstName": values.firstName,
             "lastName": values.lastName,
             "displayName": values.username,
             "email": values.email,
             "password": values.password
         }).then(() => {
-            backendService.post("login", {
-                "email":  values.email,
-                "password": values.password
-            }).then(response => {
-                sessionStorage.setItem('accessToken', response.accessToken);
-                router.push('/listings');
-            }).catch(error => {
-                toast.error("There was an issue during sign up. Please log in with your new credentials to continue.");
-                setCurrentForm(LandingFormType.LoginForm);
-            })
+            backendService.get("/users/id/request").then(response => {
+                onRequestAccess(values.email);
+            }).catch((error => {
+                backendService.post("/auth/login", {
+                    "email":  values.email,
+                    "password": values.password
+                }).then(response => {
+                    sessionStorage.setItem('accessToken', response.accessToken);
+    
+                    router.push('/listings');
+                }).catch(error => {
+                    toast.error("There was an issue signing you up. Please try again.");
+                })
+            }))
         }).catch(() => {
             toast.error("There was an issue signing you up. Please try again.");
         })
@@ -121,85 +105,12 @@ export default function SignUpForm({email, setCurrentForm}: SignUpFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <Input {...field} placeholder={email} disabled className="bg-white"/>
+                                <Input {...field} placeholder="Email" className="bg-white"/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="addressLine1"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormControl className="mt-5">
-                                <Input {...field} placeholder="Address" className="bg-white" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="addressLine2"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormControl>
-                                <Input {...field} placeholder="Appt, suite, unit, etc." className="bg-white" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className="flex w-full gap-4">
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormControl>
-                                    <Input {...field} placeholder="City" className="bg-white" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="state"
-                        render={({ field }) => (
-                            <FormItem className="min-w-[20%]">
-                                <FormControl>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger className="bg-white text-black font-normal">
-                                            <SelectValue placeholder="State" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {Object.values(StateCode).map((state) => (
-                                                <SelectItem key={state} value={state}>
-                                                    {state}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="zipCode"
-                        render={({ field }) => (
-                            <FormItem className="w-[50%]">
-                                <FormControl>
-                                    <Input {...field} placeholder="Zip Code" className="bg-white" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
                 <FormField
                     control={form.control}
                     name="username"

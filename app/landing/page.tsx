@@ -1,7 +1,6 @@
 "use client"
 
 import { LandingFormType } from "../types/LandingFormType";
-import EmailCheckForm from "../components/EmailCheckForm";
 import LoginForm from "../components/LoginForm";
 import RequestAccessForm from "../components/RequestAccessForm";
 import SignUpForm from "../components/SignUpForm";
@@ -26,10 +25,8 @@ export default function LandingPage() {
         switch(currentForm) {
             case LandingFormType.LoginForm:
                 return <LoginForm setCurrentForm={setCurrentForm}></LoginForm>
-            case LandingFormType.EmailCheckForm:
-                return <EmailCheckForm onEmailVerified={onEmailVerified} onRequestAccess={onRequestAccess} setCurrentForm={setCurrentForm}></EmailCheckForm>
             case LandingFormType.SignUpForm:
-                return <SignUpForm email={email} setCurrentForm={setCurrentForm}></SignUpForm>
+                return <SignUpForm setCurrentForm={setCurrentForm} onRequestAccess={onRequestAccess}></SignUpForm>
             case LandingFormType.RequestAccessForm:
                 return <RequestAccessForm email={email} setCurrentForm={setCurrentForm}></RequestAccessForm>
             case LandingFormType.RequestSubmitted:

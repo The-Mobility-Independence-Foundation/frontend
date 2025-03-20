@@ -96,7 +96,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                     </AlertDescription>
                 </Alert>}
                 <div className="flex justify-between items-center gap-[5vw] pt-3">
-                    <Button type="button" variant="secondary" className="w-1/4" onClick={() => setCurrentForm(LandingFormType.EmailCheckForm)}>Sign Up</Button>
+                    <Button type="button" variant="secondary" className="w-1/4" onClick={() => setCurrentForm(LandingFormType.SignUpForm)}>Sign Up</Button>
 
                     <div className="flex items-center gap-2">
                         <Button type="button" className="w-[40px]" size="icon"><img src="/assets/google.svg" alt="Login with Google"></img></Button>
