@@ -32,14 +32,12 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "120",
-            onValueChange: () => console.log()
           },
           {
             placeholder: "Height (in.)",
             type: "number",
             minValue: "0",
             maxValue: "120",
-            onValueChange: () => console.log()
           },
         ],
         divider: "X",
@@ -52,14 +50,12 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "100",
-            onValueChange: () => console.log()
           },
           {
             placeholder: "Upper Bound",
             type: "number",
             minValue: "0",
             maxValue: "100",
-            onValueChange: () => console.log()
           },
         ],
         divider: "-",

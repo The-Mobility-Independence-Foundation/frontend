@@ -2,7 +2,9 @@ import { OrganizationData } from "./Organization";
 
 export interface Inventory {
   message: string;
-  data: InventoryData
+  data: {
+    results: InventoryData[]
+  }
 }
 
 export interface InventoryData {
