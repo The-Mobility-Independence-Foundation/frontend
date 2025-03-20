@@ -67,7 +67,6 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
         paramsAsString += `&${key}=${value}`;
       }
     });
-    console.log(paramsAsString)
     router.push(`${pathname}?${paramsAsString}`);
   }
 
