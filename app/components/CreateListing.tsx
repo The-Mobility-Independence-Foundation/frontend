@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 
+// TODO: second half
 export default function CreateListing() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
