@@ -17,8 +17,12 @@ import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 
+interface CreateListingProps {
+  onClose: (created: boolean) => void;
+}
+
 // TODO: second half
-export default function CreateListing() {
+export default function CreateListing({onClose}: CreateListingProps) {
   const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
@@ -52,6 +56,7 @@ export default function CreateListing() {
   const onFormSubmit = (values: z.infer<typeof createListingSchema>) => {
     console.log(values);
     // TODO: POST call for creating a listing
+    onClose(true);
   };
 
   const onInventoryItemChange = (value: string, field: any) => {
@@ -118,17 +123,17 @@ export default function CreateListing() {
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+                      <div className="flex items-center">
+                        <p>Quantity Available: </p>
+                        <h5 className="ml-[1rem]">
+                          {quantityAvailable > -1 ? quantityAvailable : "N/A"}
+                        </h5>
+                      </div>
                     </>
                   </FormControl>
                 </FormItem>
               )}
             />
-            <div className="flex items-center">
-              <p>Quantity Available: </p>
-              <h5 className="ml-[1rem]">
-                {quantityAvailable > -1 ? quantityAvailable : "N/A"}
-              </h5>
-            </div>
             <FormField
               control={createListingForm.control}
               name="quantity"
@@ -195,6 +200,13 @@ export default function CreateListing() {
                 images={[imageDisplaying]}
               />
             }
+            <div className="flex ml-auto mt-[1rem]
+                            max-md:mx-auto">
+            <button onClick={() => onClose(false)} className="button !bg-[#BBBBBB]">Cancel</button>
+              <button type="submit" className="button ml-[1rem]">
+                Create Listing
+              </button>
+            </div>
           </div>
           </div>
         </form>

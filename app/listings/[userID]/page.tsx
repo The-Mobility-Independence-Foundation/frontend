@@ -33,7 +33,7 @@ export default function MyListings() {
       />
         <div className={`absolute z-50 ${newListingDropdownIsOpen ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out w-screen`}>
           <CreateListing
-          
+            onClose={() => setNewListingDropdownIsOpen(false)}
           />
           <div className="w-full h-screen bg-black/20" onClick={() => setNewListingDropdownIsOpen(false)} />
         </div>
