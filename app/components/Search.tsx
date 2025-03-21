@@ -123,7 +123,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     </div>
 
     {filterType &&
-      <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
+      <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out w-screen`}>
         {filterType == FilterComponentType.LISTINGS && 
           <ListingFilters onFilterValueChange={onFilterValueChange}/>
         }
