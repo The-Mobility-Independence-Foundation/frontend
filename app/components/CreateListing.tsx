@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { z } from "zod";
 import { InventoryItemData } from "../models/InventoryItem";
 import { FormProvider, useForm } from "react-hook-form";
@@ -15,13 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
-import { Label } from "@/components/ui/label";
+import ImageCarousel, { ImageReference } from "./ImageCarousel";
 
 // TODO: second half
 export default function CreateListing() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
+  const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
 
   // TODO: API call for grabbing all items from all inventories
 
@@ -67,6 +68,16 @@ export default function CreateListing() {
     setActiveButton(value);
   };
 
+  const onAttachmentChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if(event.target?.files && event.target?.files.length > 0) {
+      setImageDisplaying({
+        url: URL.createObjectURL(event.target.files[0]),
+        alt: event.target?.value,
+        id: 1
+      });
+    }
+  }
+
   return (
     <div className="w-full bg-white p-5" id="filters">
       <FormProvider {...createListingForm}>
@@ -76,7 +87,7 @@ export default function CreateListing() {
         >
           <div className="flex justify-around items-center w-full
                     max-md:flex-col">
-          <div className="w-[25rem]">
+          <div className="w-[25rem] flex flex-col justify-between h-full">
             <FormField
               control={createListingForm.control}
               name="inventoryItemID"
@@ -160,19 +171,30 @@ export default function CreateListing() {
             className="w-[2px] h-[80%] bg-[#d9d9d9] rounded
                       max-md:w-[80%] max-md:h-[2px] max-md:my-[1rem]"
           />
-          <div className="flex flex-col h-full
-                          ">
+          <div className="h-full flex flex-col justify-between w-[15rem]
+                          max-md:w-[25rem]">
             <FormField
               control={createListingForm.control}
               name="attachment"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input {...field} type="file" />
+                    <Input 
+                      {...field}
+                      onChange={event => onAttachmentChange(event)}
+                      type="file" 
+                      accept=".png,.jpg,.jpeg"
+                      className="mb-[1rem]"
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
+            {imageDisplaying &&
+              <ImageCarousel 
+                images={[imageDisplaying]}
+              />
+            }
           </div>
           </div>
         </form>
