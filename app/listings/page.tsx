@@ -4,9 +4,11 @@ import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
 import { useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
-import { Listings } from "../models/Listings";
+import { ListingData, Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import Pagination, { PageChangeEvent } from "../components/Pagination";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import BulkOperations from "../components/BulkOperations";
 
 export default function PublicListings() {
 
@@ -20,6 +22,8 @@ export default function PublicListings() {
       results: []
     }
   });
+  const [listingsChecked, setListingsChecked] = useState<Map<ListingData, boolean>>(new Map());
+  const [showBulkOps, setShowBulkOps] = useState(false);
 
   const params = useSearchParams();
   const userID = params.get("u_id");
@@ -29,6 +33,17 @@ export default function PublicListings() {
     setListings(listings as Listings);
   }
 
+  const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
+    if(checked == 'indeterminate') { return; }
+
+    let listingsCheckedUpdate = new Map(listingsChecked);
+    listingsCheckedUpdate.set(listing, checked);
+
+    setListingsChecked(new Map(listingsCheckedUpdate));
+
+    setShowBulkOps(listingsCheckedUpdate.values().toArray().includes(true));
+  }
+
   return <div className="overflow-y-hidden">
     <Search 
       apiRoute={"/listings"} 
@@ -36,9 +51,12 @@ export default function PublicListings() {
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
+    {showBulkOps && <BulkOperations></BulkOperations>}
     <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
       {listings.data?.results.map(listing => 
         <Listing 
+          myListing={userID != null ? true : false}
+          onCheckboxChange={userID != null ? (checked) => onCheckboxChange(listing, checked) : undefined}
           listing={listing}
           className="mb-[1rem] mx-auto"
           key={listing.id}
