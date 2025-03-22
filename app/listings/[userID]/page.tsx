@@ -5,9 +5,29 @@ import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { ListingData, Listings } from "../../models/Listings";
+import Listing from "../../components/Listing";
+import { CheckedState } from "@radix-ui/react-checkbox";
+import BulkOperations from "../../components/BulkOperations";
+import { statuses } from "../../models/Status";
+import KeysetPagination from "../../components/KeysetPagination";
 
 export default function MyListings() {
   const [newListingDropdownIsOpen, setNewListingDropdownIsOpen] = useState(false);
+
+  const [listings, setListings] = useState<Listings>({
+      message: "Default",
+      data: {
+        count: 0,
+        totalCount: 0,
+        hasNext: false,
+        nextToken: null,
+        results: []
+      }
+    });
+  const [listingsChecked, setListingsChecked] = useState<Map<ListingData, boolean>>(new Map());
+  const [listingsStatus, setListingsStatus] = useState<Map<ListingData, number>>(new Map());
+  const [showBulkOps, setShowBulkOps] = useState(false);
 
   const myUserID = 1; // TODO: grab current user ID from db
   const router = useRouter();
@@ -19,7 +39,51 @@ export default function MyListings() {
   }
 
   const receiveListings = (data: any) => {
-    // TODO: receive listings from Search
+    // received from Search component
+    setListings(data as Listings);
+    
+    setListingsChecked(new Map((data as Listings).data?.results.map(listing => [listing, false])));
+    setListingsStatus(new Map((data as Listings).data?.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
+  }
+
+  const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
+    if(checked == 'indeterminate') { return; }
+
+    let listingsCheckedUpdate = new Map(listingsChecked);
+    listingsCheckedUpdate.set(listing, checked);
+
+    setListingsChecked(new Map(listingsCheckedUpdate));
+
+    setShowBulkOps(listingsCheckedUpdate.values().toArray().includes(true));
+  }
+
+  const onStatusChange = (listing: ListingData, status: number) => {
+    let listingsStatusUpdate = new Map(listingsStatus);
+    listingsStatusUpdate.set(listing, status);
+
+    setListingsStatus(new Map(listingsStatusUpdate));
+  }
+
+  const onCheckAllChange = (checked: CheckedState) => {
+    if(checked == 'indeterminate') { return; }
+
+    let listingsCheckedUpdate = new Map(listingsChecked);
+    listingsCheckedUpdate.forEach((val, key) => { listingsCheckedUpdate.set(key, checked) });
+
+    setListingsChecked(new Map(listingsCheckedUpdate));
+
+    setShowBulkOps(listingsCheckedUpdate.values().toArray().includes(true));
+  }
+
+  const onBulkStatusChange = (status: number) => {
+    let listingsStatusUpdate = new Map(listingsStatus);
+    listingsStatusUpdate.forEach((val, key) => { 
+      if(listingsChecked.get(key)) {
+        listingsStatusUpdate.set(key, status);
+      }
+    });
+
+    setListingsStatus(new Map(listingsStatusUpdate));
   }
 
   return <>
@@ -38,5 +102,29 @@ export default function MyListings() {
           <div className="w-full h-screen bg-black/20" onClick={() => setNewListingDropdownIsOpen(false)} />
         </div>
     </div>
+    
+    {showBulkOps && <BulkOperations onCheckboxChange={onCheckAllChange} onChangeActiveStatus={onBulkStatusChange}></BulkOperations>}
+
+    <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
+      {listings.data?.results.map(listing => 
+        <Listing 
+          myListing={true}
+          onCheckboxChange={(checked) => onCheckboxChange(listing, checked)}
+          checked={listingsChecked.get(listing)}
+          onStatusChange={(status) => onStatusChange(listing, status)}
+          activeStatus={listingsStatus.get(listing)}
+          listing={listing}
+          className="mb-[1rem] mx-auto"
+          key={listing.id}
+        />
+      )}
+    </div>
+
+    <KeysetPagination 
+      hasNextPage={listings.data.hasNext}
+      hasPreviousPage={false}
+      nextCursor={listings.data.nextToken}
+      count={listings.data.count}
+    />
   </>
 }
