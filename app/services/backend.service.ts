@@ -24,9 +24,14 @@ class BackendService {
   }
 
   private async fetcher(method: string, endpoint: string, data: any = null) {
+    let token = localStorage.getItem("token");
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api${endpoint}`, {
       method: method,
       body: data ? JSON.stringify(data) : null,
+      headers: {
+        "X-Api-Key": token != null ? token : ""
+      }
     });
 
     if (!response.ok) {
