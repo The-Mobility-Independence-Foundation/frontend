@@ -33,7 +33,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        backendService.post("login", {
+        backendService.post("/auth/login", {
             "email":  values.email,
             "password": values.password
         }).then(response => {
@@ -45,7 +45,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
         })
     }
 
-    return <div className= "w-[80%] lg:w-[65%]">
+    return <div className= "w-[80%]">
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 text-left">
                 <FormField

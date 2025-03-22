@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 interface SignUpFormProps {
     setCurrentForm: (newForm: LandingFormType) => void
-    onRequestAccess: (email: string) => void
+    onRequestAccess: (firstName: string, lastName: string, email: string) => void
 }
 
 export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpFormProps) {
@@ -52,7 +52,7 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
             "password": values.password
         }).then(() => {
             backendService.get("/users/id/request").then(response => {
-                onRequestAccess(values.email);
+                onRequestAccess(values.firstName, values.lastName, values.email);
             }).catch((error => {
                 backendService.post("/auth/login", {
                     "email":  values.email,
@@ -70,7 +70,7 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
         })
     }
 
-    return <div className= "w-[80%] lg:w-[65%]">
+    return <div className= "w-[80%]">
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 text-left">
                 <div className="flex w-full gap-8">

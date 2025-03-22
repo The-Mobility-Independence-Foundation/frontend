@@ -14,8 +14,8 @@ import { LandingFormType } from "../types/LandingFormType";
 import { isValidPhoneNumber } from "react-phone-number-input";
 
 const formSchema = z.object({
-    firstName: z.string().nonempty("Please enter your first name"),
-    lastName: z.string().nonempty("Please enter your last name"),
+    firstName: z.string(),
+    lastName: z.string(),
     email: z.string(),
     ein: z.string().nonempty("Please enter your EIN"),
     phoneNumber: z.string().nonempty("Please enter your phone number").refine(isValidPhoneNumber, { message: "Please enter a valid phone number" }),
@@ -23,16 +23,18 @@ const formSchema = z.object({
 });
 
 interface RequestAccessFormProps {
+    firstName: string,
+    lastName: string,
     email: string,
     setCurrentForm: (newForm: LandingFormType) => void
 }
 
-export default function RequestAccessForm({email, setCurrentForm}: RequestAccessFormProps) {
+export default function RequestAccessForm({firstName, lastName, email, setCurrentForm}: RequestAccessFormProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            firstName: "",
-            lastName: "",
+            firstName: firstName,
+            lastName: lastName,
             email: email,
             ein: "",
             phoneNumber: "",
@@ -41,7 +43,7 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        backendService.post("requests", {
+        backendService.post("/requests", {
             "ein": values.ein,
             "firstName": values.firstName,
             "lastName": values.lastName,
@@ -55,7 +57,7 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
         })
     }
 
-    return <div className= "w-[80%] lg:w-[65%]">
+    return <div className= "w-[80%]">
         <p className="text-white text-md mb-6">The MIF DME Parts Exchange Portal is currently operating on an <b>invite only</b> basis.
             You can request access to the site using the form below.</p>
 
@@ -68,7 +70,7 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormControl>
-                                    <Input {...field} placeholder="First Name" className="bg-white" />
+                                    <Input {...field} placeholder={firstName} disabled className="bg-white" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -80,7 +82,7 @@ export default function RequestAccessForm({email, setCurrentForm}: RequestAccess
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormControl>
-                                    <Input {...field} placeholder="Last Name" className="bg-white" />
+                                    <Input {...field} placeholder={lastName} disabled className="bg-white" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
