@@ -17,18 +17,21 @@ import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
+import Menu from "./Menu";
 
 export interface ListingProps {
   listing: ListingData;
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
+  checked?: boolean;
+  onStatusChange?: (status: number) => void;
+  activeStatus?: number;
   className?: string;
 }
 
-export default function Listing({listing, myListing, onCheckboxChange, className}: ListingProps) {
+export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
-  const [activeStatus, setActiveStatus] = useState(statuses.indexOf(listing.status)+1);
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
@@ -74,7 +77,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
   }
 
   const onActiveChange = (newSelected: number) => {
-    setActiveStatus(newSelected);
+    if (onStatusChange) { onStatusChange(newSelected); }
     patchListing({
       title: listing.title,
       description: "",
@@ -99,6 +102,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
           <div className="flex">
             {onCheckboxChange != null && (
               <Checkbox
+                checked={checked}
                 onCheckedChange={(checked) => onCheckboxChange(checked)}
               />
             )}
@@ -147,7 +151,7 @@ export default function Listing({listing, myListing, onCheckboxChange, className
                 <RadioButton
                   label1={ACTIVE}
                   label2={INACTIVE}
-                  selected={activeStatus}
+                  selected={activeStatus != undefined ? activeStatus : 1}
                   onChange={onActiveChange}
                 />
               </div>
@@ -206,6 +210,8 @@ export default function Listing({listing, myListing, onCheckboxChange, className
             </div>
           )}
         </div>
+
+        {myListing && <Menu items={["Edit", "Activate", "Delete"]} className="fixed top-2 right-4"></Menu>}
       </div>
       <Modal
         isOpen={createOrderModalIsOpen}
