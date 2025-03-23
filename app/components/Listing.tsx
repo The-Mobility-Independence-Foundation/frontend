@@ -88,6 +88,19 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
     });
   }
 
+  const onMenuItemClick = (itemClicked: string) => {
+    switch(itemClicked) {
+      case "Activate": {
+        onActiveChange(1);
+        break;
+      }
+      case "Deactivate": {
+        onActiveChange(2);
+        break;
+      }
+    }
+  }
+
   return (
     <>
       <div
@@ -211,7 +224,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           )}
         </div>
 
-        {myListing && <Menu items={["Edit", "Activate", "Delete"]} className="fixed top-2 right-4"></Menu>}
+        {myListing && <Menu items={["Edit", activeStatus == 1 ? "Deactivate" : "Activate", "Delete"]} onItemClick={onMenuItemClick} className="fixed top-2 right-4"></Menu>}
       </div>
       <Modal
         isOpen={createOrderModalIsOpen}
