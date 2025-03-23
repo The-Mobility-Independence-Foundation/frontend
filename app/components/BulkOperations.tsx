@@ -10,13 +10,13 @@ export interface BulkOperationsProps {
 
 export default function BulkOperations({onCheckboxChange, onChangeActiveStatus}: BulkOperationsProps) {
     return <div className="flex bg-[#F4F4F5] items-center py-4">
-        <Checkbox onCheckedChange={(checked) => onCheckboxChange(checked)} className="ml-5"/>
+        <Checkbox onCheckedChange={(checked) => onCheckboxChange(checked)} className="ml-1 sm:ml-6"/>
 
-        <div className="flex space-x-2 ml-14">
+        <div className="flex space-x-1 sm:space-x-2 ml-2 sm:ml-14">
             <Button className="bg-[#D3E8FF] font-semibold text-black" variant="secondary" onClick={() => onChangeActiveStatus(statuses.indexOf(ACTIVE)+1)}>Activate Selected</Button>
             <Button className="bg-[#FFD3D3] font-semibold text-black" variant="secondary" onClick={() => onChangeActiveStatus(statuses.indexOf(INACTIVE)+1)}>Deactivate Selected</Button>
         </div>
 
-        <Button className="ml-auto mr-5 bg-[#FF6C6C] font-semibold">Delete Selected</Button>
+        <Button className="ml-1 sm:ml-auto mr-5 bg-[#FF6C6C] font-semibold">Delete Selected</Button>
   </div>
 }

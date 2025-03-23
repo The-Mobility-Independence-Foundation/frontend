@@ -11,6 +11,11 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
 import { statuses } from "../../models/Status";
 import KeysetPagination from "../../components/KeysetPagination";
+import Modal from "@/app/components/modals/Modal";
+import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
+
+const EDIT = "Edit Attachment";
+const DELETE = "Delete";
 
 export default function MyListings() {
   const [newListingDropdownIsOpen, setNewListingDropdownIsOpen] = useState(false);
@@ -28,6 +33,8 @@ export default function MyListings() {
   const [listingsChecked, setListingsChecked] = useState<Map<ListingData, boolean>>(new Map());
   const [listingsStatus, setListingsStatus] = useState<Map<ListingData, number>>(new Map());
   const [showBulkOps, setShowBulkOps] = useState(false);
+  const [editListingIsOpen, setEditListingIsOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<ListingData>();
 
   const myUserID = 1; // TODO: grab current user ID from db
   const router = useRouter();
@@ -86,6 +93,25 @@ export default function MyListings() {
     setListingsStatus(new Map(listingsStatusUpdate));
   }
 
+  const onOpenChange = (open: boolean, listing: ListingData) => {
+    if(open) {
+      setEditListingIsOpen(false);
+      //setDeleteListingIsOpen(false);
+      setSelectedListing(listing);
+    }
+  }
+
+  const onMenuItemClick = (item: string) => {
+    switch(item) {
+      case EDIT:
+        setEditListingIsOpen(true);
+        break;
+      // case DELETE:
+      //   setDeleteListingIsOpen(true);
+      //   break;
+    }
+  }
+
   return <>
     <div>
       <Search 
@@ -114,11 +140,25 @@ export default function MyListings() {
           onStatusChange={(status) => onStatusChange(listing, status)}
           activeStatus={listingsStatus.get(listing)}
           listing={listing}
+          onOpenChange={onOpenChange}
+          onMenuItemClickModal={onMenuItemClick}
           className="mb-[1rem] mx-auto"
           key={listing.id}
         />
       )}
     </div>
+
+    {selectedListing &&
+      <Modal
+        isOpen={editListingIsOpen}
+        onClose={() => setEditListingIsOpen(false)}
+      >
+        <EditListingAttachmentModal
+          listingData={selectedListing}
+          onClose={() => setEditListingIsOpen(false)}
+        />
+      </Modal> 
+    }
 
     <KeysetPagination 
       hasNextPage={listings.data.hasNext}

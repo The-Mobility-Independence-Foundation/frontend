@@ -26,10 +26,17 @@ export interface ListingProps {
   checked?: boolean;
   onStatusChange?: (status: number) => void;
   activeStatus?: number;
+  onOpenChange?: (open: boolean, listing: ListingData) => void;
+  onMenuItemClickModal?: (itemClicked: string) => void; 
   className?: string;
 }
 
-export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, className}: ListingProps) {
+const ACTIVATE = "Activate";
+const DEACTIVATE = "Deactivate";
+const EDIT = "Edit Attachment";
+const DELETE = "Delete";
+
+export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
@@ -90,13 +97,16 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
 
   const onMenuItemClick = (itemClicked: string) => {
     switch(itemClicked) {
-      case "Activate": {
+      case ACTIVATE: {
         onActiveChange(1);
         break;
       }
-      case "Deactivate": {
+      case DEACTIVATE: {
         onActiveChange(2);
         break;
+      }
+      default: {
+        onMenuItemClickModal && onMenuItemClickModal(itemClicked);
       }
     }
   }
@@ -224,7 +234,12 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           )}
         </div>
 
-        {myListing && <Menu items={["Edit", activeStatus == 1 ? "Deactivate" : "Activate", "Delete"]} onItemClick={onMenuItemClick} className="fixed top-2 right-4"></Menu>}
+        {myListing && 
+        <Menu 
+          onOpenChange={(open) => onOpenChange && onOpenChange(open, listing)}
+          items={[EDIT, activeStatus == 1 ? DEACTIVATE : ACTIVATE, DELETE]} 
+          onItemClick={onMenuItemClick} 
+          className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"></Menu>}
       </div>
       <Modal
         isOpen={createOrderModalIsOpen}
