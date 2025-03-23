@@ -13,12 +13,19 @@ import { statuses } from "../../models/Status";
 import KeysetPagination from "../../components/KeysetPagination";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
+import Dialog from "@/app/components/modals/Dialog";
 
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
 export default function MyListings() {
   const [newListingDropdownIsOpen, setNewListingDropdownIsOpen] = useState(false);
+  const [listingsChecked, setListingsChecked] = useState<Map<ListingData, boolean>>(new Map());
+  const [listingsStatus, setListingsStatus] = useState<Map<ListingData, number>>(new Map());
+  const [showBulkOps, setShowBulkOps] = useState(false);
+  const [editListingIsOpen, setEditListingIsOpen] = useState(false);
+  const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<ListingData>();
 
   const [listings, setListings] = useState<Listings>({
       message: "Default",
@@ -30,11 +37,6 @@ export default function MyListings() {
         results: []
       }
     });
-  const [listingsChecked, setListingsChecked] = useState<Map<ListingData, boolean>>(new Map());
-  const [listingsStatus, setListingsStatus] = useState<Map<ListingData, number>>(new Map());
-  const [showBulkOps, setShowBulkOps] = useState(false);
-  const [editListingIsOpen, setEditListingIsOpen] = useState(false);
-  const [selectedListing, setSelectedListing] = useState<ListingData>();
 
   const myUserID = 1; // TODO: grab current user ID from db
   const router = useRouter();
@@ -93,10 +95,20 @@ export default function MyListings() {
     setListingsStatus(new Map(listingsStatusUpdate));
   }
 
+  const onBulkDelete = () => {
+    listings.data?.results.forEach(() => {}); // TODO add api call
+  }
+
+  const onDeleteDialogClose = (confirm: boolean) => {
+    console.log(confirm);
+    // TODO: api call
+    setDeleteListingIsOpen(false);
+  }
+
   const onOpenChange = (open: boolean, listing: ListingData) => {
     if(open) {
       setEditListingIsOpen(false);
-      //setDeleteListingIsOpen(false);
+      setDeleteListingIsOpen(false);
       setSelectedListing(listing);
     }
   }
@@ -106,9 +118,9 @@ export default function MyListings() {
       case EDIT:
         setEditListingIsOpen(true);
         break;
-      // case DELETE:
-      //   setDeleteListingIsOpen(true);
-      //   break;
+      case DELETE:
+        setDeleteListingIsOpen(true);
+        break;
     }
   }
 
@@ -129,7 +141,7 @@ export default function MyListings() {
         </div>
     </div>
     
-    {showBulkOps && <BulkOperations onCheckboxChange={onCheckAllChange} onChangeActiveStatus={onBulkStatusChange}></BulkOperations>}
+    {showBulkOps && <BulkOperations onCheckboxChange={onCheckAllChange} onChangeActiveStatus={onBulkStatusChange} onDelete={onBulkDelete}></BulkOperations>}
 
     <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
       {listings.data?.results.map(listing => 
@@ -159,6 +171,17 @@ export default function MyListings() {
         />
       </Modal> 
     }
+    {selectedListing && 
+    <Modal
+      isOpen={deleteListingIsOpen}
+      onClose={() => setDeleteListingIsOpen(false)}
+    >
+      <Dialog
+        text={"Are you sure you would like to delete this listing?"}
+        onClose={onDeleteDialogClose}
+        header={`Delete ${selectedListing.title}?`}
+      />
+    </Modal>}
 
     <KeysetPagination 
       hasNextPage={listings.data.hasNext}

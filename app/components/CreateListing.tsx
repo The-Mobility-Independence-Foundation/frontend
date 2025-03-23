@@ -166,6 +166,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       onChange={(newSelected) =>
                         onActiveChange(newSelected, field)
                       }
+                      className="bg-[#F4F4F5]"
                     />
                   </FormControl>
                 </FormItem>

@@ -176,6 +176,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
                   label2={INACTIVE}
                   selected={activeStatus != undefined ? activeStatus : 1}
                   onChange={onActiveChange}
+                  className="bg-[#FFFFFF]"
                 />
               </div>
             ) : (
