@@ -13,4 +13,5 @@ export interface InventoryData {
   organization: OrganizationData;
   description: string;
   location: string;
+  archived: boolean;
 }
