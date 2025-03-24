@@ -9,14 +9,16 @@ interface LinkReference {
   title: string;
 }
 
+// TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
   const userID = 1; // TODO: replace with real User ID
+  const orgID = 1; // TODO: replace with real org id
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
   const FORUM = "/forum";
   const PRIVATE_MESSAGES = `/messages?u_id=${userID}`;
-  const INVENTORIES = `/inventories?u_id=${userID}`;
+  const INVENTORIES = `/inventories?org_id=${orgID}`;
   const MY_LISTINGS = `/listings?u_id=${userID}`;
   const ACCOUNT = "/account";
 
