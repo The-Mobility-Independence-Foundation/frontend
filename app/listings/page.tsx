@@ -7,6 +7,7 @@ import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import Pagination, { PageChangeEvent } from "../components/Pagination";
+import KeysetPagination from "../components/KeysetPagination";
 
 export default function PublicListings() {
 
@@ -51,5 +52,11 @@ export default function PublicListings() {
       hasNext={listings.data.hasNext}
       nextToken={listings.data.nextToken}
     />
+    {/* <KeysetPagination 
+      hasNextPage={listings.data.hasNext}
+      hasPreviousPage={false}
+      nextCursor={listings.data.nextToken}
+      count={listings.data.count}
+    /> */}
   </div>
 }
