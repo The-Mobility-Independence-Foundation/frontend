@@ -46,17 +46,17 @@ export default function PublicListings() {
         />
       )}
     </div>
-    {/* <Pagination 
+    <Pagination 
       count={listings.data.count}
       totalCount={listings.data.totalCount}
       hasNext={listings.data.hasNext}
       nextToken={listings.data.nextToken}
-    /> */}
-    <KeysetPagination 
+    />
+    {/* <KeysetPagination 
       hasNextPage={listings.data.hasNext}
       hasPreviousPage={false}
       nextCursor={listings.data.nextToken}
       count={listings.data.count}
-    />
+    /> */}
   </div>
 }
