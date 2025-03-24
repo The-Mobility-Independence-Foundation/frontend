@@ -21,9 +21,10 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
 
-  backendService.get("/users/@me").catch(error => {
-    router.push('/landing');
-  })
+  // TODO Uncomment when backend is hooked up
+  // backendService.get("/users/@me").catch(error => {
+  //   router.push('/landing');
+  // })
 
   return (
     <html lang="en">
