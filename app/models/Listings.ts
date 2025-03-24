@@ -69,7 +69,8 @@ export const testListingData: ListingData = {
         phoneNumber: "(555) 555-5555"
       },
       description: "Inventory Description",
-      location: "City, State"
+      location: "City, State",
+      archived: false
     },
     part: {
       id: 0,
@@ -83,7 +84,7 @@ export const testListingData: ListingData = {
     quantity: 500000,
     publicCount: 40,
     notes: "Notes",
-    attributes: "attributes"
+    attributes: {"color": "red", "size": 100}
   },
   status: "ACTIVE",
   attachment: "https://picsum.photos/300/200"
