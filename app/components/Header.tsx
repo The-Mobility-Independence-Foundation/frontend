@@ -19,7 +19,7 @@ export default function Header() {
   const FORUM = "/forum";
   const PRIVATE_MESSAGES = `/messages?u_id=${userID}`;
   const INVENTORIES = `/inventories?org_id=${orgID}`;
-  const MY_LISTINGS = `/listings?u_id=${userID}`;
+  const MY_LISTINGS = `/listings/${userID}`;
   const ACCOUNT = "/account";
 
   const links: LinkReference[] = [

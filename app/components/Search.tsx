@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
-import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
+import { TEST_LISTING_ONE, TEST_LISTING_TWO, testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
@@ -50,7 +50,15 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     //   .then(response => {
     //     receiveData(response);
     //   });
-    receiveData(testInventoryItems)
+    let testData;
+
+    if(apiRoute == "/listing" || apiRoute == "/listings") {
+      testData = testListings
+    } else {
+      testData = testInventoryItems
+    }
+
+    receiveData(testData)
   }
     
   const form = useForm<z.infer<typeof formSchema>>({
