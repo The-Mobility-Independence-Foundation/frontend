@@ -12,6 +12,7 @@ import { FilterComponentType } from "../types/FilterTypes";
 import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
+import { TEST_USER_ONE, TEST_USER_TWO } from "../testData/TestUserData";
 
 interface SearchProps {
   apiRoute: string;
@@ -55,7 +56,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
         totalCount: 2,
         hasNext: true,
         nextToken: "2",
-        results: [TEST_LISTING_ONE, TEST_LISTING_TWO]
+        results: apiRoute == "/users" ? [TEST_USER_ONE, TEST_USER_TWO] : [TEST_LISTING_ONE, TEST_LISTING_TWO]
       }
     })
   }
