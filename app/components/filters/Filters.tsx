@@ -74,7 +74,7 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
             <MultiInput key={multiInputInfo.title} title={multiInputInfo.title} inputs={multiInputInfo.inputs} divider={multiInputInfo.divider}></MultiInput>
         ))}
         {radioButtons.map((radioButtonInfo, index) => (
-            <RadioButton key={radioButtonInfo.filterType} label1={radioButtonInfo.label1} label2={radioButtonInfo.label2} selected={activeStatusSelectedList[index]} onChange={(newActiveStatus) => changeActiveStatus(index, newActiveStatus)}></RadioButton>
+            <RadioButton key={radioButtonInfo.filterType} label1={radioButtonInfo.label1} label2={radioButtonInfo.label2} selected={activeStatusSelectedList[index]} onChange={(newActiveStatus) => changeActiveStatus(index, newActiveStatus)} className="bg-[#F4F4F5]"></RadioButton>
         ))}
     </div>  
   </div>
