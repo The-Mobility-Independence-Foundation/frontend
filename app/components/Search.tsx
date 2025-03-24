@@ -7,12 +7,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import backendService from "../services/backend.service";
-import ListingFilters from "./ListingFilters";
+import ListingFilters from "./filters/ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
-import { TEST_LISTING_ONE, TEST_LISTING_TWO } from "../testData/TestListingData";
+import { TEST_LISTING_ONE, TEST_LISTING_TWO, testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
 import { TEST_USER_ONE, TEST_USER_TWO } from "../testData/TestUserData";
+import InventoryItemFilters from "./filters/InventoryItemFilters";
+import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
 
 interface SearchProps {
   apiRoute: string;
@@ -49,16 +51,15 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     //   .then(response => {
     //     receiveData(response);
     //   });
-    receiveData({
-      message: "Test Message",
-      data: {
-        count: 1,
-        totalCount: 2,
-        hasNext: true,
-        nextToken: "2",
-        results: apiRoute == "/users" ? [TEST_USER_ONE, TEST_USER_TWO] : [TEST_LISTING_ONE, TEST_LISTING_TWO]
-      }
-    })
+    let testData;
+
+    if(apiRoute == "/listing" || apiRoute == "/listings") {
+      testData = testListings
+    } else {
+      testData = testInventoryItems
+    }
+
+    receiveData(testData)
   }
     
   const form = useForm<z.infer<typeof formSchema>>({
@@ -124,9 +125,12 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     </div>
 
     {filterType &&
-      <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out`}>
+      <div className={`absolute z-50 ${showFilter ? "opacity-100" : "opacity-0 pointer-events-none"} transition-all duration-200 ease-in-out w-screen`}>
         {filterType == FilterComponentType.LISTINGS && 
           <ListingFilters onFilterValueChange={onFilterValueChange}/>
+        }
+        {filterType == FilterComponentType.INVENTORY_ITEMS && 
+          <InventoryItemFilters onFilterValueChange={onFilterValueChange}/>
         }
         <div className="w-full h-screen bg-black/20" onClick={() => setShowFilter(false)} />
       </div>

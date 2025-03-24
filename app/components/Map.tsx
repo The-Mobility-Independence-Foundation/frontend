@@ -21,7 +21,7 @@ const Map = ({ pos, radius, className }: MapProps) => {
             return;
         }
 
-        const map = L.map(mapRef.current).setView(pos, 10);
+        const map = L.map(mapRef.current, {zoomControl: false}).setView(pos, 10);
         mapInstance.current = map;
 
         const maplibreLayer = (L as any).maplibreGL({
@@ -36,14 +36,18 @@ const Map = ({ pos, radius, className }: MapProps) => {
             iconAnchor: [14, 38]
         });
 
-        const marker = L.marker(pos, { icon: customIcon }).addTo(map);
+        const marker = L.marker(pos, { icon: customIcon, interactive: false }).addTo(map);
         markerRef.current = marker;
 
         const circle = L.circle(pos, {
             fillOpacity: 0.5,
-            radius: radius
+            radius: radius,
+            interactive: false
         }).addTo(map);
         circleRef.current = circle;
+
+        var zoom = L.control.zoom({position: "topright"});
+        zoom.addTo(map);
 
         return () => {
             map.remove();
