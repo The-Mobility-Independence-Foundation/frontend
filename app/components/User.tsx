@@ -13,7 +13,7 @@ export interface UserProps {
 
 export default function User({user, onConnectButtonClicked, onConnectedButtonClicked, connected, className}: UserProps) {
     return <div className={"bg-[#DDEDFF] px-5 py-3 rounded-md drop-shadow-md w-[350px] " + className}>
-        <h5 className="text-center">{user.displayName}</h5>
+        <h5 className="text-center"><a href={"/profile/listings?u_id=" + user.id}>{user.displayName}</a></h5>
 
         <div className="flex">
             <p className="font-medium">{"@" + user.username}</p>
