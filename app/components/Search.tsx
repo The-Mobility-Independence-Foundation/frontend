@@ -12,6 +12,7 @@ import { FilterComponentType } from "../types/FilterTypes";
 import { TEST_LISTING_ONE, TEST_LISTING_TWO, testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
+import { TEST_USER_ONE, TEST_USER_TWO, testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
 
@@ -54,6 +55,8 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
 
     if(apiRoute == "/listing" || apiRoute == "/listings") {
       testData = testListings
+    } else if(apiRoute == "/users") {
+      testData = testUsers;
     } else {
       testData = testInventoryItems
     }
