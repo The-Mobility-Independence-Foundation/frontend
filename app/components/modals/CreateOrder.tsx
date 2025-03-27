@@ -7,7 +7,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 import { useEffect } from "react";
 
 interface CreateOrderProps {
@@ -45,7 +45,9 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
     //     // TODO: toastr with message
     //   }
     // );
-    onClose();
+    if(values) {
+      onClose();
+    }
   }
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
 
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, []);
+  });
 
   return <>
       <ModalHeader
@@ -109,7 +111,7 @@ export default function CreateOrder({listing, listingImages, onClose}: CreateOrd
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[#2D3748]">
-                      Enter the quantity you'd like to order:
+                      Enter the quantity you&apos;d like to order:
                     </FormLabel>
                     <FormControl>
                       <Input
