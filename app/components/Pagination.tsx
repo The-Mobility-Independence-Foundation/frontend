@@ -70,7 +70,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     });
     router.push(`${pathname}?${paramsAsString}`);
-  }, []);
+  }, [params, pathname, router]);
 
   const getAllBoxes = useCallback((currentPage: number): Box[] => {
     // set the new boxes that are rendered
@@ -96,7 +96,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     }
     return newBoxes;
-  }, []);
+  }, [count, numberOfPages, totalCount]);
   const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
     if(onPageChange) {
       onPageChange({currentPage: page});
     }
-  }, [page, totalCount, count]);
+  }, [page, totalCount, count, setBoxes, reroutePage, onPageChange, getAllBoxes]);
 
   return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
     <PaginationContent className="w-full">

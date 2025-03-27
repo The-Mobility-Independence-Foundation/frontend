@@ -1,8 +1,8 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+// import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
@@ -22,13 +22,13 @@ export default function PublicListings() {
     }
   });
 
-  const params = useSearchParams();
+  // const params = useSearchParams();
   // const userID = params.get("u_id");
 
-  const receiveListings = (listings: object) => {
+  const receiveListings = useCallback((listings: object) => {
     // received from Search component
     setListings(listings as Listings);
-  }
+  }, []);
 
   return <div className="overflow-y-hidden">
     <Search 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UserData, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
@@ -51,10 +51,10 @@ export default function UsersPage() {
         }
     });
 
-    const receiveUsers = (users: object) => {
+    const receiveUsers = useCallback((users: object) => {
         // received from Search component
         setUsers(users as Users);
-    }
+    }, []);
 
     return <div>
         <Search 

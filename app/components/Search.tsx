@@ -62,7 +62,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     }
 
     receiveData(testData)
-  }, []);
+  }, [apiRoute, receiveData]);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,7 +82,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
 
   return <div className="relative">
     <div 

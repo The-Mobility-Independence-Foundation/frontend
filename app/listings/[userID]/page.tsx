@@ -4,7 +4,7 @@ import CreateListing from "@/app/components/CreateListing";
 import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ListingData, Listings } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -47,13 +47,13 @@ export default function MyListings() {
     router.push(`/listings`);
   }
 
-  const receiveListings = (data: object) => {
+  const receiveListings = useCallback((data: object) => {
     // received from Search component
     setListings(data as Listings);
     
     setListingsChecked(new Map((data as Listings).data?.results.map(listing => [listing, false])));
     setListingsStatus(new Map((data as Listings).data?.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
-  }
+  }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
     if(checked == 'indeterminate') { return; }

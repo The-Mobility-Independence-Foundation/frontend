@@ -77,7 +77,7 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
   };
 
   const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
-    let newSelectedValues = new Map(selectedValues);
+    const newSelectedValues = new Map(selectedValues);
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);
     } else {

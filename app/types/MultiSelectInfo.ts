@@ -1,4 +1,4 @@
-import { FilterType } from "./FilterTypes"
+import { FilterType } from "./FilterTypes";
 
 export type MultiSelectInfo = {
     title: string,

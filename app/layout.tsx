@@ -5,8 +5,9 @@ import "./globals.css";
 import Header from "./components/Header";
 import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { Suspense } from "react";
 // import backendService from "./services/backend.service";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -29,10 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
-        {!usePathname().endsWith("/landing") && <Header />}
+        <Suspense fallback={<div>Loading...</div>}>
+          {!usePathname().endsWith("/landing") && <Header />}
 
-        <main>{children}</main>
-        <Toaster richColors />
+          <main>{children}</main>
+          <Toaster richColors />
+        </Suspense>
       </body>
     </html>
   );
