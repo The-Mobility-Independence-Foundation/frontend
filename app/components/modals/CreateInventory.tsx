@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 
 interface CreateInventoryModalProps {
   organizationID: number,
@@ -42,7 +42,9 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
     //     // TODO: toastr with message
     //   }
     // );
-    onClose();
+    if(organizationID && values) {
+      onClose();
+    }
   }
 
   return (
