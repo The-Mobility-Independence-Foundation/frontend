@@ -26,7 +26,7 @@ export default function RootLayout({
   const pathName = usePathname();
 
   // User is not logged in, there was an error, or the request is still executing
-  if (isLoading || isError || (!data.success && usePathname() != "/landing")) {
+  if (isLoading || isError || (!data.success && pathName != "/landing")) {
     return (
       <html lang="en">
         <body className={`${interRegular.variable} antialiased`}>
@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
-        {!usePathname().endsWith("/landing") && <Header />}
+        {!pathName.endsWith("/landing") && <Header />}
 
         <main>{children}</main>
         <Toaster richColors />
