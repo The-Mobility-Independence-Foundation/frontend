@@ -10,7 +10,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {v4 as uuidv4} from "uuid";
 
 export interface PageChangeEvent {
@@ -72,14 +72,6 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
     router.push(`${pathname}?${paramsAsString}`);
   }
 
-  useEffect(() => {
-    setBoxes(getAllBoxes(page));
-    reroutePage((page - 1) * count, count);
-    if(onPageChange) {
-      onPageChange({currentPage: page});
-    }
-  }, [page, totalCount, count]);
-
   const getAllBoxes = (currentPage: number): Box[] => {
     // set the new boxes that are rendered
     const newBoxes: Box[] = [];
@@ -106,6 +98,14 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
     return newBoxes;
   }
   const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
+
+  useEffect(() => {
+    setBoxes(getAllBoxes(page));
+    reroutePage((page - 1) * count, count);
+    if(onPageChange) {
+      onPageChange({currentPage: page});
+    }
+  }, [page, totalCount, count, getAllBoxes, reroutePage, onPageChange]);
 
   return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
     <PaginationContent className="w-full">
