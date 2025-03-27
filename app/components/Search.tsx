@@ -6,19 +6,19 @@ import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
-import { TEST_LISTING_ONE, TEST_LISTING_TWO, testListings } from "../testData/TestListingData";
+import { testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
-import { TEST_USER_ONE, TEST_USER_TWO, testUsers } from "../testData/TestUserData";
+import { testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
-import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
+import { testInventoryItems } from "../testData/TestInventoryItemData";
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: any) => void;
+  receiveData: (data: Object) => void;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -71,7 +71,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     }
   });
 
-  const handleNewButtonClick = (event: any) => {
+  const handleNewButtonClick = () => {
     if(newButtonEvent) {
       newButtonEvent(true);
     }
@@ -82,7 +82,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
 
   return <div className="relative">
     <div 
