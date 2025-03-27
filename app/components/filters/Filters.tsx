@@ -10,11 +10,10 @@ import { MultiSelectInfo } from "../../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
 
-
 export interface FiltersProps {
   options: FilterOptions;
-  selectedValues: Map<string, any>;
-  onValueChange: (field: string, newValue: any) => void;
+  selectedValues: Map<string, string | number | string[] | boolean>;
+  onValueChange: (field: string, newValue: string | number | string[] | boolean) => void;
 }
 
 export interface FilterOptions {
@@ -34,8 +33,8 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
   );
 
   function updateMultiSelect(key: string, selectedOption: string) {
-    let selectedOptions: string[] = selectedValues.has(key)
-      ? selectedValues.get(key)
+    const selectedOptions: string[] = selectedValues.has(key)
+      ? selectedValues.get(key) as string[]
       : [];
     if (!selectedOptions.includes(selectedOption)) {
       selectedOptions.push(selectedOption);
