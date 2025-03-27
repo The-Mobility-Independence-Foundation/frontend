@@ -49,7 +49,7 @@ const Map = ({ pos, radius, className }: MapProps) => {
         }).addTo(map);
         circleRef.current = circle;
 
-        let zoom = L.control.zoom({position: "topright"});
+        const zoom = L.control.zoom({position: "topright"});
         zoom.addTo(map);
 
         return () => {

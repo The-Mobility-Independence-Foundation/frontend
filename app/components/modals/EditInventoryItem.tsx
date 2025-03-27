@@ -20,8 +20,8 @@ interface CreateInventoryItemModalProps {
 
 // TODO: test form, any changes here should be made to the EditInventoryItemModal as well
 export default function EditInventoryItemModal({onClose, inventoryItem}: CreateInventoryItemModalProps) {
-  const [parts, setParts] = useState<PartData[]>([]);
-  const [models, setModels] = useState<ModelData[]>([]);
+  const parts = useState<PartData[]>([])[0];
+  const models = useState<ModelData[]>([])[0];
 
   const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
   const attributesAsString = attributesToString(inventoryItem.attributes);
@@ -91,7 +91,9 @@ export default function EditInventoryItemModal({onClose, inventoryItem}: CreateI
     //     // TODO: toastr with message
     //     onClose();
     //   });
-    onClose();
+    if(values) {
+      onClose();
+    }
   }
   
   return (

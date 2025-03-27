@@ -62,7 +62,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
   const pathname = usePathname();
   const params = useSearchParams();
 
-  const reroutePage = (offset: number, limit: number) => {
+  const reroutePage = useCallback((offset: number, limit: number) => {
     let paramsAsString = `${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`;
     params.forEach((value, key) => {
       if(key != PaginationSearchParams.OFFSET && key != PaginationSearchParams.LIMIT) {
@@ -70,9 +70,9 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     });
     router.push(`${pathname}?${paramsAsString}`);
-  }
+  }, []);
 
-  const getAllBoxes = (currentPage: number): Box[] => {
+  const getAllBoxes = useCallback((currentPage: number): Box[] => {
     // set the new boxes that are rendered
     const newBoxes: Box[] = [];
     if (totalCount == count) {
@@ -96,7 +96,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     }
     return newBoxes;
-  }
+  }, []);
   const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
 
   useEffect(() => {

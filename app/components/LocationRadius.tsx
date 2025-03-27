@@ -54,6 +54,7 @@ export default function LocationRadius({className, onValueChange}: LocationRadiu
             onValueChange(FilterType.Radius, radiusMeters);
         } catch (error) {
             setRadiusError("Please enter a numeric value");
+            console.error(error)
         }
     }
 

@@ -51,7 +51,7 @@ export default function UsersPage() {
         }
     });
 
-    const receiveUsers = (users: Object) => {
+    const receiveUsers = (users: object) => {
         // received from Search component
         setUsers(users as Users);
     }

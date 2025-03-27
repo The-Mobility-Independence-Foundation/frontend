@@ -3,5 +3,6 @@ export type InputInfo = {
     type: string,
     minValue: string,
     maxValue: string,
-    onValueChange: (value: Object) => void
+    onValueChange: (values: Map<string, string>) => void;
+
 }

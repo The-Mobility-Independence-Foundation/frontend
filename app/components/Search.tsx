@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
 import { FilterComponentType } from "../types/FilterTypes";
@@ -18,7 +18,7 @@ import { testInventoryItems } from "../testData/TestInventoryItemData";
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: Object) => void;
+  receiveData: (data: object) => void;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -42,7 +42,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
-  const backendSearch = () => {
+  const backendSearch = useCallback(() => {
     // COMMENTED OUT FOR TESTING
     // TODO: add radius, latitude and longitude after that's finished
     // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
@@ -62,7 +62,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     }
 
     receiveData(testData)
-  }
+  }, []);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -5,7 +5,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
-import backendService from "./services/backend.service";
+// import backendService from "./services/backend.service";
 import { useRouter } from "next/navigation";
 
 const interRegular = localFont({
@@ -19,7 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
+  // const router = useRouter();
 
   // TODO Uncomment when backend is hooked up
   // backendService.get("/users/@me").catch(error => {

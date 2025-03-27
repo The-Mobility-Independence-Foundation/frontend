@@ -70,6 +70,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
     //   .then(response => {
     //     // TODO: toastr with message
     //   });
+    console.log(body)
   }
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {

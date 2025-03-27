@@ -20,7 +20,7 @@ export default function Inventory() {
   const orgID = params.get("org_id");
   const inventoryID = params.get("inventory_id");
 
-  const receiveInventoryItems = (data: Object) => {
+  const receiveInventoryItems = (data: object) => {
     const inventoryItemData = data as InventoryItems;
     setInventoryItemsDisplaying(inventoryItemData.data.results.map(item => {
       return {

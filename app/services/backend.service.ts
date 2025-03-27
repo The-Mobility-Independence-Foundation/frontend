@@ -11,11 +11,11 @@ class BackendService {
     return this.fetcher("GET", endpoint);
   }
 
-  async post(endpoint: string, data: Object) {
+  async post(endpoint: string, data: object) {
     return this.fetcher("POST", endpoint, data);
   }
 
-  async put(endpoint: string, data: Object) {
+  async put(endpoint: string, data: object) {
     return this.fetcher("PUT", endpoint, data);
   }
 
@@ -23,7 +23,7 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: Object | null = null) {
+  private async fetcher(method: string, endpoint: string, data: object | null = null) {
     const token = localStorage.getItem("token");
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api${endpoint}`, {

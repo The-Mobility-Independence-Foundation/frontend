@@ -6,8 +6,8 @@ import { useState } from "react";
 import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
-import Pagination, { PageChangeEvent } from "../components/Pagination";
-import KeysetPagination from "../components/KeysetPagination";
+import Pagination from "../components/Pagination";
+// import KeysetPagination from "../components/KeysetPagination";
 
 export default function PublicListings() {
 
@@ -23,9 +23,9 @@ export default function PublicListings() {
   });
 
   const params = useSearchParams();
-  const userID = params.get("u_id");
+  // const userID = params.get("u_id");
 
-  const receiveListings = (listings: any) => {
+  const receiveListings = (listings: object) => {
     // received from Search component
     setListings(listings as Listings);
   }
