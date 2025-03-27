@@ -3,11 +3,12 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image"
 
 export interface ImageReference {
   url: string;
   alt: string;
-  id: any;
+  id: string | number;
 }
 
 export interface ImageCarouselProps {
@@ -53,11 +54,12 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
               key={image.id}
               className="max-h-[10rem]"
             >
-              <img 
-                src={image.url} 
-                alt={image.alt} 
-                className="h-full mx-auto cursor-pointer rounded"
-                onClick={() => setFullScreenImageStartIndex(index)}
+              <Image 
+              src={image.url} 
+              alt={image.alt} 
+              className="h-full mx-auto cursor-pointer rounded !relative"
+              onClick={() => setFullScreenImageStartIndex(index)}
+              fill
               />
             </CarouselItem>
           )}
@@ -104,10 +106,11 @@ function FullScreenImage({clickFullScreenBackground, images, fullScreenImageStar
               key={image.id}
               className="w-auto flex items-center"
             >
-              <img 
+              <Image 
                 src={image.url} 
                 alt={image.alt} 
-                className="h-auto w-auto mx-auto"
+                className="h-auto w-auto mx-auto !relative"
+                fill
               />
             </CarouselItem>
           )}
