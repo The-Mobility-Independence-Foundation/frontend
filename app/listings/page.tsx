@@ -3,10 +3,10 @@
 // import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
 import { useCallback, useState } from "react";
-import { FilterComponentType } from "../types/FilterTypes";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import Pagination from "../components/Pagination";
+import { FilterComponentType } from "../types/FilterTypes";
 // import KeysetPagination from "../components/KeysetPagination";
 
 export default function PublicListings() {

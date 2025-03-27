@@ -8,13 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
 // import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
-import { FilterComponentType } from "../types/FilterTypes";
 import { testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
 import { testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { testInventoryItems } from "../testData/TestInventoryItemData";
+import { FilterComponentType } from "../types/FilterTypes";
 
 interface SearchProps {
   apiRoute: string;

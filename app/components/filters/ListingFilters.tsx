@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ACTIVE, INACTIVE } from "../../models/Status";
-import { FilterType } from "../../types/FilterTypes";
 import Filters, { FilterOptions } from "./Filters";
+import { FilterType } from "@/app/types/FilterTypes";
 
 export interface ListingFiltersProps {
   onFilterValueChange: (values: Map<string, string>) => void;

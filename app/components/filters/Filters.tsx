@@ -3,12 +3,12 @@
 import MultiSelect from "../MultiSelect";
 import RadioButton from "../RadioButton";
 import { useState } from "react";
-import { FilterType } from "../../types/FilterTypes";
 import { MultiInputInfo } from "../../types/MultiInputInfo";
 import MultiInput from "../MultiInput";
 import { MultiSelectInfo } from "../../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
+import { FilterType } from "@/app/types/FilterTypes";
 
 export interface FiltersProps {
   options: FilterOptions;
