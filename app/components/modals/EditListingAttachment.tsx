@@ -73,7 +73,7 @@ export default function EditListingAttachmentModal({listingData, onClose}: EditL
                       <Input 
                         {...fieldProps}
                         onChange={event => {
-                          onChange(event.target.files && event.target.files[0]);
+                          onChange(value);
                           onAttachmentChange(event);
                         }}
                         type="file" 
