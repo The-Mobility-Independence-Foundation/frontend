@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import backendService from "./services/backend.service";
 import { useRouter } from "next/navigation";
+import "react-chat-elements/dist/main.css";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
