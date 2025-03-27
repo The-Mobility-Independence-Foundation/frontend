@@ -9,7 +9,6 @@ import MultiInput from "../MultiInput";
 import { MultiSelectInfo } from "../../types/MultiSelectInfo";
 import { RadioButtonInfo } from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
-import dynamic from "next/dynamic";
 
 
 export interface FiltersProps {

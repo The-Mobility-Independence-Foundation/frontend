@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LatLngExpression } from "leaflet";
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,7 +15,7 @@ const Map = dynamic(() => import('./Map'), {
 
 interface LocationRadiusProps {
     className: string,
-    onValueChange: (field: string, newValue: any) => void
+    onValueChange: (field: string, newValue: number) => void
 }
 
 interface LocationData {
