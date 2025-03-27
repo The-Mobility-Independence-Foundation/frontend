@@ -24,11 +24,14 @@ const Map = ({ pos, radius, className }: MapProps) => {
         const map = L.map(mapRef.current, {zoomControl: false}).setView(pos, 10);
         mapInstance.current = map;
 
-        const maplibreLayer = (L as any).maplibreGL({
+        const maplibreLayer = L.maplibreGL({
             style: "https://tiles.openfreemap.org/styles/liberty",
-            attribution: '<a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
+        
         map.addLayer(maplibreLayer);
+        map.attributionControl.addAttribution(
+            '<a href="https://openmaptiles.org/">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        );
 
         const customIcon = L.icon({
             iconUrl: "/assets/map-marker.png",
@@ -46,14 +49,14 @@ const Map = ({ pos, radius, className }: MapProps) => {
         }).addTo(map);
         circleRef.current = circle;
 
-        var zoom = L.control.zoom({position: "topright"});
+        let zoom = L.control.zoom({position: "topright"});
         zoom.addTo(map);
 
         return () => {
             map.remove();
             mapInstance.current = null;
         };
-    }, []);
+    });
 
     useEffect(() => {
         if (!mapInstance.current) {
