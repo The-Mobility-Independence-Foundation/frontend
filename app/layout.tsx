@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import backendService from "./services/backend.service";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/hooks/useUser";
+import { Spinner } from "@/components/ui/spinner";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -20,12 +22,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
+  const {data, isLoading, isError} = useUser();
+  const pathName = usePathname();
 
-  backendService.get("/users/@me").then(response => {
-    if(!response.success) {
-      router.push('/landing');
-    }
-  });
+  // User is not logged in, there was an error, or the request is still executing
+  if (isLoading || isError || (!data.success && usePathname() != "/landing")) {
+    return (
+      <html lang="en">
+        <body className={`${interRegular.variable} antialiased`}>
+          <div className="flex items-center justify-center h-screen">
+            <Spinner></Spinner>
+          </div>
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html lang="en">

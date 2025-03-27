@@ -13,6 +13,7 @@ import { LandingFormType } from "../types/LandingFormType";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
     email: z.string().nonempty("Please enter your email"),
@@ -42,7 +43,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                 setLoginFailed(false);
                 setInvalidLogin(false);
                 localStorage.setItem('token', response.data.accessToken);
-                router.push('/listings');
+                window.location.reload();
             } else {
                 setLoginFailed(false);
                 setInvalidLogin(true);
