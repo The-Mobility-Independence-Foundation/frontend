@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image"
 
 interface LinkReference {
   route: string;
@@ -36,14 +37,15 @@ export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
 
   const backendUnreadMessages = () => {
-    const apiRoute = `/conversations`;
-    const filters = ["read=null"];
     // TODO: uncomment this when backend is hooked up
+    // const apiRoute = `/conversations`;
+    // const filters = ["read=null"];
     // backendService.get(apiRoute, filters)
     //   .then(response => {
-    //     setHasMessages(response.data?.length > 0);
+        // setHasMessages(response.data?.length > 0);
     //   }
     // )
+    setHasMessages(false)
   };
 
   setInterval(() => {
@@ -54,7 +56,14 @@ export default function Header() {
     <Link
       href="/listings"
       className="w-[20%]"
-    ><img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img>
+    >
+      <Image 
+        src="/assets/Header Logo.png" 
+        alt={`"The MIF Foundation" company logo`}
+        fill
+        className="!relative"
+      />
+      {/* <img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img> */}
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
