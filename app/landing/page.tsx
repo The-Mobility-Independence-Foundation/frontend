@@ -42,6 +42,7 @@ export default function LandingPage() {
                 className="mt-5 mb-2"
                 width="353"
                 height="100"
+                priority
             />
             <h5 className="text-white mb-4">DME Parts Exchange Portal</h5>
             {getCurrentForm()}

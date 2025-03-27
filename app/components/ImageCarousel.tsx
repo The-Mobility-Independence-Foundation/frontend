@@ -52,14 +52,16 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
           {images.map((image, index) => 
             <CarouselItem 
               key={image.id}
-              className="max-h-[10rem]"
+              className="max-h-[10rem] relative"
             >
               <Image 
-              src={image.url} 
-              alt={image.alt} 
-              className="h-full mx-auto cursor-pointer rounded !relative"
-              onClick={() => setFullScreenImageStartIndex(index)}
-              fill
+                src={image.url} 
+                alt={image.alt} 
+                className="h-full mx-auto cursor-pointer rounded !relative"
+                onClick={() => setFullScreenImageStartIndex(index)}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
               />
             </CarouselItem>
           )}
@@ -111,6 +113,7 @@ function FullScreenImage({clickFullScreenBackground, images, fullScreenImageStar
                 alt={image.alt} 
                 className="h-auto w-auto mx-auto !relative"
                 fill
+                sizes="100vw"
               />
             </CarouselItem>
           )}

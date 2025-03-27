@@ -101,7 +101,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                     <Button type="button" variant="secondary" className="w-1/4" onClick={() => setCurrentForm(LandingFormType.SignUpForm)}>Sign Up</Button>
 
                     <div className="flex items-center gap-2">
-                        <Button type="button" className="w-[40px]" size="icon">
+                        <Button type="button" className="relative w-[40px]" size="icon">
                             <Image 
                                 src="/assets/google.svg" 
                                 alt="Login with Google"

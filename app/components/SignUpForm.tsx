@@ -184,7 +184,7 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
                     <Button type="button" className="button cancel w-1/4" onClick={() => setCurrentForm(LandingFormType.LoginForm)}>Cancel</Button>
 
                     <div className="flex items-center gap-2">
-                        <Button type="button" className="w-[40px]" size="icon">
+                        <Button type="button" className="relative w-[40px]" size="icon">
                             <Image 
                                 src="/assets/google.svg" 
                                 alt="Sign Up with Google"

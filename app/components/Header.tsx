@@ -55,13 +55,14 @@ export default function Header() {
   return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
     <Link
       href="/listings"
-      className="w-[20%]"
+      className="w-[20%] relative"
     >
       <Image 
         src="/assets/Header Logo.png" 
         alt={`"The MIF Foundation" company logo`}
         fill
-        className="!relative"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"        className="!relative"
+        priority
       />
       {/* <img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img> */}
     </Link>
