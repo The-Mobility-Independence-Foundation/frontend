@@ -33,12 +33,14 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "120",
+            onValueChange: onFilterValueChange
           },
           {
             placeholder: "Height (in.)",
             type: "number",
             minValue: "0",
             maxValue: "120",
+            onValueChange: onFilterValueChange
           },
         ],
         divider: "X",
@@ -51,12 +53,14 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "100",
+            onValueChange: onFilterValueChange
           },
           {
             placeholder: "Upper Bound",
             type: "number",
             minValue: "0",
             maxValue: "100",
+            onValueChange: onFilterValueChange
           },
         ],
         divider: "-",
@@ -72,7 +76,7 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
     map: true
   };
 
-  const onValueChange = (field: string, newValue: any) => {
+  const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
     let newSelectedValues = new Map(selectedValues);
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);

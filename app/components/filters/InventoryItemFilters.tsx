@@ -31,12 +31,14 @@ export default function InventoryItemFilters({onFilterValueChange}: InventoryIte
           type: "number",
           minValue: "0",
           maxValue: "100",
+          onValueChange: onFilterValueChange
         },
         {
           placeholder: "Upper Bound",
           type: "number",
           minValue: "0",
           maxValue: "100",
+          onValueChange: onFilterValueChange
         },
       ],
       divider: "-",
@@ -44,8 +46,8 @@ export default function InventoryItemFilters({onFilterValueChange}: InventoryIte
     radioButtons: []
   }
 
-  const onValueChange = (field: string, newValue: any) => {
-    let newSelectedValues = new Map(selectedValues);
+  const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
+    const newSelectedValues = new Map(selectedValues);
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);
     } else {
