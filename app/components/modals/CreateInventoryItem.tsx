@@ -3,7 +3,7 @@ import ModalHeader from "./ModalHeader"
 import ModalBody from "./ModalBody"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 import { useEffect, useState } from "react";
 import { PartData } from "@/app/models/Part";
 import { ModelData } from "@/app/models/Model";
@@ -21,8 +21,8 @@ interface CreateInventoryItemModalProps {
 
 // TODO: test form, any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
-  const [parts, setParts] = useState<PartData[]>([]);
-  const [models, setModels] = useState<ModelData[]>([]);
+  const parts = useState<PartData[]>([])[0];
+  const models = useState<ModelData[]>([])[0];
 
   const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
 
@@ -83,7 +83,9 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
     //     // TODO: toastr with message
     //     onClose();
     //   });
-    onClose();
+    if(organizationID && values && inventoryID) {
+      onClose();
+    }
   }
   
   return (
