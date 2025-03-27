@@ -82,7 +82,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
 
   return <div className="relative">
     <div 

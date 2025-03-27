@@ -4,7 +4,7 @@ import CreateListing from "@/app/components/CreateListing";
 import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ListingData, Listings } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -43,11 +43,12 @@ export default function MyListings() {
   const path = usePathname();
   const pathSplit = path.split("/");
   const userIDInRoute = pathSplit[pathSplit.length-1];
-  if(myUserID != parseInt(userIDInRoute)) {
+  if (myUserID !== parseInt(userIDInRoute)) {
     router.push(`/listings`);
   }
 
   const receiveListings = (data: any) => {
+    console.log("receiveListings")
     // received from Search component
     setListings(data as Listings);
     
@@ -100,7 +101,6 @@ export default function MyListings() {
   }
 
   const onDeleteDialogClose = (confirm: boolean) => {
-    console.log(confirm);
     // TODO: api call
     setDeleteListingIsOpen(false);
   }

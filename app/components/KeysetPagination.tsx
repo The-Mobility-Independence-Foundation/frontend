@@ -16,7 +16,7 @@ export default function PaginationComponent({hasNextPage, hasPreviousPage, nextC
   const emitter = new EventEmitter();
 
   if(count) {
-    console.log("yurp")
+    // console.log("yurp")
   }
   
   return <Pagination className="absolute left-[1rem] bottom-[1rem] justify-start items-center">

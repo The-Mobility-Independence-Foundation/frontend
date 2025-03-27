@@ -105,7 +105,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
     if(onPageChange) {
       onPageChange({currentPage: page});
     }
-  }, [page, totalCount, count, getAllBoxes, reroutePage, onPageChange]);
+  }, [page, totalCount, count]);
 
   return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
     <PaginationContent className="w-full">
