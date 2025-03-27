@@ -25,10 +25,10 @@ export interface InventoryItemData {
   quantity: number;
   publicCount: number;
   notes: string;
-  attributes: { [key: string]: any };
+  attributes: { [key: string]: Object };
 }
 
-export function attributesToString(attributes: { [key: string]: any }) {
+export function attributesToString(attributes: { [key: string]: Object }) {
   return Object.keys(attributes)
     .map((attributeKey) => `${attributeKey}: ${attributes[attributeKey]}`)
     .join("\n");
