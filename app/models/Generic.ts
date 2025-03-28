@@ -24,3 +24,10 @@ export function toastErrors(error: ErrorCallback) {
     });
   })
 }
+
+export interface PaginationData {
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  nextCursor: string | null,
+  previousCursor: string | null
+}

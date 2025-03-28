@@ -8,8 +8,8 @@ export interface Inventory {
     results: InventoryData[],
     hasNextPage: boolean,
     hasPreviousPage: boolean,
-    nextCursor: number | null,
-    previousCursor: number | null
+    nextCursor: string | null,
+    previousCursor: string | null
   }
 }
 

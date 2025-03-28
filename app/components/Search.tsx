@@ -13,6 +13,7 @@ import { PaginationSearchParams } from "./Pagination";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
+import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
 
 interface SearchProps {
   apiRoute: string;
@@ -32,6 +33,7 @@ const formSchema = z.object({
 
 const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
+  const [paginationCursor, setPaginationCursor] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
 
@@ -39,16 +41,26 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   const offset = queryParams.get(PaginationSearchParams.OFFSET);
   const limit = queryParams.get(PaginationSearchParams.LIMIT);
 
+  useEffect(() => {
+    paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
+      setPaginationCursor(cursor);
+    })
+  })
+
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
   const backendSearch = () => {
     loading(true);
-    let url = apiRoute;
+    const params = [];
+    if(paginationCursor) {
+      params.push(`cursor=${paginationCursor}`)
+    }    
     if(searchQuery) {
-      url = `${url}?${searchBy}=${searchQuery}`;
+      params.push(`${searchBy}=${searchQuery}`);
     }
     // TODO: add parsing of filters
+    const url = `${apiRoute}${params.length > 0 ? `?${params.join("&")}` : ""}`;
     backendService.get(url)
       .then(response => {
         if(!response.success) {
@@ -105,7 +117,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
 
   useEffect(() => {
     backendSearch();
-  }, [searchQuery])
+  }, [searchQuery, paginationCursor])
 
   return <div className="relative">
     <div 
