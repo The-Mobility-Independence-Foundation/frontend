@@ -44,7 +44,7 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
   return <>
     <div className={`${className}`}>
       <Carousel 
-        className={`flex items-center justify-around`}
+        className={`flex items-center justify-around mr-[1rem]`}
         opts={{loop: true}}
       >
         {images.length > 1 && <CarouselPrevious className="static" />}
@@ -106,15 +106,15 @@ function FullScreenImage({clickFullScreenBackground, images, fullScreenImageStar
           {images.map(image => 
             <CarouselItem 
               key={image.id}
-              className="w-auto flex items-center"
+              className="relative w-auto flex items-center"
             >
               <Image 
                 src={image.url} 
                 alt={image.alt} 
                 className="h-auto w-auto mx-auto !relative"
                 fill
-                sizes="100vw"
-              />
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
             </CarouselItem>
           )}
         </CarouselContent>

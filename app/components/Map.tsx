@@ -10,7 +10,7 @@ interface MapProps {
   className: string;
 }
 
-const Map = ({ pos, radius, className }: MapProps) => {
+export default function Map({ pos, radius, className }: MapProps) {
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstance = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
@@ -78,5 +78,3 @@ const Map = ({ pos, radius, className }: MapProps) => {
 
     return <div ref={mapRef} className={className} />;
 };
-
-export default Map;
