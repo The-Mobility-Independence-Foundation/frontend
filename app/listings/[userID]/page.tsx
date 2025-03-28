@@ -10,10 +10,11 @@ import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
 import { statuses } from "../../models/Status";
-import KeysetPagination from "../../components/KeysetPagination";
+// import KeysetPagination from "../../components/KeysetPagination";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
+// import { PaginationData } from "@/app/models/Generic";
 
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
@@ -26,6 +27,7 @@ export default function MyListings() {
   const [editListingIsOpen, setEditListingIsOpen] = useState(false);
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
+  // const [paginationData, setPaginationData] = useState<PaginationData>();
 
   const [listings, setListings] = useState<Listings>({
       message: "Default",
@@ -49,10 +51,11 @@ export default function MyListings() {
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
+    const responseData = (data as Listings).data;
     setListings(data as Listings);
-    
-    setListingsChecked(new Map((data as Listings).data?.results.map(listing => [listing, false])));
-    setListingsStatus(new Map((data as Listings).data?.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
+    // TODO: keyset pagination data
+    setListingsChecked(new Map(responseData.results.map(listing => [listing, false])));
+    setListingsStatus(new Map(responseData.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
   }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
@@ -128,7 +131,8 @@ export default function MyListings() {
     <div>
       <Search 
         apiRoute="/listing"
-        receiveData={receiveListings}
+        searchBy={"name"}
+        receiveResponse={receiveListings}
         filterType={FilterComponentType.LISTINGS}
         placeholderText="Search My Listings"
         newButtonEvent={() => setNewListingDropdownIsOpen(true)}
@@ -183,11 +187,11 @@ export default function MyListings() {
       />
     </Modal>}
 
-    <KeysetPagination 
+    {/* <KeysetPagination 
       hasNextPage={listings.data.hasNext}
       hasPreviousPage={false}
       nextCursor={listings.data.nextToken}
-      count={listings.data.count}
-    />
+      previousCursor={listings.data.}
+    /> */}
   </>
 }

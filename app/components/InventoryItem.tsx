@@ -56,7 +56,7 @@ export default function InventoryItem({inventoryItem, className}: InventoryItemP
         </Link>
       </div>
     </div>
-    {!inventoryItem.inventory.archived && <Menu 
+    {!inventoryItem.inventory.archivedAt && <Menu 
       items={menuItems}
       onItemClick={onMenuItemClick}
       className="absolute right-2.5"

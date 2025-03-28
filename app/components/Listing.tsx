@@ -164,7 +164,13 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           >
             <div className="mr-[5rem]">
               <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
-              <p>{inventoryItem.inventory.location}</p>
+              {inventoryItem.inventory.address &&
+                <div className="text-white">
+                  <h5>{inventoryItem.inventory.address.addressLine1}</h5>
+                  <h5>{inventoryItem.inventory.address.addressLine2}</h5>
+                  <p>{inventoryItem.inventory.address.city}, {inventoryItem.inventory.address.state}</p>
+                  <p>{inventoryItem.inventory.address.zipCode}</p>
+                </div>}            
             </div>
             {myListing ? (
               <div className="flex flex-col justify-between mr-[5rem]">

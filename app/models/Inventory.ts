@@ -1,10 +1,22 @@
+import { AddressData } from "./Address";
 import { OrganizationData } from "./Organization";
 
 export interface Inventory {
-  message: string;
+  message: string | null;
+  success: boolean;
   data: {
-    results: InventoryData[]
+    results: InventoryData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string | null,
+    previousCursor: string | null
   }
+}
+
+export interface InventorySuccess {
+  success: boolean,
+  message: string | null,
+  data: InventoryData
 }
 
 export interface InventoryData {
@@ -12,6 +24,6 @@ export interface InventoryData {
   name: string;
   organization: OrganizationData;
   description: string;
-  location: string;
-  archived: boolean;
+  address: AddressData;
+  archivedAt: string | null;
 }

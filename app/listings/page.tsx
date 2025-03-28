@@ -33,7 +33,8 @@ export default function PublicListings() {
   return <div className="overflow-y-hidden">
     <Search 
       apiRoute={"/listings"} 
-      receiveData={receiveListings} 
+      searchBy={"name"}
+      receiveResponse={receiveListings} 
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />
