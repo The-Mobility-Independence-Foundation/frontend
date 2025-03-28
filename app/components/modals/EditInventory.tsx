@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 import { InventoryData } from "@/app/models/Inventory";
 
 interface EditInventoryModalProps {
@@ -43,7 +43,9 @@ export default function EditInventoryModal({organizationID, inventoryData, onClo
     //     // TODO: toastr with message
     //   }
     // );
-    onClose();
+    if(organizationID && values) {
+      onClose();
+    }
   }
 
   return (

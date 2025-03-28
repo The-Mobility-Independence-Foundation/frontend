@@ -14,6 +14,10 @@ export const PAGE_CHANGE_EVENT = "pageChange";
 // Possibly replacing existing Pagination
 export default function PaginationComponent({hasNextPage, hasPreviousPage, nextCursor, previousCursor, count}: KeysetPaginationProps) {
   const emitter = new EventEmitter();
+
+  if(count) {
+    // console.log("yurp")
+  }
   
   return <Pagination className="absolute left-[1rem] bottom-[1rem] justify-start items-center">
     <PaginationItem

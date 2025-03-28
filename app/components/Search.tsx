@@ -5,20 +5,20 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import backendService from "../services/backend.service";
+import { useCallback, useEffect, useState } from "react";
+// import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
-import { FilterComponentType } from "../types/FilterTypes";
-import { TEST_LISTING_ONE, TEST_LISTING_TWO, testListings } from "../testData/TestListingData";
+import { testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
-import { TEST_USER_ONE, TEST_USER_TWO, testUsers } from "../testData/TestUserData";
+import { testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
-import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
+import { testInventoryItems } from "../testData/TestInventoryItemData";
+import { FilterComponentType } from "../types/FilterTypes";
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: any) => void;
+  receiveData: (data: object) => void;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
@@ -42,7 +42,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
-  const backendSearch = () => {
+  const backendSearch = useCallback(() => {
     // COMMENTED OUT FOR TESTING
     // TODO: add radius, latitude and longitude after that's finished
     // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
@@ -62,7 +62,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     }
 
     receiveData(testData)
-  }
+  }, [apiRoute, receiveData]);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +71,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
     }
   });
 
-  const handleNewButtonClick = (event: any) => {
+  const handleNewButtonClick = () => {
     if(newButtonEvent) {
       newButtonEvent(true);
     }
@@ -82,7 +82,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit]);
+  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
 
   return <div className="relative">
     <div 

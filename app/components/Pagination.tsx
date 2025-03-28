@@ -10,7 +10,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {v4 as uuidv4} from "uuid";
 
 export interface PageChangeEvent {
@@ -62,7 +62,7 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
   const pathname = usePathname();
   const params = useSearchParams();
 
-  const reroutePage = (offset: number, limit: number) => {
+  const reroutePage = useCallback((offset: number, limit: number) => {
     let paramsAsString = `${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`;
     params.forEach((value, key) => {
       if(key != PaginationSearchParams.OFFSET && key != PaginationSearchParams.LIMIT) {
@@ -70,17 +70,9 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     });
     router.push(`${pathname}?${paramsAsString}`);
-  }
+  }, [params, pathname, router]);
 
-  useEffect(() => {
-    setBoxes(getAllBoxes(page));
-    reroutePage((page - 1) * count, count);
-    if(onPageChange) {
-      onPageChange({currentPage: page});
-    }
-  }, [page, totalCount, count]);
-
-  const getAllBoxes = (currentPage: number): Box[] => {
+  const getAllBoxes = useCallback((currentPage: number): Box[] => {
     // set the new boxes that are rendered
     const newBoxes: Box[] = [];
     if (totalCount == count) {
@@ -104,8 +96,16 @@ export default function PaginationComponent({count, totalCount, hasNext, nextTok
       }
     }
     return newBoxes;
-  }
+  }, [count, numberOfPages, totalCount]);
   const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
+
+  useEffect(() => {
+    setBoxes(getAllBoxes(page));
+    reroutePage((page - 1) * count, count);
+    if(onPageChange) {
+      onPageChange({currentPage: page});
+    }
+  }, [page, totalCount, count, setBoxes, reroutePage, onPageChange, getAllBoxes]);
 
   return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
     <PaginationContent className="w-full">

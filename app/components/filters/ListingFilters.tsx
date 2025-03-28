@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ACTIVE, INACTIVE } from "../../models/Status";
-import { FilterType } from "../../types/FilterTypes";
 import Filters, { FilterOptions } from "./Filters";
+import { FilterType } from "@/app/types/FilterTypes";
 
 export interface ListingFiltersProps {
   onFilterValueChange: (values: Map<string, string>) => void;
@@ -33,12 +33,14 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "120",
+            onValueChange: onFilterValueChange
           },
           {
             placeholder: "Height (in.)",
             type: "number",
             minValue: "0",
             maxValue: "120",
+            onValueChange: onFilterValueChange
           },
         ],
         divider: "X",
@@ -51,12 +53,14 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             type: "number",
             minValue: "0",
             maxValue: "100",
+            onValueChange: onFilterValueChange
           },
           {
             placeholder: "Upper Bound",
             type: "number",
             minValue: "0",
             maxValue: "100",
+            onValueChange: onFilterValueChange
           },
         ],
         divider: "-",
@@ -72,8 +76,8 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
     map: true
   };
 
-  const onValueChange = (field: string, newValue: any) => {
-    let newSelectedValues = new Map(selectedValues);
+  const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
+    const newSelectedValues = new Map(selectedValues);
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);
     } else {

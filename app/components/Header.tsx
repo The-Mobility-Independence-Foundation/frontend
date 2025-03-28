@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image"
 
 interface LinkReference {
   route: string;
@@ -36,14 +37,15 @@ export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
 
   const backendUnreadMessages = () => {
-    const apiRoute = `/conversations`;
-    const filters = ["read=null"];
     // TODO: uncomment this when backend is hooked up
+    // const apiRoute = `/conversations`;
+    // const filters = ["read=null"];
     // backendService.get(apiRoute, filters)
     //   .then(response => {
-    //     setHasMessages(response.data?.length > 0);
+        // setHasMessages(response.data?.length > 0);
     //   }
     // )
+    setHasMessages(false)
   };
 
   setInterval(() => {
@@ -53,8 +55,16 @@ export default function Header() {
   return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
     <Link
       href="/listings"
-      className="w-[20%]"
-    ><img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img>
+      className="w-[20%] relative"
+    >
+      <Image 
+        src="/assets/Header Logo.png" 
+        alt={`"The MIF Foundation" company logo`}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"        className="!relative"
+        priority
+      />
+      {/* <img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img> */}
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 

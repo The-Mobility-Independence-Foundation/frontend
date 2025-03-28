@@ -1,5 +1,5 @@
 import { InventoryItemData, InventoryItems } from "../models/InventoryItem";
-import { testInventory, testInventoryData1 } from "./TestInventoryData";
+import { testInventoryData1 } from "./TestInventoryData";
 
 export const TEST_INVENTORY_ITEM_DATA_1: InventoryItemData = {
   id: 1,

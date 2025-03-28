@@ -11,7 +11,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
 import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
@@ -37,7 +37,7 @@ const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
 export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
-  const userID = 1; // TODO: replace with real User ID
+  // const userID = 1; // TODO: replace with real User ID
 
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
@@ -66,10 +66,11 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
   });
 
   const patchListing = (body: PatchListing) => {
-    backendService.put(`/listings/${listing.id}`, body)
-      .then(response => {
-        // TODO: toastr with message
-      });
+    // backendService.put(`/listings/${listing.id}`, body)
+    //   .then(response => {
+    //     // TODO: toastr with message
+    //   });
+    console.log(body)
   }
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
@@ -106,7 +107,9 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
         break;
       }
       default: {
-        onMenuItemClickModal && onMenuItemClickModal(itemClicked);
+        if(onMenuItemClickModal) {
+          onMenuItemClickModal(itemClicked);
+        }
       }
     }
   }

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 import ImageCarousel, { ImageReference } from "../ImageCarousel";
 import { ListingData } from "@/app/models/Listings";
 import { ChangeEvent, useState } from "react";
@@ -40,7 +40,9 @@ export default function EditListingAttachmentModal({listingData, onClose}: EditL
     //     // TODO: toastr with message
     //   }
     // );
-    onClose();
+    if(values) {
+      onClose();
+    }
   }
 
   const onAttachmentChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +73,7 @@ export default function EditListingAttachmentModal({listingData, onClose}: EditL
                       <Input 
                         {...fieldProps}
                         onChange={event => {
-                          onChange(event.target.files && event.target.files[0]);
+                          onChange(value);
                           onAttachmentChange(event);
                         }}
                         type="file" 

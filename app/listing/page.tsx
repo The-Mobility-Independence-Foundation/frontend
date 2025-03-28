@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 import { ListingData, testListingData } from "../models/Listings";
 import Link from "next/link";
 import Modal from "../components/modals/Modal";

@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Inventory, InventoryData } from "../models/Inventory";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 import { testInventory } from "../testData/TestInventoryData";
 import Modal from "../components/modals/Modal";
 import EditInventoryModal from "../components/modals/EditInventory";
@@ -57,14 +57,19 @@ export default function Inventories() {
   }
 
   const archiveSelectedInventory = (confirm: boolean) => {
+    console.log(confirm)
     setArchiveInventoryIsOpen(false);
     //TODO
   }
 
+  const receiveInventories = useCallback((data: object) => {
+    setInventories((data as Inventory).data.results);
+  }, []);
+
   return <>
     <Search 
       apiRoute={`/organizations/${orgID}/inventories`}
-      receiveData={(data) => setInventories(data)}
+      receiveData={(data) => receiveInventories(data)}
       newButtonEvent={() => setCreateInventoryIsOpen(true)}
     />
     <div className="px-[1rem] py-[2rem]">
