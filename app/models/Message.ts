@@ -1,63 +1,38 @@
 // GET
 
-import { OrganizationData } from "./Organization";
-
-export interface Users {
+export interface Messages {
   message: string;
   data: {
     count: number;
-    totalCount: number;
     hasNext: boolean;
     nextToken: string | null;
-    results: UserData[]
+    results: MessageData[]
   }
 }
 
-export interface User {
+export interface Message {
   message: string;
-  data: UserData;
+  data: MessageData;
 }
 
-export interface UserData {
+export interface MessageData {
   id: string,
-  firstName: string,
-  lastName: string,
-  username: string,
-  displayName: string,
-  rating: number,
-  listingsNum: number,
-  connectionsNum: number,
-  lastActive: string,
-  organization: OrganizationData
+  authorId: string,
+  conversationId: string,
+  messageContent: string,
+  readStatus: string,
+  createdAt: Date,
+  updatedAt: Date
+  attachments: string[]
 }
 
-export interface PatchUser {
+export interface PatchMessage {
   id: string,
-  firstName: string,
-  lastName: string,
-  username: string,
-  displayName: string,
-  rating: number,
-  listingsNum: number,
-  connectionsNum: number,
-  lastActive: string,
-  organization: OrganizationData
-}
-
-export const testUserData: UserData = {
-  id: "1",
-  firstName: "First",
-  lastName: "Last",
-  username: "username",
-  displayName: "Display Name",
-  rating: 3.5,
-  listingsNum: 3,
-  connectionsNum: 2,
-  lastActive: "Nov. 25th 2001",
-  organization: {
-    id: "1",
-    name: "Organization",
-    email: "person@organization.com",
-    phoneNumber: "111-111-1111"
-  }
+  authorId: string,
+  conversationId: string,
+  messageContent: string,
+  readStatus: string,
+  createdAt: Date,
+  updatedAt: Date
+  attachments: string[]
 }
