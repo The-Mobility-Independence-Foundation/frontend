@@ -5,52 +5,61 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// import backendService from "@/app/services/backend.service";
-import { InventoryData } from "@/app/models/Inventory";
+import backendService from "@/app/services/backend.service";
+import { InventoryData, InventorySuccess } from "@/app/models/Inventory";
+import { Textarea } from "@/components/ui/textarea";
+import { ErrorCallback, toastErrors } from "@/app/models/Generic";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface EditInventoryModalProps {
   organizationID: number,
   inventoryData: InventoryData,
-  onClose: () => void
+  onClose: (submit: boolean) => void
 }
 
 export default function EditInventoryModal({organizationID, inventoryData, onClose}: EditInventoryModalProps) {
+  const [loadingEdit, setLoadingEdit] = useState(false);
+
   const editInventoryFormSchema = z.object({
     title: z
       .string()
       .min(1, "Title is required"),
-    address: z
-      .string()
-      .regex(/(\d{1,5}\s\w.\s(\b\w*\b\s){1,2}\w*\.)?/, "Must be in the format \"2014 Forrest Hills Dr.\"")
+      description: z
+      .string({
+        required_error: "Description is required"
+      }),
   });
   const editInventoryForm = useForm<z.infer<typeof editInventoryFormSchema>>({
     resolver: zodResolver(editInventoryFormSchema),
     defaultValues: {
       title: inventoryData.name,
-      address: inventoryData.location
+      description: inventoryData.description
     }
   })
   
   const onInventorySubmit = (values: z.infer<typeof editInventoryFormSchema>) => {
-    // TODO: Uncomment when backend is hooked up
-    // const body = {
-    //   name: values.title,
-    //   description: "",
-    //   location: values.address
-    // };
-    // backendService.patch(`/organizations/${organizationID}/inventories/${inventoryData.id}`, body)
-    //   .then(response => {
-    //     // TODO: toastr with message
-    //   }
-    // );
-    if(organizationID && values) {
-      onClose();
-    }
+    setLoadingEdit(true);
+    const body = {
+      name: values.title,
+      description: values.description
+    };
+    backendService.patch(`/organization/${organizationID}/inventory/${inventoryData.id}`, body)
+      .then(response => {
+        const responseAsInventory = response as InventorySuccess;
+        if(!responseAsInventory.success) {
+          toastErrors(response as ErrorCallback);
+          setLoadingEdit(false);
+          return;
+        }
+        onClose(true);
+      }
+    );
   }
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title={`Edit ${inventoryData.name}`} onClose={onClose} />
+      <ModalHeader title={`Edit ${inventoryData.name}`} onClose={() => onClose(false)} />
       <ModalBody>
         <>
           <FormProvider {...editInventoryForm}>
@@ -76,23 +85,30 @@ export default function EditInventoryModal({organizationID, inventoryData, onClo
               />
               <FormField
                 control={editInventoryForm.control}
-                name="address"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
+                      <Textarea 
                         {...field} 
-                        type="string" 
-                        placeholder="Address" 
+                        placeholder="Description" 
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
               <div className="flex w-max ml-auto mt-[1.5rem]">
-                <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
-                <button type="submit" className="button ml-[1rem]">
-                  Save
+                <button 
+                  onClick={() => onClose(false)} 
+                  className="button !bg-[#BBBBBB]"
+                  disabled={loadingEdit}
+                >Cancel</button>
+                <button 
+                  type="submit" 
+                  className="button ml-[1rem] h-[3rem] w-[5rem]"
+                  disabled={loadingEdit}
+                >
+                  {loadingEdit ? <Spinner className="text-white" /> : "Create"}
                 </button>
               </div>
             </form>

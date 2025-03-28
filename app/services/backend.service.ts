@@ -15,8 +15,8 @@ class BackendService {
     return this.fetcher("POST", endpoint, data);
   }
 
-  async put(endpoint: string, data: object) {
-    return this.fetcher("PUT", endpoint, data);
+  async patch(endpoint: string, data: object) {
+    return this.fetcher("PATCH", endpoint, data);
   }
 
   async delete(endpoint: string) {

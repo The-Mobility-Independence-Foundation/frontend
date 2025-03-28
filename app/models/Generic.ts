@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-export interface PostError {
+export interface ErrorCallback {
   success: boolean,
   message: string | null,
   data: {
@@ -15,7 +15,7 @@ export interface PostError {
   }
 }
 
-export function toastErrors(error: PostError) {
+export function toastErrors(error: ErrorCallback) {
   const errorKeys = Object.keys(error.data.errors);
   errorKeys.forEach(key => {
     const messages = error.data.errors[key].message;

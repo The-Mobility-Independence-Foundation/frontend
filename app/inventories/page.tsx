@@ -61,13 +61,24 @@ export default function Inventories() {
     setInventories((response as Inventory).data.results);
   }, []);
 
+  const refreshInventories = () => {
+    if(searchRef.current) {
+      searchRef.current.clearSearch();
+      searchRef.current.executeSearch();
+    }
+  }
+
   const onCreateInventoryClose = (submit: boolean) => {
     setCreateInventoryIsOpen(false);
     if(submit) {
-      if(searchRef.current) {
-        searchRef.current.clearSearch();
-        searchRef.current.executeSearch();
-      }
+      refreshInventories();
+    }
+  }
+
+  const onEditInventoryClose = (submit: boolean) => {
+    setEditInventoryIsOpen(false);
+    if(submit) {
+      refreshInventories();
     }
   }
 
@@ -117,7 +128,7 @@ export default function Inventories() {
       <EditInventoryModal
         organizationID={orgID}
         inventoryData={selectedInventory}
-        onClose={() => setEditInventoryIsOpen(false)}
+        onClose={onEditInventoryClose}
         />
     </Modal>
     }

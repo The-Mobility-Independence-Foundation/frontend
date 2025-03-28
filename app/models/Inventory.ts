@@ -13,7 +13,7 @@ export interface Inventory {
   }
 }
 
-export interface InventoryPost {
+export interface InventorySuccess {
   success: boolean,
   message: string | null,
   data: InventoryData

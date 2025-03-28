@@ -9,10 +9,10 @@ import backendService from "@/app/services/backend.service";
 import { Textarea } from "@/components/ui/textarea";
 import { Address } from "@/app/models/Address";
 import { toast } from "sonner";
-import { Inventory, InventoryPost } from "@/app/models/Inventory";
+import { InventorySuccess } from "@/app/models/Inventory";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { PostError, toastErrors } from "@/app/models/Generic";
+import { ErrorCallback, toastErrors } from "@/app/models/Generic";
 
 interface CreateInventoryModalProps {
   organizationID: number,
@@ -76,7 +76,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
       .then(response => {
         const responseAsAddress = response as Address;
         if(!responseAsAddress.success) {
-          toastErrors(response as PostError);
+          toastErrors(response as ErrorCallback);
           setLoadingCreation(false);
           return;
         }
@@ -88,7 +88,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
         };
         backendService.post(`/organization/${organizationID}/inventory`, inventoryBody)
           .then(response => {
-            const responseAsInventory = response as InventoryPost;
+            const responseAsInventory = response as InventorySuccess;
             if(responseAsInventory.message) {
               toast(response.message);
             }
