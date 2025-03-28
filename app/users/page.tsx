@@ -59,7 +59,7 @@ export default function UsersPage() {
     return <div>
         <Search 
             apiRoute={"/users"} 
-            receiveData={receiveUsers} 
+            receiveResponse={receiveUsers} 
             placeholderText="Search Users"
         />
         <div className="flex flex-wrap sm:mx-10 mt-8 gap-10 justify-center sm:justify-start">

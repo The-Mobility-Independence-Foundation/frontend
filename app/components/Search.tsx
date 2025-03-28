@@ -6,31 +6,31 @@ import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
-// import backendService from "../services/backend.service";
+import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
-import { testListings } from "../testData/TestListingData";
 import { useSearchParams } from "next/navigation";
 import { PaginationSearchParams } from "./Pagination";
-import { testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
-import { testInventoryItems } from "../testData/TestInventoryItemData";
 import { FilterComponentType } from "../types/FilterTypes";
+import { toast } from "sonner"
 
 interface SearchProps {
   apiRoute: string;
-  receiveData: (data: object) => void;
+  searchBy: string;
+  receiveResponse: (response: object) => void;
   filterType?: FilterComponentType;
   placeholderText?: string;
   newButtonText?: string;
   defaultQuery?: string;
   newButtonEvent?: (clicked: boolean) => void;
+  loadingResponse?: (loading: boolean) => void;
 }
 
 const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, receiveData, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent}: SearchProps) {  
+export default function Search({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps) {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
@@ -43,26 +43,28 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
   // TODO: grab filters from URL?
 
   const backendSearch = useCallback(() => {
-    // COMMENTED OUT FOR TESTING
-    // TODO: add radius, latitude and longitude after that's finished
-    // const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
-    // const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
-    // backendService.get(`${apiRoute}?query="${searchQuery}"&count=${limit}&offset=${offset}`, filters)
-    //   .then(response => {
-    //     receiveData(response);
-    //   });
-    let testData;
-
-    if(apiRoute == "/listing" || apiRoute == "/listings") {
-      testData = testListings
-    } else if(apiRoute == "/users") {
-      testData = testUsers;
-    } else {
-      testData = testInventoryItems
-    }
-
-    receiveData(testData)
-  }, [apiRoute, receiveData]);
+    // TODO: rework filters
+    const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
+    const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
+    loading(true);
+    backendService.get(`${apiRoute}?${searchBy}=${searchQuery}`, filters)
+      .then(response => {
+        if(response.message) {
+          toast(response.message, {
+            action: {
+              label: "Close",
+              onClick: () => {},
+            }
+          });
+          loading(false);
+          if(!response.success) {
+            return;
+          }
+        }
+        receiveResponse(response);
+        loading(false)
+      });
+  }, [apiRoute]);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,6 +85,12 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
   useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
+
+  const loading = (loading: boolean) => {
+    if(loadingResponse) {
+      loadingResponse(loading);
+    }
+  }
 
   return <div className="relative">
     <div 
@@ -110,7 +118,15 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
                       placeholder={placeholderText || "Search"}
                     />
                 </FormControl>
-                <svg className="absolute right-[0.5rem] !mt-[0rem]" width="27" height="27" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg 
+                  className="absolute right-[0.5rem] !mt-[0rem] cursor-pointer" 
+                  width="27" 
+                  height="27" 
+                  viewBox="0 0 15 15" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  onClick={backendSearch}
+                >
                   <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
                 </svg>
               </FormItem>

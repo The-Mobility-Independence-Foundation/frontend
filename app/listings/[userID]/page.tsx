@@ -128,7 +128,7 @@ export default function MyListings() {
     <div>
       <Search 
         apiRoute="/listing"
-        receiveData={receiveListings}
+        receiveResponse={receiveListings}
         filterType={FilterComponentType.LISTINGS}
         placeholderText="Search My Listings"
         newButtonEvent={() => setNewListingDropdownIsOpen(true)}
