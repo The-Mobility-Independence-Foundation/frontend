@@ -1,9 +1,14 @@
 import { OrganizationData } from "./Organization";
 
 export interface Inventory {
-  message: string;
+  message: string | null;
+  success: boolean;
   data: {
-    results: InventoryData[]
+    results: InventoryData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: number | null,
+    previousCursor: number | null
   }
 }
 

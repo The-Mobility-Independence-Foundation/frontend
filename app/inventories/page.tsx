@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Inventory, InventoryData } from "../models/Inventory";
-// import backendService from "../services/backend.service";
-import { testInventory } from "../testData/TestInventoryData";
+import backendService from "../services/backend.service";
 import Modal from "../components/modals/Modal";
 import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
@@ -12,6 +11,8 @@ import Menu from "../components/Menu";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
+import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
@@ -22,19 +23,11 @@ export default function Inventories() {
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
   const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
+  const [loadingInventories, setLoadingInventories] = useState(false);
 
   const params = useSearchParams();
   const orgID = Number(params.get("org_id")) || -1;
   const menuItems = [EDIT, ARCHIVE];
-
-  useEffect(() => {
-    // TODO: uncomment when backend is hooked up
-    // backendService.get(`organizations/${orgID}/inventories`)
-    //   .then(response => {
-    //     setInventories(response.results as Inventory[]);
-    //   })
-    setInventories(testInventory.data.results)
-  }, [orgID]);
 
   const onMenuItemClick = (item: string) => {
     switch(item) {
@@ -62,17 +55,21 @@ export default function Inventories() {
     //TODO
   }
 
-  const receiveInventories = useCallback((data: object) => {
-    setInventories((data as Inventory).data.results);
+  const receiveInventories = useCallback((response: object) => {
+    console.log(response)
+    setInventories((response as Inventory).data.results);
   }, []);
 
   return <>
     <Search 
-      apiRoute={`/organizations/${orgID}/inventories`}
-      receiveData={(data) => receiveInventories(data)}
+      apiRoute={`/inventory/organization/${orgID}/inventory`}
+      searchBy="name"
+      receiveResponse={(data) => receiveInventories(data)}
       newButtonEvent={() => setCreateInventoryIsOpen(true)}
+      loadingResponse={(loading) => setLoadingInventories(loading)}
     />
     <div className="px-[1rem] py-[2rem]">
+      {loadingInventories && <Spinner />}
       {inventories.map((inventory, index) => 
         <div
           key={inventory.id}
