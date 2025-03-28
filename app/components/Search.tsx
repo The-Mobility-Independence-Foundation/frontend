@@ -44,7 +44,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
 
   const backendSearch = () => {
     loading(true);
-    console.log(searchQuery)
     let url = apiRoute;
     if(searchQuery) {
       url = `${url}?${searchBy}=${searchQuery}`;

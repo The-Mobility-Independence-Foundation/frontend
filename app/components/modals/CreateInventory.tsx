@@ -65,39 +65,26 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
   
   const onInventorySubmit = (values: z.infer<typeof createInventoryFormSchema>) => {
     setLoadingCreation(true);
-    const addressBody = {
+    const body = {
       addressLine1: values.addressLine1,
       addressLine2: values.addressLine2 || "",
       city: values.city,
       state: values.state,
-      zipCode: values.zipCode
+      zipCode: values.zipCode,
+      organizationId: organizationID,
+      name: values.title,
+      description: values.description
     }
-    backendService.post("/address", addressBody)
+    backendService.post(`/organizations/${organizationID}/inventories`, body)
       .then(response => {
-        const responseAsAddress = response as Address;
-        if(!responseAsAddress.success) {
+        const responseAsInventory = response as InventorySuccess;
+        if(!responseAsInventory.success) {
           toastErrors(response as ErrorCallback);
           setLoadingCreation(false);
           return;
         }
-        const inventoryBody = {
-          organizationId: organizationID,
-          name: values.title,
-          description: values.description,
-          address: responseAsAddress.data.id
-        };
-        backendService.post(`/organization/${organizationID}/inventory`, inventoryBody)
-          .then(response => {
-            const responseAsInventory = response as InventorySuccess;
-            if(responseAsInventory.message) {
-              toast(response.message);
-            }
-            if(responseAsInventory.success) {
-              onClose(true);
-            }
-            setLoadingCreation(false);
-          })
-      });
+        onClose(true);
+    });
   }
 
   return (

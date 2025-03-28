@@ -44,7 +44,7 @@ export default function EditInventoryModal({organizationID, inventoryData, onClo
       name: values.title,
       description: values.description
     };
-    backendService.patch(`/organization/${organizationID}/inventory/${inventoryData.id}`, body)
+    backendService.patch(`/organizations/${organizationID}/inventories/${inventoryData.id}`, body)
       .then(response => {
         const responseAsInventory = response as InventorySuccess;
         if(!responseAsInventory.success) {
