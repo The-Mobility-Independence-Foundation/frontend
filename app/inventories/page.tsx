@@ -13,17 +13,20 @@ import Dialog from "../components/modals/Dialog";
 import { Spinner } from "@/components/ui/spinner";
 import KeysetPagination from "../components/KeysetPagination";
 import { PaginationData } from "../models/Generic";
+import backendService from "../services/backend.service";
+import { toast } from "sonner";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
 const RESTORE = "Restore";
 
+// TODO: separate tabs for archived inventories
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
   const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
+  const [selectedInventory, setSelectedInventory] = useState<InventoryData | null>(null);
   const [loadingInventories, setLoadingInventories] = useState(false);
   const [paginationData, setPaginationData] = useState<PaginationData>();
 
@@ -59,8 +62,19 @@ export default function Inventories() {
 
   const archiveSelectedInventory = (confirm: boolean) => {
     setArchiveInventoryIsOpen(false);
-    if(confirm) {}
-    //TODO
+    if(confirm && selectedInventory) {
+      setLoadingInventories(true);
+      backendService.delete(`/organizations/${orgID}/inventories/${selectedInventory.id}`)
+        .then(response => {
+          const responseAsInventory = response as Inventory;
+          if(responseAsInventory.success) {
+            toast(responseAsInventory.message);
+            setSelectedInventory(null);
+            refreshInventories();
+          }
+          setLoadingInventories(false);
+        })
+    }
   }
 
   const receiveInventories = useCallback((response: object) => {
@@ -121,11 +135,11 @@ export default function Inventories() {
             <p className="text-white">{inventory.description}</p>
           </div>
           {inventory.address &&
-          <div className="text-white">
-            <h5>{inventory.address.addressLine1}</h5>
-            <h5>{inventory.address.addressLine2}</h5>
-            <p>{inventory.address.city}, {inventory.address.state}</p>
-            <p>{inventory.address.zipCode}</p>
+          <div>
+            <h5 className="text-white">{inventory.address.addressLine1}</h5>
+            <h5 className="text-white">{inventory.address.addressLine2}</h5>
+            <p className="text-white">{inventory.address.city}, {inventory.address.state}</p>
+            <p className="text-white">{inventory.address.zipCode}</p>
           </div>
           }
           <Menu 

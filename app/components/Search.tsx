@@ -44,7 +44,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
-  const backendSearch = useCallback(() => {
+  const backendSearch = () => {
     loading(true);
     const params = [];
     if(paginationCursor) {
@@ -72,7 +72,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  }, [searchQuery, paginationCursor, apiRoute, searchBy]);
+  };
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -109,6 +109,10 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
       // TODO: clear filters
     }
   }));
+
+  useEffect(() => {
+    backendSearch();
+  }, [searchQuery, paginationCursor, apiRoute, searchBy])
 
   return <div className="relative">
     <div 
