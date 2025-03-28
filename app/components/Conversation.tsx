@@ -1,7 +1,9 @@
-import { MessageBox, MessageList } from "react-chat-elements";
 import { Messages } from "../models/Message";
 import { useEffect, useRef, useState } from "react";
 import { testMessages } from "../testData/TestMessagesData";
+import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
+import { ChatBubble, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
+import ImageCarousel from "./ImageCarousel";
 
 export interface MessagesProps {
     conversationId: string;
@@ -34,66 +36,19 @@ export default function Conversation({conversationId, userId, className}: Messag
 
     return (
         <div className={className}>
-            {/* <MessageList
-            referance={messageListRef} // Pass the reference
-            className="message-list"
-            lockable={true}
-            toBottomHeight={"100%"}
-            dataSource={[
-                {
-                    id: 1,
-                    className: "bg-[#002856]",
-                    position: "left",
-                    type: "text",
-                    title: "",
-                    text: "Give me a message list example!",
-                    date: new Date(),
-                    focus: false,
-                    titleColor: "#000",
-                    status: "read",
-                    forwarded: false,
-                    replyButton: false,
-                    removeButton: false,
-                    notch: true,
-                    retracted: false,
-                },
-                {
-                    id: 2,
-                    className: "bg-[#002856]",
-                    position: "right",
-                    type: "text",
-                    title: "",
-                    text: "That's all.",
-                    date: new Date(),
-                    focus: false,
-                    titleColor: "#000",
-                    status: "sent",
-                    forwarded: false,
-                    replyButton: false,
-                    removeButton: true,
-                    notch: true,
-                    retracted: false,
-                },
-            ]}
-            /> */}
+            <ChatMessageList>
+                <ChatBubble variant='sent'>
+                    <ChatBubbleMessage variant='sent' className="bg-[#034FA7]">
+                        Hello, how has your day been? I hope you are doing well.
+                    </ChatBubbleMessage>
+                </ChatBubble>
 
-        <MessageBox
-            id={2}
-            className="bg-[#002856]" // Custom background color
-            position="right"
-            type="text"
-            title="" // No title
-            text="That's all."
-            date={new Date()} // Current date/time
-            focus={false}
-            titleColor="#000"
-            status="sent" // Message status
-            forwarded={false}
-            replyButton={false}
-            removeButton={true}
-            notch={true}
-            retracted={false}
-            />
+                <ChatBubble variant='received'>
+                    <ChatBubbleMessage variant='received' className="bg-[#002856] text-white flex-col justify-start">
+                        Hi, I am doing well, thank you for asking. How can I help you today?
+                    </ChatBubbleMessage>
+                </ChatBubble>
+            </ChatMessageList>
         </div>
         
       );
