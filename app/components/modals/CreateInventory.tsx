@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// import backendService from "@/app/services/backend.service";
+import backendService from "@/app/services/backend.service";
 
 interface CreateInventoryModalProps {
   organizationID: number,
@@ -30,13 +30,16 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
   })
   
   const onInventorySubmit = (values: z.infer<typeof createInventoryFormSchema>) => {
-    // TODO: Uncomment when backend is hooked up
-    // const body = {
-    //   name: values.title,
-    //   organizationID: organizationID,
-    //   description: "",
-    //   location: values.address
-    // };
+    const body = {
+      name: values.title,
+      organizationID: organizationID,
+      description: "",
+      location: values.address
+    };
+    // TODO: Create new address and create inventory after that's created
+    // TODO: form for address
+    // TODO: loading spinner
+    // TODO: field for description
     // backendService.post(`/organizations/${organizationID}/inventories`, body)
     //   .then(response => {
     //     // TODO: toastr with message
