@@ -1,3 +1,4 @@
+import { AddressData } from "./Address";
 import { OrganizationData } from "./Organization";
 
 export interface Inventory {
@@ -12,11 +13,17 @@ export interface Inventory {
   }
 }
 
+export interface InventoryPost {
+  success: boolean,
+  message: string | null,
+  data: InventoryData
+}
+
 export interface InventoryData {
   id: number;
   name: string;
   organization: OrganizationData;
   description: string;
-  location: string;
-  archived: boolean;
+  address: AddressData;
+  archivedAt: string | null;
 }

@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
 import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
 import { useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ const formSchema = z.object({
   query: z.string()
 })
 
-export default function Search({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps) {  
+const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
@@ -91,6 +91,12 @@ export default function Search({apiRoute, searchBy, receiveResponse, filterType,
       loadingResponse(loading);
     }
   }
+
+  useImperativeHandle(ref, () => ({
+    executeSearch: () => {
+      backendSearch();
+    }
+  }))
 
   return <div className="relative">
     <div 
@@ -154,4 +160,6 @@ export default function Search({apiRoute, searchBy, receiveResponse, filterType,
       </div>
     }
   </div>
-}
+});
+
+export default Search;

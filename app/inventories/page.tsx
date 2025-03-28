@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Inventory, InventoryData } from "../models/Inventory";
 import backendService from "../services/backend.service";
 import Modal from "../components/modals/Modal";
@@ -11,7 +11,6 @@ import Menu from "../components/Menu";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
-import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner";
 
 const EDIT = "Edit";
@@ -24,10 +23,11 @@ export default function Inventories() {
   const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<InventoryData>();
   const [loadingInventories, setLoadingInventories] = useState(false);
-
+  
   const params = useSearchParams();
   const orgID = Number(params.get("org_id")) || -1;
   const menuItems = [EDIT, ARCHIVE];
+  const searchRef = useRef<{executeSearch: () => void} | null>(null);
 
   const onMenuItemClick = (item: string) => {
     switch(item) {
@@ -60,6 +60,11 @@ export default function Inventories() {
     setInventories((response as Inventory).data.results);
   }, []);
 
+  const onCreateInventoryClose = () => {
+    setCreateInventoryIsOpen(false);
+    searchRef.current?.executeSearch();
+  }
+
   return <>
     <Search 
       apiRoute={`/inventory/organization/${orgID}/inventory`}
@@ -67,6 +72,7 @@ export default function Inventories() {
       receiveResponse={(data) => receiveInventories(data)}
       newButtonEvent={() => setCreateInventoryIsOpen(true)}
       loadingResponse={(loading) => setLoadingInventories(loading)}
+      ref={searchRef}
     />
     <div className="px-[1rem] py-[2rem]">
       {loadingInventories && <Spinner />}
@@ -79,9 +85,10 @@ export default function Inventories() {
             <h3 className="text-white hover:underline">
               <Link href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}>{inventory.name}</Link>
             </h3>
-            {inventory.archived && <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem]">Archived</span>}
+            {inventory.archivedAt && <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem]">Archived</span>}
           </div>
-          <p className="text-white">{inventory.location}</p>
+          {/** TODO: format address */}
+          {/* <p className="text-white">{inventory.location}</p> */}
           <div>
             {/** TODO: change once fields have been established */}
             <p className="text-white">XX Different Parts</p>
@@ -114,7 +121,7 @@ export default function Inventories() {
     >
       <CreateInventoryModal
         organizationID={orgID}
-        onClose={() => setCreateInventoryIsOpen(false)}
+        onClose={onCreateInventoryClose}
         />
     </Modal>
     {selectedInventory && <Modal

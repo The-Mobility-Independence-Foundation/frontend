@@ -7,6 +7,12 @@ import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
 import { Textarea } from "@/components/ui/textarea";
+import { Address } from "@/app/models/Address";
+import { toast } from "sonner";
+import { Inventory, InventoryPost } from "@/app/models/Inventory";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { PostError, toastErrors } from "@/app/models/Generic";
 
 interface CreateInventoryModalProps {
   organizationID: number,
@@ -14,22 +20,35 @@ interface CreateInventoryModalProps {
 }
 
 export default function CreateInventoryModal({organizationID, onClose}: CreateInventoryModalProps) {
+  const [loadingCreation, setLoadingCreation] = useState(false);
+  
   const createInventoryFormSchema = z.object({
     title: z
-      .string()
-      .min(1, "Title is required"),
+      .string({
+        required_error: "Title is required"
+      }),
     description: z
-      .string(),
+      .string({
+        required_error: "Description is required"
+      }),
     addressLine1: z
-      .string(),
+      .string({
+        required_error: "Address Line 1 is required"
+      }),
     addressLine2: z
       .string(),
     city: z
-      .string(),
+      .string({
+        required_error: "City is required"
+      }),
     state: z
-      .string(),
+      .string({
+        required_error: "State is required"
+      }),
     zipCode: z
-      .string()
+      .string({
+        required_error: "Zip Code is required"
+      })
   });
   const createInventoryForm = useForm<z.infer<typeof createInventoryFormSchema>>({
     resolver: zodResolver(createInventoryFormSchema),
@@ -45,22 +64,40 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
   })
   
   const onInventorySubmit = (values: z.infer<typeof createInventoryFormSchema>) => {
-    // const body = {
-    //   name: values.title,
-    //   organizationID: organizationID,
-    //   description: "",
-    //   location: values.address
-    // };
-    // TODO: Create new address and create inventory after that's created
-    // TODO: loading spinner
-    // backendService.post(`/organizations/${organizationID}/inventories`, body)
-    //   .then(response => {
-    //     // TODO: toastr with message
-    //   }
-    // );
-    if(organizationID && values) {
-      onClose();
+    setLoadingCreation(true);
+    const addressBody = {
+      addressLine1: values.addressLine1,
+      addressLine2: values.addressLine2 || "",
+      city: values.city,
+      state: values.state,
+      zipCode: values.zipCode
     }
+    backendService.post("/address", addressBody)
+      .then(response => {
+        const responseAsAddress = response as Address;
+        if(!responseAsAddress.success) {
+          toastErrors(response as PostError);
+          setLoadingCreation(false);
+          return;
+        }
+        const inventoryBody = {
+          organizationId: organizationID,
+          name: values.title,
+          description: values.description,
+          address: responseAsAddress.data.id
+        };
+        backendService.post("/inventory", inventoryBody)
+          .then(response => {
+            const responseAsInventory = response as InventoryPost;
+            if(responseAsInventory.message) {
+              toast(response.message);
+            }
+            if(responseAsInventory.success) {
+              onClose();
+            }
+            setLoadingCreation(false);
+          })
+      });
   }
 
   return (
@@ -80,7 +117,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                     <Input
                       {...field}
                       type="string"
-                      required={true}
+                      required
                       placeholder="Title"
                       className="mb-[0.75rem]"
                     />
@@ -98,6 +135,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                       {...field}
                       placeholder="Description"
                       className="h-[5rem]"
+                      required
                     />
                   </FormControl>
                 </FormItem>
@@ -114,6 +152,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                         {...field}
                         placeholder="Address Line 1"
                         className="mb-[0.75rem]"
+                        required
                       />
                     </FormControl>
                   </FormItem>
@@ -144,6 +183,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                         {...field}
                         placeholder="City"
                         className="mb-[0.75rem]"
+                        required
                       />
                     </FormControl>
                   </FormItem>
@@ -159,6 +199,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                         <Input
                           {...field}
                           placeholder="State"
+                          required
                         />
                       </FormControl>
                     </FormItem>
@@ -173,6 +214,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                         <Input
                           {...field}
                           placeholder="Zip Code"
+                          required
                         />
                       </FormControl>
                     </FormItem>
@@ -180,25 +222,18 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                 />
               </div>
             </div>
-            {/* <FormField
-              control={createInventoryForm.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input 
-                      {...field} 
-                      type="string" 
-                      placeholder="Address" 
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            /> */}
             <div className="flex w-max ml-auto mt-[1.5rem]">
-              <button onClick={onClose} className="button !bg-[#BBBBBB]">Cancel</button>
-              <button type="submit" className="button ml-[1rem]">
-                Create
+              <button 
+                onClick={onClose} 
+                className="button !bg-[#BBBBBB]"
+                disabled={loadingCreation}
+              >Cancel</button>
+              <button 
+                type="submit" 
+                className="button ml-[1rem] h-[3rem] w-[5rem]"
+                disabled={loadingCreation}
+              >
+                {loadingCreation ? <Spinner className="text-white" /> : "Create"}
               </button>
             </div>
           </form>
