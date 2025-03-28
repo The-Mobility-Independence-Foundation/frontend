@@ -42,15 +42,18 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
-  const backendSearch = useCallback(() => {
-    // TODO: rework filters
-    const filtersAsString = Array.from(selectedValues).map(([key, value]) => `${key}:${value}`).join("&");
-    const filters = [`query="${searchQuery}`, `filters=${filtersAsString}`];
+  const backendSearch = () => {
     loading(true);
-    backendService.get(`${apiRoute}?${searchBy}=${searchQuery}`, filters)
+    console.log(searchQuery)
+    let url = apiRoute;
+    if(searchQuery) {
+      url = `${url}?${searchBy}=${searchQuery}`;
+    }
+    // TODO: add parsing of filters
+    backendService.get(url)
       .then(response => {
-        if(response.message) {
-          toast(response.message, {
+        if(!response.success) {
+          toast("There was an error grabbing data", {
             action: {
               label: "Close",
               onClick: () => {},
@@ -64,7 +67,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  }, [apiRoute]);
+  };
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,7 +87,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-  useEffect(() => backendSearch(), [searchQuery, selectedValues, offset, limit, backendSearch]);
 
   const loading = (loading: boolean) => {
     if(loadingResponse) {
@@ -95,8 +97,16 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   useImperativeHandle(ref, () => ({
     executeSearch: () => {
       backendSearch();
+    },
+    clearSearch: () => {
+      setSearchQuery("");
+      // TODO: clear filters
     }
-  }))
+  }));
+
+  useEffect(() => {
+    backendSearch();
+  }, [searchQuery])
 
   return <div className="relative">
     <div 
@@ -124,17 +134,21 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
                       placeholder={placeholderText || "Search"}
                     />
                 </FormControl>
-                <svg 
-                  className="absolute right-[0.5rem] !mt-[0rem] cursor-pointer" 
-                  width="27" 
-                  height="27" 
-                  viewBox="0 0 15 15" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  onClick={backendSearch}
+                <button 
+                  type="submit"
+                  className="!mt-[0rem] absolute right-[0.5rem]"  
                 >
-                  <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                </svg>
+                  <svg 
+                    className="cursor-pointer" 
+                    width="27" 
+                    height="27" 
+                    viewBox="0 0 15 15" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                  </svg>
+                </button>
               </FormItem>
             )}
           >

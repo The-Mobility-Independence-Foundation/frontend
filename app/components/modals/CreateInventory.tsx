@@ -16,7 +16,7 @@ import { PostError, toastErrors } from "@/app/models/Generic";
 
 interface CreateInventoryModalProps {
   organizationID: number,
-  onClose: () => void
+  onClose: (submit: boolean) => void
 }
 
 export default function CreateInventoryModal({organizationID, onClose}: CreateInventoryModalProps) {
@@ -86,14 +86,14 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
           description: values.description,
           address: responseAsAddress.data.id
         };
-        backendService.post("/inventory", inventoryBody)
+        backendService.post(`/organization/${organizationID}/inventory`, inventoryBody)
           .then(response => {
             const responseAsInventory = response as InventoryPost;
             if(responseAsInventory.message) {
               toast(response.message);
             }
             if(responseAsInventory.success) {
-              onClose();
+              onClose(true);
             }
             setLoadingCreation(false);
           })
@@ -102,7 +102,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title="Create a New Inventory" onClose={onClose} />
+      <ModalHeader title="Create a New Inventory" onClose={() => onClose(false)} />
       <ModalBody>
         <FormProvider {...createInventoryForm}>
           <form
@@ -224,7 +224,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
             </div>
             <div className="flex w-max ml-auto mt-[1.5rem]">
               <button 
-                onClick={onClose} 
+                onClick={() => onClose(false)} 
                 className="button !bg-[#BBBBBB]"
                 disabled={loadingCreation}
               >Cancel</button>

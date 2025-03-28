@@ -27,7 +27,10 @@ export default function Inventories() {
   const params = useSearchParams();
   const orgID = Number(params.get("org_id")) || -1;
   const menuItems = [EDIT, ARCHIVE];
-  const searchRef = useRef<{executeSearch: () => void} | null>(null);
+  const searchRef = useRef<{
+    executeSearch: () => void,
+    clearSearch: () => void
+  } | null>(null);
 
   const onMenuItemClick = (item: string) => {
     switch(item) {
@@ -50,24 +53,27 @@ export default function Inventories() {
   }
 
   const archiveSelectedInventory = (confirm: boolean) => {
-    console.log(confirm)
     setArchiveInventoryIsOpen(false);
     //TODO
   }
 
   const receiveInventories = useCallback((response: object) => {
-    console.log(response)
     setInventories((response as Inventory).data.results);
   }, []);
 
-  const onCreateInventoryClose = () => {
+  const onCreateInventoryClose = (submit: boolean) => {
     setCreateInventoryIsOpen(false);
-    searchRef.current?.executeSearch();
+    if(submit) {
+      if(searchRef.current) {
+        searchRef.current.clearSearch();
+        searchRef.current.executeSearch();
+      }
+    }
   }
 
   return <>
     <Search 
-      apiRoute={`/inventory/organization/${orgID}/inventory`}
+      apiRoute={`/organization/${orgID}/inventory`}
       searchBy="name"
       receiveResponse={(data) => receiveInventories(data)}
       newButtonEvent={() => setCreateInventoryIsOpen(true)}
