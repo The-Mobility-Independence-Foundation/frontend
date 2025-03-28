@@ -59,6 +59,7 @@ export default function UsersPage() {
     return <div>
         <Search 
             apiRoute={"/users"} 
+            searchBy={"name"}
             receiveResponse={receiveUsers} 
             placeholderText="Search Users"
         />

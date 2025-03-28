@@ -7,8 +7,6 @@ import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
 import { Textarea } from "@/components/ui/textarea";
-import { Address } from "@/app/models/Address";
-import { toast } from "sonner";
 import { InventorySuccess } from "@/app/models/Inventory";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";

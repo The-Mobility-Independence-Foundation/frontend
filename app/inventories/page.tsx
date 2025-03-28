@@ -1,8 +1,7 @@
 "use client"
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Inventory, InventoryData } from "../models/Inventory";
-import backendService from "../services/backend.service";
 import Modal from "../components/modals/Modal";
 import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
@@ -30,7 +29,6 @@ export default function Inventories() {
 
   const params = useSearchParams();
   const orgID = Number(params.get("org_id")) || -1;
-  const menuItems = [EDIT, ARCHIVE];
   const searchRef = useRef<{
     executeSearch: () => void,
     clearSearch: () => void
@@ -43,6 +41,9 @@ export default function Inventories() {
         break;
       case ARCHIVE:
         setArchiveInventoryIsOpen(true);
+        break;
+      case RESTORE:
+        // TODO
         break;
     }
   }
@@ -58,6 +59,7 @@ export default function Inventories() {
 
   const archiveSelectedInventory = (confirm: boolean) => {
     setArchiveInventoryIsOpen(false);
+    if(confirm) {}
     //TODO
   }
 
@@ -118,15 +120,17 @@ export default function Inventories() {
             </div>
             <p className="text-white">{inventory.description}</p>
           </div>
-          <div>
-            <h5>{inventory.address?.addressLine1}</h5>
-            <h5>{inventory.address?.addressLine2}</h5>
-            <p>{inventory.address?.city}, {inventory.address?.state}</p>
-            <p>{inventory.address?.zipCode}</p>
+          {inventory.address &&
+          <div className="text-white">
+            <h5>{inventory.address.addressLine1}</h5>
+            <h5>{inventory.address.addressLine2}</h5>
+            <p>{inventory.address.city}, {inventory.address.state}</p>
+            <p>{inventory.address.zipCode}</p>
           </div>
+          }
           <Menu 
             onOpenChange={open => onOpenChange(open, inventory)}
-            items={menuItems}
+            items={inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]}
             onItemClick={item => onMenuItemClick(item)}
             className="text-white text-lg"
           />

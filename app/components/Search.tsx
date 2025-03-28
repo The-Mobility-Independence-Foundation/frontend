@@ -8,8 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
 import backendService from "../services/backend.service";
 import ListingFilters from "./filters/ListingFilters";
-import { useSearchParams } from "next/navigation";
-import { PaginationSearchParams } from "./Pagination";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
@@ -34,12 +32,8 @@ const formSchema = z.object({
 const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [paginationCursor, setPaginationCursor] = useState("");
-  const [selectedValues, setSelectedValues] = useState(new Map());
+  // const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
-
-  const queryParams = useSearchParams();
-  const offset = queryParams.get(PaginationSearchParams.OFFSET);
-  const limit = queryParams.get(PaginationSearchParams.LIMIT);
 
   useEffect(() => {
     paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
@@ -50,7 +44,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
-  const backendSearch = () => {
+  const backendSearch = useCallback(() => {
     loading(true);
     const params = [];
     if(paginationCursor) {
@@ -78,7 +72,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  };
+  }, [searchQuery, paginationCursor, apiRoute, searchBy]);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,7 +88,8 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   }
 
   const onFilterValueChange = (values: Map<string, string>) => {
-    setSelectedValues(values);
+    // setSelectedValues(values);
+    if (values) {}
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
@@ -114,10 +109,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
       // TODO: clear filters
     }
   }));
-
-  useEffect(() => {
-    backendSearch();
-  }, [searchQuery, paginationCursor])
 
   return <div className="relative">
     <div 
@@ -187,4 +178,5 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   </div>
 });
 
+Search.displayName = "Search";
 export default Search;
