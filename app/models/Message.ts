@@ -22,7 +22,7 @@ export interface MessageData {
   messageContent: string,
   readStatus: string,
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
   attachments: string[]
 }
 
@@ -33,6 +33,6 @@ export interface PatchMessage {
   messageContent: string,
   readStatus: string,
   createdAt: Date,
-  updatedAt: Date
+  updatedAt: Date,
   attachments: string[]
 }

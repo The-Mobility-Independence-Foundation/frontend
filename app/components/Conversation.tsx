@@ -11,7 +11,7 @@ export interface MessagesProps {
     className?: string;
 }
 
-export default function Conversation({conversationId, userId, className}: MessagesProps) {
+export default function Conversation({conversationId, userId, className}: MessagesProps) {    
     const [messages, setMessages] = useState<Messages>({
         message: "Default",
         data: {
@@ -28,26 +28,42 @@ export default function Conversation({conversationId, userId, className}: Messag
     };
 
     useEffect(() => {
+        getMessages();
+
         const timer = setInterval(getMessages, 2000);
         return () => clearInterval(timer);
     }, []);
 
-    const messageListRef = useRef(null);
-
     return (
         <div className={className}>
             <ChatMessageList>
-                <ChatBubble variant='sent'>
-                    <ChatBubbleMessage variant='sent' className="bg-[#034FA7]">
-                        Hello, how has your day been? I hope you are doing well.
-                    </ChatBubbleMessage>
-                </ChatBubble>
-
-                <ChatBubble variant='received'>
-                    <ChatBubbleMessage variant='received' className="bg-[#002856] text-white flex-col justify-start">
-                        Hi, I am doing well, thank you for asking. How can I help you today?
-                    </ChatBubbleMessage>
-                </ChatBubble>
+                {messages.data?.results.map((message, index, messages) => {
+                    return <>
+                        {(index == 0 || messages[index - 1].createdAt.toLocaleDateString() != message.createdAt.toLocaleDateString()) && 
+                        <div className="flex items-center my-4">
+                            <div className="flex-grow border-t border-gray-300"></div>
+                                <span className="mx-2 text-xs text-gray-500 whitespace-nowrap">
+                                    {message.createdAt.toLocaleDateString()}
+                                </span>
+                            <div className="flex-grow border-t border-gray-300"></div>
+                        </div>}
+                        <ChatBubble key={message.id} variant={message.authorId == userId ? "sent" : "received"} className="mb-0">
+                            <ChatBubbleMessage variant={message.authorId == userId ? "sent" : "received"} 
+                            className={message.authorId == userId ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
+                                {message.messageContent}
+                            </ChatBubbleMessage>
+                        </ChatBubble>
+                        <p className={"m-0 text-xs " + (message.authorId == userId ? "text-right" : "")}>
+                            {index == messages.length - 1 && message.readStatus == "read" && <>Read </>}
+                            {message.createdAt.toLocaleTimeString([], {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                            })}
+                            {message.updatedAt != null && message.updatedAt.toLocaleString() != message.createdAt.toLocaleString() && <> (edited)</>}
+                        </p>
+                    </>
+                })}
             </ChatMessageList>
         </div>
         

@@ -16,7 +16,7 @@ export const TEST_MESSAGE_TWO = {
     authorId: "1",
     conversationId: "1",
     messageContent: "Hello",
-    readStatus: "unread",
+    readStatus: "read",
     createdAt: new Date("December 17, 2024 03:33:00"),
     updatedAt: new Date("December 17, 2024 03:33:00"),
     attachments: [""]
