@@ -120,17 +120,17 @@ export default function Inventories() {
     />
     <div className="px-[1rem] py-[2rem] max-h-[45rem] overflow-y-auto">
       {loadingInventories && <Spinner />}
-      {inventories.map((inventory, index) => 
+      {!loadingInventories && inventories.map((inventory, index) => 
         <div
           key={inventory.id}
-          className={`flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"}`}
+          className={`animate-fadeIn flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"}`}
         >
           <div className="w-[45%]">
-            <div className="flex items-center h-min">
+            <div className="flex items-start h-min">
               <h3 className="text-white hover:underline">
                 <Link href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}>{inventory.name}</Link>
               </h3>
-              {inventory.archivedAt && <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem]">Archived</span>}
+              {inventory.archivedAt && <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem] mt-[0.75rem]">Archived</span>}
             </div>
             <p className="text-white">{inventory.description}</p>
           </div>
