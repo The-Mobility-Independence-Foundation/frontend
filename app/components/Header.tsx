@@ -50,7 +50,7 @@ export default function Header() {
     backendUnreadMessages();
   }, 10000); // check for messages every 10 seconds
 
-  return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
+  return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs h-[85px] lg:h-[90px]">
     <Link
       href="/listings"
       className="w-[20%]"
