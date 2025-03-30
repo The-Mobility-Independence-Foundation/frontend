@@ -8,7 +8,7 @@ export const TEST_MESSAGE_ONE = {
     readStatus: "read",
     createdAt: new Date("December 17, 2024 03:24:00"),
     updatedAt: new Date("December 17, 2024 03:25:00"),
-    attachments: [""]
+    attachments: ["https://picsum.photos/300/200"]
 }
 
 export const TEST_MESSAGE_TWO = {
@@ -19,7 +19,7 @@ export const TEST_MESSAGE_TWO = {
     readStatus: "read",
     createdAt: new Date("December 17, 2024 03:33:00"),
     updatedAt: new Date("December 17, 2024 03:33:00"),
-    attachments: [""]
+    attachments: []
 }
 
 export const testMessages: Messages = {

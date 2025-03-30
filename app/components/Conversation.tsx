@@ -5,16 +5,20 @@ import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { ChatBubble, ChatBubbleAction, ChatBubbleActionWrapper, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
 import ImageCarousel from "./ImageCarousel";
 import { UserData } from "../models/User";
-import { Pencil1Icon } from "@radix-ui/react-icons"
+import { Pencil1Icon, PaperPlaneIcon, FileIcon } from "@radix-ui/react-icons"
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button";
+import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
+import { Spinner } from "@/components/spinner";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-    message: z.string().nonempty("Please enter a message").max(2000, "Message exceeds character limit")
-});
+    message: z.string().min(1, ""),
+    attachment: z.instanceof(File)
+}).partial();
 
 export interface MessagesProps {
     conversationId: string;
@@ -22,7 +26,12 @@ export interface MessagesProps {
     className?: string;
 }
 
-export default function Conversation({conversationId, user, className}: MessagesProps) {    
+export default function Conversation({conversationId, user, className}: MessagesProps) {
+    const fileInputRef = useRef<HTMLInputElement>(null!);
+
+    const [loading, setLoading] = useState(true);
+    const [attachments, setAttachments] = useState<string[]>([])
+
     const [messages, setMessages] = useState<Messages>({
         message: "Default",
         data: {
@@ -38,8 +47,12 @@ export default function Conversation({conversationId, user, className}: Messages
     });
 
     const getMessages = async () => {
+        setLoading(true);
+
         // TODO api call
-        setMessages(testMessages)
+        setMessages(testMessages);
+
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -49,17 +62,27 @@ export default function Conversation({conversationId, user, className}: Messages
         return () => clearInterval(timer);
     }, []);
 
+    const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let currentAttachments = attachments;
+
+        if(e.target.files != null) {
+            setAttachments(currentAttachments?.concat(URL.createObjectURL(e.target.files[0])));
+        }
+    }
+
     function onSubmit(values: z.infer<typeof formSchema>) {
 
     }
 
     return (
-        <div className={"flex flex-col h-[calc(100vh-85px)] lg:h-[calc(100vh-90px)] " + className}>
+        <div className={"flex flex-col h-[calc(100vh-85px)] lg:h-[calc(100vh-90px)] 2xl:h-[calc(100vh-120px)] " + className}>
             <div className="bg-[#D3E8FF] flex-none">
                 <h5 className="text-center">{user.displayName}</h5>
              </div>
             
-            <div className="grow">
+            {loading && <Spinner className="mt-14"></Spinner>}
+
+             <div className="grow">
                 <ChatMessageList>
                     {messages.data?.results.map((message, index, messages) => {
                         return <>
@@ -74,8 +97,19 @@ export default function Conversation({conversationId, user, className}: Messages
 
                             <ChatBubble key={message.id} variant={message.authorId == user.id ? "sent" : "received"} className="mb-0">
                                 <ChatBubbleMessage variant={message.authorId == user.id ? "sent" : "received"} 
-                                className={message.authorId == user.id ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
+                                    className={message.authorId == user.id ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
                                     {message.messageContent}
+
+                                    {message.attachments.length != 0 && <ImageCarousel
+                                        images={message.attachments.map((attachment, index) => (
+                                            {
+                                                url: attachment,
+                                                alt: "alt",
+                                                id: index
+                                            }
+                                        ))}
+                                        className="w-[150px] md:w-[300px] text-accent-foreground"
+                                    /> }
                                 </ChatBubbleMessage>
                                 <ChatBubbleActionWrapper>
                                     <ChatBubbleAction
@@ -100,25 +134,57 @@ export default function Conversation({conversationId, user, className}: Messages
                 </ChatMessageList>
             </div>
 
-            <div className="bg-[#D1D5DB] py-6 px-8 flex-none">
+            <div className="bg-[#D1D5DB] py-6 px-8">
+                <div className="mb-2 flex">
+                    {attachments?.map(attachment => (
+                        <img src={attachment} className="h-[60px]"></img>
+                    ))}
+                </div>
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <FormField
-                            control={form.control}
-                            name="message"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Message"
-                                            className="resize-none bg-white"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="flex content-end">
+                            <div className="grow">
+                                <FormField
+                                    control={form.control}
+                                    name="message"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <div className="relative">
+                                                    <AutosizeTextarea
+                                                        placeholder="Message"
+                                                        className="resize-none bg-white h-[42px]"
+                                                        {...field}
+                                                    />
+
+                                                    <Button variant="ghost" className="absolute bottom-0 right-0 h-[42px] w-[42px]">
+                                                        <PaperPlaneIcon className="size-3.5" />
+                                                    </Button>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="attachment"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-end">
+                                        <Button variant="ghost" className="h-[42px] w-[42px]" onClick={()=> {fileInputRef.current.click()}}>
+                                            <FileIcon className="size-3.5"/>
+                                        </Button>
+
+                                        <FormControl>
+                                            <Input type="file" className="hidden" ref={fileInputRef} onChange={uploadFile} />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </form>
                 </Form>
             </div>
