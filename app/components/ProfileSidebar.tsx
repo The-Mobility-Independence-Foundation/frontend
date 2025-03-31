@@ -1,9 +1,7 @@
 "use client"
 
-import { MouseEvent, useEffect, useState } from "react"
-import { OrganizationData } from "../models/Organization"
+import { useEffect, useState } from "react"
 import { UserData } from "../models/User"
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface ProfileSidebarProps {
@@ -28,8 +26,6 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
     {title: "Received Orders", route: `/account/received-orders?u_id=${user.id}`},
     {title: "Settings", route: `/account?u_id=${user.id}`}
   ];
-
-  // TODO: organization data
 
   useEffect(() => {
     const element = document.getElementById(activePath);
@@ -62,9 +58,11 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
           </h2>
           <p>@{user.displayName}</p>
           <p>{user.email}</p>
+          {user.organization && 
           <div className="bg-[#002856] text-white rounded-xl drop-shadow-md text-center my-1 py-1">
-            ORGANIZATION
+            {user.organization.name}
           </div>
+          }
         </div>
 
         <div className="relative p-[1rem]">

@@ -3,15 +3,13 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense, useEffect, useState } from "react";
 import backendService from "./services/backend.service";
 import { User, UserData } from "./models/User";
 import { toast } from "sonner";
 import ProfileSidebar from "./components/ProfileSidebar";
-// import backendService from "./services/backend.service";
-// import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -28,12 +26,23 @@ export default function RootLayout({
 }>) {
   const [user, setUser] = useState<UserData>();
 
+  const router = useRouter();
   const {data, isLoading, isError} = useUser();
   const pathName = usePathname();
 
   useEffect(() => {
     if(data?.success) {
-      setUser(data.data);
+      backendService.get(`/users/${data.data.id}`)
+        .then(response => {
+          const responseAsUser = response as User;
+          if(!responseAsUser.success) {
+            toast(responseAsUser.message);
+            router.push("/landing");
+            return;
+          }
+          setUser(responseAsUser.data);
+        })
+      // TODO: change to grab data from "data.data" after org is returnedß
     }
   }, [data]);
 
