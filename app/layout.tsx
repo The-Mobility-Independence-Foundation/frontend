@@ -26,7 +26,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [user, setUser] = useState<UserData>();
   const [isSelf, setIsSelf] = useState(false);
 
   const router = useRouter();
@@ -54,9 +53,9 @@ export default function RootLayout({
             {!pathName.endsWith("/landing") && <Header />}
             
             <div className="flex flex-1">
-              {pathName.startsWith("/account") && user && 
+              {pathName.startsWith("/account") && data.success && 
               <ProfileSidebar 
-                user={user}
+                user={data.data}
               />}
 
               <main className="flex-1">{children}</main>
