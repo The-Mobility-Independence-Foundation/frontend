@@ -54,7 +54,7 @@ export default function RootLayout({
             {!pathName.endsWith("/landing") && <Header />}
             
             <div className="flex flex-1">
-              {usePathname().startsWith("/account") && user && 
+              {pathName.startsWith("/account") && user && 
               <ProfileSidebar 
                 user={user}
               />}

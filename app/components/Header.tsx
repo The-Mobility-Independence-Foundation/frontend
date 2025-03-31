@@ -21,6 +21,7 @@ export default function Header() {
 
   const router = useRouter();
   const orgID = 1; // TODO: replace with real org id
+  const pathName = usePathname();
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
@@ -89,7 +90,7 @@ export default function Header() {
       >
         <Link 
           href={link.route}
-          className={`${usePathname().startsWith(link.base) ? "text-[#009D4F]" : ""} 
+          className={`${pathName.startsWith(link.base) ? "text-[#009D4F]" : ""} 
                       whitespace-nowrap lg:text-lg`}
         >{link.title}</Link>
         <span
@@ -100,7 +101,7 @@ export default function Header() {
     </nav>
     <Link 
       href={ACCOUNT}
-      className={`${usePathname().startsWith(ACCOUNT.split("?")[0]) ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
+      className={`${pathName.startsWith(ACCOUNT.split("?")[0]) ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
     >Account</Link>
   </div>
 }
