@@ -11,26 +11,15 @@ import { toast } from "sonner";
 interface LinkReference {
   route: string;
   title: string;
+  base: string;
 }
 
 // TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
   const [user, setUser] = useState<UserData>();
+  const [hasMessages, setHasMessages] = useState(false);
 
   const router = useRouter();
-  useEffect(() => {
-    backendService.get("/users/@me")
-    .then(response => {
-      const responseAsUser = response as User;
-      if(!responseAsUser.success) {
-        toast(responseAsUser.message);
-        router.push("/landing");
-        return;
-      }
-      setUser(responseAsUser.data);
-    });
-  })
-  
   const orgID = 1; // TODO: replace with real org id
 
   // URLS
@@ -42,17 +31,25 @@ export default function Header() {
   const ACCOUNT = `/account?u_id=${user?.id}`;
 
   const links: LinkReference[] = [
-    {route: PUBLIC_LISTINGS, title: "Public Listings"},
-    {route: FORUM, title: "Forum"},
-    {route: PRIVATE_MESSAGES, title: "Private Messages"},
-    {route: INVENTORIES, title: "My Inventories"},
-    {route: MY_LISTINGS, title: "My Listings"},
+    {route: PUBLIC_LISTINGS, title: "Public Listings", base: PUBLIC_LISTINGS.split("?")[0]},
+    {route: FORUM, title: "Forum", base: FORUM.split("?")[0]},
+    {route: PRIVATE_MESSAGES, title: "Private Messages", base: PRIVATE_MESSAGES.split("?")[0]},
+    {route: INVENTORIES, title: "My Inventories", base: INVENTORIES.split("?")[0]},
+    {route: MY_LISTINGS, title: "My Listings", base: MY_LISTINGS.split("?")[0]},
   ];
 
-  const basePath = usePathname();
-  const params = useSearchParams();
-  const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
-  const [hasMessages, setHasMessages] = useState(false);
+  useEffect(() => {
+    backendService.get("/users/@me")
+    .then(response => {
+      const responseAsUser = response as User;
+      if(!responseAsUser.success) {
+        toast(responseAsUser.message);
+        router.push("/landing");
+        return;
+      }
+      setUser(responseAsUser.data);
+    });
+  });
 
   const backendUnreadMessages = () => {
     // TODO: uncomment this when backend is hooked up
@@ -92,7 +89,8 @@ export default function Header() {
       >
         <Link 
           href={link.route}
-          className={`${path == link.route ? "text-[#009D4F]" : ""} whitespace-nowrap lg:text-lg`}
+          className={`${usePathname().startsWith(link.base) ? "text-[#009D4F]" : ""} 
+                      whitespace-nowrap lg:text-lg`}
         >{link.title}</Link>
         <span
           className={`text-red-600 ml-[0.2rem] text-xl lg:text-3xl ${link.route == PRIVATE_MESSAGES && hasMessages ? "opacity-100" : "opacity-0"}`}
@@ -102,7 +100,7 @@ export default function Header() {
     </nav>
     <Link 
       href={ACCOUNT}
-      className={`${path == ACCOUNT ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
+      className={`${usePathname().startsWith(ACCOUNT.split("?")[0]) ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
     >Account</Link>
   </div>
 }
