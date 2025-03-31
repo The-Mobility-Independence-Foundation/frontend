@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import ProfileSidebar from "./components/ProfileSidebar";
 // import backendService from "./services/backend.service";
 // import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/hooks/useUser";
+import { Spinner } from "@/components/ui/spinner";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -28,30 +30,28 @@ export default function RootLayout({
   const [isSelf, setIsSelf] = useState(false);
 
   const router = useRouter();
+  const {data, isLoading, isError} = useUser();
+  const pathName = usePathname();
 
-  useEffect(() => {
-    // backendService.get("/users/@me")
-    // .then(response => {
-    //   const responseAsUser = response as User;
-    //   if(!responseAsUser.success) {
-    //     toast(responseAsUser.message);
-    //     router.push("/landing");
-    //     return;
-    //   }
-    //   setUser(responseAsUser.data);
-    // })
-    // .catch(error => {
-    //   console.error(error);
-    //   router.push("/landing");
-    // });
-  }, []);
+  // User is not logged in, there was an error, or the request is still executing
+  if (isLoading || isError || (!data.success && pathName != "/landing")) {
+    return (
+      <html lang="en">
+        <body className={`${interRegular.variable} antialiased`}>
+          <div className="flex items-center justify-center h-screen">
+            <Spinner></Spinner>
+          </div>
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <div className="w-full h-screen flex flex-col">
-            {!usePathname().endsWith("/landing") && <Header />}
+            {!pathName.endsWith("/landing") && <Header />}
             
             <div className="flex flex-1">
               {usePathname().startsWith("/account") && user && 

@@ -23,11 +23,9 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: object | null = null) {
-    if(typeof window === "undefined") {
-      return {success: false};
-    }
-    const token = localStorage.getItem("token");
+  private async fetcher(method: string, endpoint: string, data: any = null) {
+    let token = localStorage.getItem("token");
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
       method: method,
       body: data ? JSON.stringify(data) : null,

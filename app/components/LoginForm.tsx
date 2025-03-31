@@ -13,6 +13,7 @@ import { LandingFormType } from "../types/LandingFormType";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 
 const formSchema = z.object({
@@ -27,6 +28,7 @@ interface LoginFormProps {
 export default function SignUpForm({setCurrentForm}: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [invalidLogin, setInvalidLogin] = useState(false);
+    const [loginFailed, setLoginFailed] = useState(false);
     const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -38,12 +40,18 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
             "email":  values.email,
             "password": values.password
         }).then(response => {
-            setInvalidLogin(false);
-            sessionStorage.setItem('accessToken', response.accessToken);
-            router.push('/listings');
+            if(response.success) {
+                setLoginFailed(false);
+                setInvalidLogin(false);
+                localStorage.setItem('token', response.data.accessToken);
+                window.location.reload();
+            } else {
+                setLoginFailed(false);
+                setInvalidLogin(true);
+            }
         }).catch(error => {
-            setInvalidLogin(true);
-            console.error(error);
+            setLoginFailed(true);
+            setInvalidLogin(false);
         })
     }
 
@@ -95,6 +103,13 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                     <AlertTitle className="text-left text-sm font-semibold text-red-500">Login Invalid</AlertTitle>
                     <AlertDescription className="text-left">
                         Your login is invalid, please try again.
+                    </AlertDescription>
+                </Alert>}
+                {loginFailed && <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="text-left text-sm font-semibold text-red-500">Login Failed</AlertTitle>
+                    <AlertDescription className="text-left">
+                        Your login failed, please try again.
                     </AlertDescription>
                 </Alert>}
                 <div className="flex justify-between items-center gap-[5vw] pt-3">
