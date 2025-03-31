@@ -3,13 +3,12 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense, useEffect, useState } from "react";
 import backendService from "./services/backend.service";
 import { User, UserData } from "./models/User";
 import { toast } from "sonner";
-import router from "next/router";
 import ProfileSidebar from "./components/ProfileSidebar";
 // import backendService from "./services/backend.service";
 // import { useRouter } from "next/navigation";
@@ -28,22 +27,24 @@ export default function RootLayout({
   const [user, setUser] = useState<UserData>();
   const [isSelf, setIsSelf] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
-    backendService.get("/users/@me")
-    .then(response => {
-      const responseAsUser = response as User;
-      if(!responseAsUser.success) {
-        toast(responseAsUser.message);
-        router.push("/landing");
-        return;
-      }
-      setUser(responseAsUser.data);
-    })
-    .catch(error => {
-      console.error(error);
-      router.push("/landing");
-    });
-  });
+    // backendService.get("/users/@me")
+    // .then(response => {
+    //   const responseAsUser = response as User;
+    //   if(!responseAsUser.success) {
+    //     toast(responseAsUser.message);
+    //     router.push("/landing");
+    //     return;
+    //   }
+    //   setUser(responseAsUser.data);
+    // })
+    // .catch(error => {
+    //   console.error(error);
+    //   router.push("/landing");
+    // });
+  }, []);
 
   return (
     <html lang="en">

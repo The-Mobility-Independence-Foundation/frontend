@@ -16,6 +16,7 @@ interface Tab {
   route: string
 }
 
+// TODO: collapse menu
 export default function ProfileSidebar({user}: ProfileSidebarProps) {
   const [activePath, setActivePath] = useState<string>(`${usePathname()}?${useSearchParams()}`);
   const [activeElementY, setActiveElementY] = useState(0);
