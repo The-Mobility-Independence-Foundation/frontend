@@ -1,9 +1,12 @@
 "use client"
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Image from "next/image"
+import backendService from "../services/backend.service";
+import { User, UserData } from "../models/User";
+import { toast } from "sonner";
 
 interface LinkReference {
   route: string;
@@ -12,16 +15,31 @@ interface LinkReference {
 
 // TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
-  const userID = 1; // TODO: replace with real User ID
+  const [user, setUser] = useState<UserData>();
+
+  const router = useRouter();
+  useEffect(() => {
+    backendService.get("/users/@me")
+    .then(response => {
+      const responseAsUser = response as User;
+      if(!responseAsUser.success) {
+        toast(responseAsUser.message);
+        router.push("/landing");
+        return;
+      }
+      setUser(responseAsUser.data);
+    });
+  })
+  
   const orgID = 1; // TODO: replace with real org id
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
   const FORUM = "/forum";
-  const PRIVATE_MESSAGES = `/messages?u_id=${userID}`;
+  const PRIVATE_MESSAGES = `/messages?u_id=${user?.id}`;
   const INVENTORIES = `/inventories?org_id=${orgID}`;
-  const MY_LISTINGS = `/listings/${userID}`;
-  const ACCOUNT = "/account";
+  const MY_LISTINGS = `/listings/${user?.id}`;
+  const ACCOUNT = `/account?u_id=${user?.id}`;
 
   const links: LinkReference[] = [
     {route: PUBLIC_LISTINGS, title: "Public Listings"},
@@ -52,7 +70,7 @@ export default function Header() {
     backendUnreadMessages();
   }, 10000); // check for messages every 10 seconds
 
-  return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
+  return <div className="h-min bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs">
     <Link
       href="/listings"
       className="w-[20%] relative"

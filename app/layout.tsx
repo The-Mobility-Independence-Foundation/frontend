@@ -31,9 +31,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
-          {!usePathname().endsWith("/landing") && <Header />}
+          <div className="w-full h-screen flex flex-col">
+            {!usePathname().endsWith("/landing") && <Header />}
 
-          <main>{children}</main>
+            <main className="flex-1">{children}</main>
+          </div>
           <Toaster richColors />
         </Suspense>
       </body>
