@@ -1,7 +1,10 @@
+"use client"
+
 import { MouseEvent, useEffect, useState } from "react"
 import { OrganizationData } from "../models/Organization"
 import { UserData } from "../models/User"
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface ProfileSidebarProps {
   user: UserData,
@@ -14,30 +17,36 @@ interface Tab {
 }
 
 export default function ProfileSidebar({user}: ProfileSidebarProps) {
-  const [activeTabY, setActiveTabY] = useState(0);
-  const [activeTabHeight, setActiveTabHeight] = useState(0);
+  const [activePath, setActivePath] = useState<string>(`${usePathname()}?${useSearchParams()}`);
+  const [activeElementY, setActiveElementY] = useState(0);
+  const [activeElementHeight, setActiveElementHeight] = useState(0);
 
+  const router = useRouter();
   const tabs: Tab[] = [
     {title: "Connections", route: `/account/connections?u_id=${user.id}`},
     {title: "My Orders", route: `/account/my-orders?u_id=${user.id}`},
     {title: "Received Orders", route: `/account/received-orders?u_id=${user.id}`},
     {title: "Settings", route: `/account?u_id=${user.id}`}
   ];
+
   // TODO: organization data
 
-  const setActiveTabStyles = (y: number, height: number) => {
-    setActiveTabY(y);
-    setActiveTabHeight(height);
-  }
-
-  const clickTab = (event: MouseEvent<HTMLDivElement>) => {
-    const element = event.currentTarget;
-    const parent = element.parentElement;
-    if(element && parent) {
-      const elementRect = element.getBoundingClientRect();
-      const parentRect = parent.getBoundingClientRect();
-      setActiveTabStyles(elementRect.top - parentRect.top, elementRect.height);
+  useEffect(() => {
+    const element = document.getElementById(activePath);
+    if(element) {
+      const parent = element.parentElement;
+      if(parent) {
+        const elementRect = element.getBoundingClientRect();
+        const parentRect = parent.getBoundingClientRect();
+        setActiveElementY(elementRect.top - parentRect.top);
+        setActiveElementHeight(elementRect.height);
+      }
     }
+  }, [activePath]);
+
+  const clickTab = (route: string) => {
+    router.push(route);
+    setActivePath(route);
   }
   
   return <div className="h-full w-min flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md">
@@ -53,7 +62,8 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
         <div 
           className="w-full p-1 my-3 cursor-pointer hover:opacity-50 transition-opacity duration-100" 
           key={tab.route}
-          onClick={(event) => clickTab(event)}
+          id={tab.route}
+          onClick={() => clickTab(tab.route)}
         >
             <h5 className="text-right">{tab.title}</h5>
         </div>
@@ -64,8 +74,8 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
           border-r-[5px] border-r-[#002856] 
           border-t-[1px] border-t-[#bdd8f6] border-b-[1px] border-b-[#bdd8f6]"
         style={{
-          top: `${activeTabY}px`,
-          height: `${activeTabHeight}px`
+          top: `${activeElementY}px`,
+          height: `${activeElementHeight}px`
         }}
       />
     </div>
