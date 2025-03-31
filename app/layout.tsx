@@ -3,9 +3,14 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import backendService from "./services/backend.service";
+import { User, UserData } from "./models/User";
+import { toast } from "sonner";
+import router from "next/router";
+import ProfileSidebar from "./components/ProfileSidebar";
 // import backendService from "./services/backend.service";
 // import { useRouter } from "next/navigation";
 
@@ -20,12 +25,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const router = useRouter();
+  const [user, setUser] = useState<UserData>();
+  const [isSelf, setIsSelf] = useState(false);
 
-  // TODO Uncomment when backend is hooked up
-  // backendService.get("/users/@me").catch(error => {
-  //   router.push('/landing');
-  // })
+  useEffect(() => {
+    backendService.get("/users/@me")
+    .then(response => {
+      const responseAsUser = response as User;
+      if(!responseAsUser.success) {
+        toast(responseAsUser.message);
+        router.push("/landing");
+        return;
+      }
+      setUser(responseAsUser.data);
+    })
+    .catch(error => {
+      console.error(error);
+      router.push("/landing");
+    });
+  });
 
   return (
     <html lang="en">
@@ -33,8 +51,15 @@ export default function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>
           <div className="w-full h-screen flex flex-col">
             {!usePathname().endsWith("/landing") && <Header />}
+            
+            <div className="flex flex-1">
+              {usePathname().startsWith("/account") && user && 
+              <ProfileSidebar 
+                user={user}
+              />}
 
-            <main className="flex-1">{children}</main>
+              <main className="flex-1">{children}</main>
+            </div>
           </div>
           <Toaster richColors />
         </Suspense>
