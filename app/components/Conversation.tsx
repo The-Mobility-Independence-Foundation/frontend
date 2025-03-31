@@ -5,7 +5,7 @@ import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { ChatBubble, ChatBubbleAction, ChatBubbleActionWrapper, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
 import ImageCarousel from "./ImageCarousel";
 import { UserData } from "../models/User";
-import { Pencil1Icon, PaperPlaneIcon, FileIcon } from "@radix-ui/react-icons"
+import { Pencil1Icon, PaperPlaneIcon, FileIcon, TrashIcon } from "@radix-ui/react-icons"
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,6 +31,7 @@ export default function Conversation({conversationId, user, className}: Messages
 
     const [loading, setLoading] = useState(true);
     const [attachments, setAttachments] = useState<string[]>([])
+    const [messagesEditing, setMessagesEditing] = useState<Map<string, boolean>>()
 
     const [messages, setMessages] = useState<Messages>({
         message: "Default",
@@ -42,7 +43,11 @@ export default function Conversation({conversationId, user, className}: Messages
         }
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const sendForm = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema)
+    });
+
+    const editForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema)
     });
 
@@ -70,8 +75,36 @@ export default function Conversation({conversationId, user, className}: Messages
         }
     }
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    const removeFile = (index: number) => {
+        let currentAttachments = [...attachments];
 
+        setAttachments([...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]);
+    }
+
+    function setEditing(messageId: string, editing: boolean) {
+        let currentMessagesEditing = new Map(messagesEditing);
+
+        currentMessagesEditing.set(messageId, editing);
+
+        setMessagesEditing(currentMessagesEditing);
+    }
+
+    function onSend(values: z.infer<typeof formSchema>) {
+        // TODO call endpoint
+
+        sendForm.reset({message: ""});
+        setAttachments([]);
+        getMessages();
+    }
+
+    function onEditSubmit(values: z.infer<typeof formSchema>) {
+        // TODO call endpoint
+
+        getMessages();
+    }
+
+    function onDeleteMessage(messageId: string) {
+        //TODO call endpoint
     }
 
     return (
@@ -95,12 +128,47 @@ export default function Conversation({conversationId, user, className}: Messages
                                 <div className="flex-grow border-t border-gray-300"></div>
                             </div>}
 
-                            <ChatBubble key={message.id} variant={message.authorId == user.id ? "sent" : "received"} className="mb-0">
+                            <ChatBubble key={message.id} variant={message.authorId == user.id ? "sent" : "received"} className="mb-0"> 
                                 <ChatBubbleMessage variant={message.authorId == user.id ? "sent" : "received"} 
                                     className={message.authorId == user.id ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
-                                    {message.messageContent}
+                                    {messagesEditing?.has(message.id) && messagesEditing.get(message.id) && 
+                                        <Form {...editForm}>
+                                            <form onSubmit={editForm.handleSubmit(onEditSubmit)}>
+                                            <FormField
+                                                control={editForm.control}
+                                                name="message"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <AutosizeTextarea
+                                                                    placeholder="Message"
+                                                                    className="resize-none bg-transparent text-white"
+                                                                    defaultValue={message.messageContent}
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key == "Enter" && !e.shiftKey) {
+                                                                            e.preventDefault();
+                                                                            editForm.handleSubmit(onEditSubmit)();
+                                                                            setEditing(message.id, false);
+                                                                        } else if (e.key == "Escape") {
+                                                                            setEditing(message.id, false);
+                                                                        }
+                                                                    }}
+                                                                    {...field}
+                                                                />
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            </form>
+                                        </Form>}
+                                
+                                    {(!messagesEditing?.has(message.id) || !messagesEditing.get(message.id)) && message.messageContent}
 
-                                    {message.attachments.length != 0 && <ImageCarousel
+                                    {message.attachments.length != 0 && 
+                                    <ImageCarousel
                                         images={message.attachments.map((attachment, index) => (
                                             {
                                                 url: attachment,
@@ -111,13 +179,20 @@ export default function Conversation({conversationId, user, className}: Messages
                                         className="w-[150px] md:w-[300px] text-accent-foreground"
                                     /> }
                                 </ChatBubbleMessage>
+                                
+                                {message.authorId == user.id && 
                                 <ChatBubbleActionWrapper>
                                     <ChatBubbleAction
                                         className="size-7"
                                         icon={<Pencil1Icon />}
-                                        onClick={() => {}}
+                                        onClick={() => {setEditing(message.id, true)}}
                                     />
-                                </ChatBubbleActionWrapper>
+                                    <ChatBubbleAction
+                                        className="size-7"
+                                        icon={<TrashIcon />}
+                                        onClick={() => {onDeleteMessage(message.id)}}
+                                    />
+                                </ChatBubbleActionWrapper>}
                             </ChatBubble>
 
                             <p className={"m-0 text-xs " + (message.authorId == user.id ? "text-right" : "")}>
@@ -136,17 +211,22 @@ export default function Conversation({conversationId, user, className}: Messages
 
             <div className="bg-[#D1D5DB] py-6 px-8">
                 <div className="mb-2 flex">
-                    {attachments?.map(attachment => (
-                        <img src={attachment} className="h-[60px]"></img>
+                    {attachments?.map((attachment, index) => (
+                        <div className="relative group">
+                            <Button variant="outline" onClick={() => removeFile(index)} className="h-6 p-1 absolute top-[2px] right-[2px] opacity-0 group-hover:opacity-100">
+                                <TrashIcon />
+                            </Button>
+                            <img src={attachment} className="h-[80px]"></img>
+                        </div>
                     ))}
                 </div>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Form {...sendForm}>
+                    <form onSubmit={sendForm.handleSubmit(onSend)}>
                         <div className="flex content-end">
                             <div className="grow">
                                 <FormField
-                                    control={form.control}
+                                    control={sendForm.control}
                                     name="message"
                                     render={({ field }) => (
                                         <FormItem>
@@ -155,10 +235,16 @@ export default function Conversation({conversationId, user, className}: Messages
                                                     <AutosizeTextarea
                                                         placeholder="Message"
                                                         className="resize-none bg-white h-[42px]"
+                                                        onKeyDown={(e) => {
+                                                            if (e.key == "Enter" && !e.shiftKey) {
+                                                                e.preventDefault();
+                                                                sendForm.handleSubmit(onSend)();
+                                                            }
+                                                        }}
                                                         {...field}
                                                     />
 
-                                                    <Button variant="ghost" className="absolute bottom-0 right-0 h-[42px] w-[42px]">
+                                                    <Button variant="ghost" type="submit" className="absolute bottom-0 right-0 h-[42px] w-[42px]">
                                                         <PaperPlaneIcon className="size-3.5" />
                                                     </Button>
                                                 </div>
@@ -170,11 +256,11 @@ export default function Conversation({conversationId, user, className}: Messages
                             </div>
 
                             <FormField
-                                control={form.control}
+                                control={sendForm.control}
                                 name="attachment"
                                 render={({ field }) => (
                                     <FormItem className="flex items-end">
-                                        <Button variant="ghost" className="h-[42px] w-[42px]" onClick={()=> {fileInputRef.current.click()}}>
+                                        <Button variant="ghost" className="h-[42px] w-[42px]" type="button" onClick={()=> {fileInputRef.current.click()}}>
                                             <FileIcon className="size-3.5"/>
                                         </Button>
 
