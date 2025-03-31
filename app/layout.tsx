@@ -26,11 +26,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isSelf, setIsSelf] = useState(false);
+  const [user, setUser] = useState<UserData>();
 
-  const router = useRouter();
   const {data, isLoading, isError} = useUser();
   const pathName = usePathname();
+
+  useEffect(() => {
+    if(data?.success) {
+      setUser(data.data);
+    }
+  }, [data]);
 
   // User is not logged in, there was an error, or the request is still executing
   if (isLoading || isError || (!data.success && pathName != "/landing")) {
@@ -50,7 +55,7 @@ export default function RootLayout({
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <div className="w-full h-screen flex flex-col">
-            {!pathName.endsWith("/landing") && <Header />}
+            {!pathName.endsWith("/landing") && user && <Header user={user} />}
             
             <div className="flex flex-1">
               {pathName.startsWith("/account") && data.success && 

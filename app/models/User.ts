@@ -30,6 +30,7 @@ export interface UserData {
   inactive: boolean,
   referralCode: string | null,
   rating: string
+  organization: OrganizationData | null
 }
 
 export interface PatchUser {

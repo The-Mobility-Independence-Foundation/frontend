@@ -14,20 +14,21 @@ interface LinkReference {
   base: string;
 }
 
+interface HeaderProps {
+  user: UserData
+}
+
 // TODO: highlight "Public Listings" with query parameters (should work with all links)
-export default function Header() {
-  const [user, setUser] = useState<UserData>();
+export default function Header({user}: HeaderProps) {
   const [hasMessages, setHasMessages] = useState(false);
 
-  const router = useRouter();
-  const orgID = 1; // TODO: replace with real org id
   const pathName = usePathname();
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
   const FORUM = "/forum";
-  const PRIVATE_MESSAGES = `/messages?u_id=${user?.id}`;
-  const INVENTORIES = `/inventories?org_id=${orgID}`;
+  const PRIVATE_MESSAGES = `/messages?u_id=${user.id}`;
+  const INVENTORIES = user.organization ? `/inventories?org_id=${user.organization.id}` : PUBLIC_LISTINGS;
   const MY_LISTINGS = `/listings/${user?.id}`;
   const ACCOUNT = `/account?u_id=${user?.id}`;
 
@@ -38,19 +39,6 @@ export default function Header() {
     {route: INVENTORIES, title: "My Inventories", base: INVENTORIES.split("?")[0]},
     {route: MY_LISTINGS, title: "My Listings", base: MY_LISTINGS.split("?")[0]},
   ];
-
-  useEffect(() => {
-    backendService.get("/users/@me")
-    .then(response => {
-      const responseAsUser = response as User;
-      if(!responseAsUser.success) {
-        toast(responseAsUser.message);
-        router.push("/landing");
-        return;
-      }
-      setUser(responseAsUser.data);
-    });
-  });
 
   const backendUnreadMessages = () => {
     // TODO: uncomment this when backend is hooked up
@@ -80,12 +68,11 @@ export default function Header() {
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"        className="!relative"
         priority
       />
-      {/* <img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img> */}
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
       <div 
-        key={link.route}
+        key={link.title}
         className="flex items-center"
       >
         <Link 
