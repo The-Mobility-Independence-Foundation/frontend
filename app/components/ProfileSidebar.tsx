@@ -51,7 +51,7 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
   
   return (
     <div className={`relative ${appearing ? "animate-slideIn" : "animate-slideOut"}`}>
-      <div className="h-full w-min flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md">
+      <div className={`h-full flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md ${appearing ? "w-min" : "w-0 p-0 overflow-hidden"}`}>
         <div className="m-[1rem]">
           <h2 className="text-nowrap">
             {user.firstName} {user.lastName}
