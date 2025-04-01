@@ -59,7 +59,7 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
                     "email":  values.email,
                     "password": values.password
                 }).then(response => {
-                    sessionStorage.setItem('accessToken', response.accessToken);
+                    localStorage.setItem('token', response.accessToken);
     
                     router.push('/listings');
                 }).catch(() => {
