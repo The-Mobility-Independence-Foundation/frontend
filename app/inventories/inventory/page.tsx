@@ -47,7 +47,8 @@ export default function Inventory() {
       )}
       <Search
         apiRoute={`/organizations/${orgID}/inventories/${inventoryID}/items`}
-        receiveData={receiveInventoryItems}
+        searchBy={"name"}
+        receiveResponse={receiveInventoryItems}
         placeholderText="Search Inventory Items"
         newButtonEvent={() => setNewItemModalIsOpen(true)}
         filterType={FilterComponentType.INVENTORY_ITEMS}
