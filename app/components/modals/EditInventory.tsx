@@ -42,7 +42,8 @@ export default function EditInventoryModal({organizationID, inventoryData, onClo
     setLoadingEdit(true);
     const body = {
       name: values.title,
-      description: values.description
+      description: values.description,
+      restore: false
     };
     backendService.patch(`/organizations/${organizationID}/inventories/${inventoryData.id}`, body)
       .then(response => {
