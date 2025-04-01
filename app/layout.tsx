@@ -3,13 +3,15 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { Suspense, useEffect, useState } from "react";
 import backendService from "./services/backend.service";
-import { useRouter } from "next/navigation";
+import { User, UserData } from "./models/User";
+import { toast } from "sonner";
+import ProfileSidebar from "./components/ProfileSidebar";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
-import { Suspense } from "react";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -22,9 +24,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [user, setUser] = useState<UserData>();
+
   const router = useRouter();
   const {data, isLoading, isError} = useUser();
   const pathName = usePathname();
+
+  useEffect(() => {
+    if(data?.success) {
+      backendService.get(`/users/${data.data.id}`)
+        .then(response => {
+          const responseAsUser = response as User;
+          if(!responseAsUser.success) {
+            toast(responseAsUser.message);
+            router.push("/landing");
+            return;
+          }
+          setUser(responseAsUser.data);
+        })
+      // TODO: change to grab data from "data.data" after org is returnedß
+    }
+  }, [data]);
 
   // User is not logged in, there was an error, or the request is still executing
   if (isLoading || isError || (!data.success && pathName != "/landing")) {
@@ -43,9 +63,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
-          {!pathName.endsWith("/landing") && <Header />}
+          <div className="w-full h-screen flex flex-col">
+            {!pathName.endsWith("/landing") && user && <Header user={user} />}
+            
+            <div className="flex flex-1">
+              {pathName.startsWith("/account") && data.success && 
+              <ProfileSidebar 
+                user={data.data}
+              />}
 
-          <main>{children}</main>
+              <main className="flex-1">{children}</main>
+            </div>
+          </div>
           <Toaster richColors />
         </Suspense>
       </body>

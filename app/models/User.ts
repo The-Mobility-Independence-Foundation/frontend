@@ -14,6 +14,7 @@ export interface Users {
 }
 
 export interface User {
+  success: boolean;
   message: string;
   data: UserData;
 }
@@ -22,13 +23,14 @@ export interface UserData {
   id: string,
   firstName: string,
   lastName: string,
-  username: string,
+  email: string,
   displayName: string,
-  rating: number,
-  listingsNum: number,
-  connectionsNum: number,
-  lastActive: string,
-  organization: OrganizationData
+  type: string,
+  lastActivity: string,
+  inactive: boolean,
+  referralCode: string | null,
+  rating: string
+  organization: OrganizationData | null
 }
 
 export interface PatchUser {
@@ -42,22 +44,4 @@ export interface PatchUser {
   connectionsNum: number,
   lastActive: string,
   organization: OrganizationData
-}
-
-export const testUserData: UserData = {
-  id: "1",
-  firstName: "First",
-  lastName: "Last",
-  username: "username",
-  displayName: "Display Name",
-  rating: 3.5,
-  listingsNum: 3,
-  connectionsNum: 2,
-  lastActive: "Nov. 25th 2001",
-  organization: {
-    id: "1",
-    name: "Organization",
-    email: "person@organization.com",
-    phoneNumber: "111-111-1111"
-  }
 }

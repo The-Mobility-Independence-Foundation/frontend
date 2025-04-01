@@ -1,3 +1,3 @@
-export default function Account() {
-  return <>Account!</>
+export default function AccountSettings() {
+  return <div>Settings!</div>
 }
