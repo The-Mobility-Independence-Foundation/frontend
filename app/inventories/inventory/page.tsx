@@ -2,10 +2,10 @@
 
 import Search from "@/app/components/Search";
 import { InventoryItemData, InventoryItems } from "@/app/models/InventoryItem";
-import backendService from "@/app/services/backend.service";
+// import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useSearchParams } from "next/navigation"
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Pagination from "@/app/components/Pagination";
 import InventoryItem from "@/app/components/InventoryItem";
 import Modal from "@/app/components/modals/Modal";
@@ -20,7 +20,7 @@ export default function Inventory() {
   const orgID = params.get("org_id");
   const inventoryID = params.get("inventory_id");
 
-  const receiveInventoryItems = (data: any) => {
+  const receiveInventoryItems = useCallback((data: object) => {
     const inventoryItemData = data as InventoryItems;
     setInventoryItemsDisplaying(inventoryItemData.data.results.map(item => {
       return {
@@ -36,7 +36,7 @@ export default function Inventory() {
       checked: false
     }}));
     setInventoryItems(inventoryItemData);
-  }
+  }, []);
 
   return <>
     <div className="flex flex-col">
@@ -47,7 +47,8 @@ export default function Inventory() {
       )}
       <Search
         apiRoute={`/organizations/${orgID}/inventories/${inventoryID}/items`}
-        receiveData={receiveInventoryItems}
+        searchBy={"name"}
+        receiveResponse={receiveInventoryItems}
         placeholderText="Search Inventory Items"
         newButtonEvent={() => setNewItemModalIsOpen(true)}
         filterType={FilterComponentType.INVENTORY_ITEMS}

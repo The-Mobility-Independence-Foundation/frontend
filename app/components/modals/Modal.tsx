@@ -27,7 +27,7 @@ export default function Modal({isOpen, onClose, children}: ModalProps) {
 
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, [])
+  })
   
   return isOpen && createPortal(
     <div 

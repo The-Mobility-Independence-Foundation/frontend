@@ -9,6 +9,7 @@ import backendService from "./services/backend.service";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
+import { Suspense } from "react";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
@@ -41,10 +42,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
-        {!pathName.endsWith("/landing") && <Header />}
+        <Suspense fallback={<div>Loading...</div>}>
+          {!pathName.endsWith("/landing") && <Header />}
 
-        <main>{children}</main>
-        <Toaster richColors />
+          <main>{children}</main>
+          <Toaster richColors />
+        </Suspense>
       </body>
     </html>
   );

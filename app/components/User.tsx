@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { UserData } from "../models/User";
 import { StarFilledIcon } from "@radix-ui/react-icons"
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 
 export interface UserProps {
     user: UserData;
@@ -40,7 +40,7 @@ export default function User({user, onConnectButtonClicked, onConnectedButtonCli
 
         <div className="flex justify-center">
             {!connected && <Button className="button" onClick={() => onConnectButtonClicked(user.id)}>+ Connect</Button>}
-            {connected && <Button className="bg-[#009D4F]" onClick={() => onConnectButtonClicked(user.id)}>Connected</Button>}
+            {connected && <Button className="bg-[#009D4F]" onClick={() => onConnectedButtonClicked(user)}>Connected</Button>}
         </div>
     </div>
 }

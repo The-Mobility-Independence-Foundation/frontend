@@ -12,6 +12,7 @@ import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image"
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[\d\W]).*$/;
 
@@ -51,9 +52,9 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
             "email": values.email,
             "password": values.password
         }).then(() => {
-            backendService.get("/users/id/request").then(response => {
+            backendService.get("/users/id/request").then(() => {
                 onRequestAccess(values.firstName, values.lastName, values.email);
-            }).catch((error => {
+            }).catch((() => {
                 backendService.post("/auth/login", {
                     "email":  values.email,
                     "password": values.password
@@ -61,7 +62,7 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
                     localStorage.setItem('token', response.accessToken);
     
                     router.push('/listings');
-                }).catch(error => {
+                }).catch(() => {
                     toast.error("There was an issue signing you up. Please try again.");
                 })
             }))
@@ -183,7 +184,14 @@ export default function SignUpForm({setCurrentForm, onRequestAccess}: SignUpForm
                     <Button type="button" className="button cancel w-1/4" onClick={() => setCurrentForm(LandingFormType.LoginForm)}>Cancel</Button>
 
                     <div className="flex items-center gap-2">
-                        <Button type="button" className="w-[40px]" size="icon"><img src="/assets/google.svg" alt="Sign Up with Google"></img></Button>
+                        <Button type="button" className="relative w-[40px]" size="icon">
+                            <Image 
+                                src="/assets/google.svg" 
+                                alt="Sign Up with Google"
+                                fill
+                                className="!relative"
+                            />
+                        </Button>
                         <Button type="submit" className="button px-[2vw] flex-1">Sign Up</Button>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import Image from "next/image";
 
 const formSchema = z.object({
     email: z.string().nonempty("Please enter your email"),
@@ -115,7 +116,14 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                     <Button type="button" variant="secondary" className="w-1/4" onClick={() => setCurrentForm(LandingFormType.SignUpForm)}>Sign Up</Button>
 
                     <div className="flex items-center gap-2">
-                        <Button type="button" className="w-[40px]" size="icon"><img src="/assets/google.svg" alt="Login with Google"></img></Button>
+                        <Button type="button" className="relative w-[40px]" size="icon">
+                            <Image 
+                                src="/assets/google.svg" 
+                                alt="Login with Google"
+                                fill
+                                className="!relative"
+                            />
+                        </Button>
                         <Button type="submit" className="button px-[2vw] flex-1">Log In</Button>
                     </div>
                 </div>

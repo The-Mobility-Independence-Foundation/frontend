@@ -1,13 +1,13 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+// import { useSearchParams } from "next/navigation"
 import Search from "../components/Search";
-import { useState } from "react";
-import { FilterComponentType } from "../types/FilterTypes";
+import { useCallback, useState } from "react";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
-import Pagination, { PageChangeEvent } from "../components/Pagination";
-import KeysetPagination from "../components/KeysetPagination";
+import Pagination from "../components/Pagination";
+import { FilterComponentType } from "../types/FilterTypes";
+// import KeysetPagination from "../components/KeysetPagination";
 
 export default function PublicListings() {
 
@@ -22,18 +22,19 @@ export default function PublicListings() {
     }
   });
 
-  const params = useSearchParams();
-  const userID = params.get("u_id");
+  // const params = useSearchParams();
+  // const userID = params.get("u_id");
 
-  const receiveListings = (listings: any) => {
+  const receiveListings = useCallback((listings: object) => {
     // received from Search component
     setListings(listings as Listings);
-  }
+  }, []);
 
   return <div className="overflow-y-hidden">
     <Search 
       apiRoute={"/listings"} 
-      receiveData={receiveListings} 
+      searchBy={"name"}
+      receiveResponse={receiveListings} 
       placeholderText="Search Listings"
       filterType={FilterComponentType.LISTINGS}
     />

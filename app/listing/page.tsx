@@ -2,13 +2,13 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import backendService from "../services/backend.service";
-import { ListingData, testListingData } from "../models/Listings";
+// import backendService from "../services/backend.service";
+import { ListingData } from "../models/Listings";
 import Link from "next/link";
 import Modal from "../components/modals/Modal";
 import CreateOrder from "../components/modals/CreateOrder";
 import ImageCarousel, { ImageReference } from "../components/ImageCarousel";
-import {v4 as uuidv4} from "uuid";
+// import {v4 as uuidv4} from "uuid";
 import Listing from "../components/Listing";
 
 export default function ListingPage() {
@@ -28,21 +28,12 @@ export default function ListingPage() {
     //     const data = response?.data;
     //     setListing(data as ListingData);
     //   });
-    setListing(testListingData);
-    setImages([
-      {
-        url: testListingData.attachment,
-        alt: `Attachment for ${testListingData.title}`,
-        id: uuidv4()
-      }
-    ]);
     // TODO: uncomment when backend is hooked up
     // backendService.get(`/listings/${listing.inventoryItem.inventory.organization.id}/listings`)
     //   .then(response => {
     //     const data = response?.data;
     //     setListingsFromOrg(data as ListingData[]);
     //   });
-    setListingsFromOrg([testListingData, testListingData]);
 
     // TODO: uncomment when backend is hooked up
     // backendService.get(`/orgs/${listing.}/recommended`)
@@ -50,7 +41,6 @@ export default function ListingPage() {
     //     const data = response?.data;
     //     setRecommendedListings(data as ListingData[]);
     //   });
-    setRecommendedListings([testListingData, testListingData]);
   }, [listingID])
 
   return (
@@ -104,7 +94,14 @@ export default function ListingPage() {
               <div className="flex flex-col my-[1rem] mx-[0.25rem] justify-between">
                 <div>
                   <h5>{listing.inventoryItem.inventory.name}</h5>
-                  <p>{listing.inventoryItem.inventory.location}</p>
+                  {listing.inventoryItem.inventory.address &&
+                    <div className="text-white">
+                      <h5>{listing.inventoryItem.inventory.address.addressLine1}</h5>
+                      <h5>{listing.inventoryItem.inventory.address.addressLine2}</h5>
+                      <p>{listing.inventoryItem.inventory.address.city}, {listing.inventoryItem.inventory.address.state}</p>
+                      <p>{listing.inventoryItem.inventory.address.zipCode}</p>
+                    </div>
+                    }
                 </div>
                 <div>
                   <p className="w-max mx-auto">Quantity Available:</p>

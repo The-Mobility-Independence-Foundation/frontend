@@ -1,30 +1,30 @@
 class BackendService {
   async get(endpoint: string, filters: string[] = [], sorts: string[] = []) {
-    if (filters) {
+    if (filters.length > 0) {
       endpoint += "?filters=" + filters.join(",");
     }
 
-    if (sorts) {
+    if (sorts.length > 0) {
       endpoint += "&sorts=" + sorts.join(",");
     }
 
     return this.fetcher("GET", endpoint);
   }
 
-  async post(endpoint: string, data: any) {
+  async post(endpoint: string, data: object) {
     return this.fetcher("POST", endpoint, data);
   }
 
-  async put(endpoint: string, data: any) {
-    return this.fetcher("PUT", endpoint, data);
+  async patch(endpoint: string, data: object) {
+    return this.fetcher("PATCH", endpoint, data);
   }
 
   async delete(endpoint: string) {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: any = null) {
-    let token = localStorage.getItem("token");
+  private async fetcher(method: string, endpoint: string, data: object | null = null) {
+    const token = localStorage.getItem("token");
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
       method: method,
@@ -44,4 +44,5 @@ class BackendService {
   }
 }
 
-export default new BackendService();
+const backendService = new BackendService();
+export default backendService;

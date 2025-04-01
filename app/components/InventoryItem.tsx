@@ -1,12 +1,9 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
 import Link from "next/link";
 import Menu from "./Menu";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "./modals/Modal";
 import { attributesToString, InventoryItemData } from "../models/InventoryItem";
 import EditInventoryItem from "./modals/EditInventoryItem";
-import Dialog from "./modals/Dialog";
 
 interface InventoryItemProps {
   inventoryItem: InventoryItemData
@@ -59,7 +56,7 @@ export default function InventoryItem({inventoryItem, className}: InventoryItemP
         </Link>
       </div>
     </div>
-    {!inventoryItem.inventory.archived && <Menu 
+    {!inventoryItem.inventory.archivedAt && <Menu 
       items={menuItems}
       onItemClick={onMenuItemClick}
       className="absolute right-2.5"
