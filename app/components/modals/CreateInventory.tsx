@@ -69,7 +69,6 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
       city: values.city,
       state: values.state,
       zipCode: values.zipCode,
-      organizationId: organizationID,
       name: values.title,
       description: values.description
     }
