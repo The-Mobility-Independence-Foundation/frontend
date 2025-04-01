@@ -20,13 +20,13 @@ const formSchema = z.object({
     attachment: z.instanceof(File)
 }).partial();
 
-export interface MessagesProps {
+export interface ConversationProps {
     conversationId: string;
     user: UserData;
     className?: string;
 }
 
-export default function Conversation({conversationId, user, className}: MessagesProps) {
+export default function Conversation({conversationId, user, className}: ConversationProps) {
     const fileInputRef = useRef<HTMLInputElement>(null!);
 
     const [loading, setLoading] = useState(true);

@@ -15,6 +15,7 @@ import { PaginationSearchParams } from "./Pagination";
 import { TEST_USER_ONE, TEST_USER_TWO, testUsers } from "../testData/TestUserData";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { TEST_INVENTORY_ITEM_DATA_1, TEST_INVENTORY_ITEM_DATA_2, testInventoryItems } from "../testData/TestInventoryItemData";
+import { testConversations } from "../testData/TestConversationData";
 
 interface SearchProps {
   apiRoute: string;
@@ -57,6 +58,8 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
       testData = testListings
     } else if(apiRoute == "/users") {
       testData = testUsers;
+    } else if(apiRoute == "/messages") {
+      testData = testConversations;
     } else {
       testData = testInventoryItems
     }
@@ -96,7 +99,7 @@ export default function Search({apiRoute, receiveData, filterType, placeholderTe
       <FormProvider {...form}>
         <form 
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-[44rem] w-[50%] h-full"
+          className="max-w-[44rem] w-[80%] h-full"
         >
           <FormField
             control={form.control}

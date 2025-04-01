@@ -1,38 +1,35 @@
 // GET
 
+import { MessageData } from "./Message";
+
+export enum ConversationType {
+  DIRECT = 'direct',
+  INQUIRY = 'inquiry',
+}
+
 export interface Conversations {
     message: string;
     data: {
       count: number;
       hasNext: boolean;
       nextToken: string | null;
-      results: MessageData[]
+      results: ConversationData[]
     }
   }
   
-  export interface Message {
+  export interface Conversation {
     message: string;
-    data: MessageData;
+    data: ConversationData;
   }
   
-  export interface MessageData {
+  export interface ConversationData {
     id: string,
-    authorId: string,
-    conversationId: string,
-    messageContent: string,
-    readStatus: string,
+    type: ConversationType,
+    listingId: string,
+    initiatorId: string,
+    participantId: string,
+    messages: MessageData[],
     createdAt: Date,
-    updatedAt: Date,
-    attachments: string[]
+    updatedAt: Date
   }
   
-  export interface PatchMessage {
-    id: string,
-    authorId: string,
-    conversationId: string,
-    messageContent: string,
-    readStatus: string,
-    createdAt: Date,
-    updatedAt: Date,
-    attachments: string[]
-  }
