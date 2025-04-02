@@ -3,16 +3,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod"
-import { UserData } from "../models/User";
+import { User, UserData } from "../models/User";
 import { useEffect, useState } from "react";
 import { userEmitter } from "../layout";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import backendService from "../services/backend.service";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AccountSettings() {
   const [user, setUser] = useState<UserData>();
-  const [personalInformationFields, setPersonalInformationFields] = useState<any>();
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   useEffect(() => {
     userEmitter.on("user", (userEmitted: UserData) => {
@@ -23,8 +26,7 @@ export default function AccountSettings() {
   const personalInformationSchema = z.object({
     firstName: z.string().optional(),
     lastName: z.string().optional(),
-    displayName: z.string().optional(),
-    active: z.boolean(),
+    displayName: z.string().optional()
   });
 
   const personalInformationForm = useForm<z.infer<typeof personalInformationSchema>>({
@@ -32,29 +34,36 @@ export default function AccountSettings() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      displayName: "",
-      active: false
+      displayName: ""
     }
   })
 
-  useEffect(() => {
-    if(user) {
-      personalInformationForm.setValue("active", !user.inactive);
-    }
-  }, [user]);
-
   const onFormSubmit = (values: z.infer<typeof personalInformationSchema>) => {
-    let fields = {inactive: !values.active};
-    if(values.firstName) {
-      Object.assign({}, fields, {firstName: values.firstName});
+    if(user) {
+      let fields: object = {};
+      if(values.firstName) {
+        fields = {...fields, firstName: values.firstName};
+      }
+      if(values.lastName) {
+        fields = {...fields, lastName: values.lastName};
+      }
+      if(values.displayName) {
+        fields = {...fields, displayName: values.displayName};
+      }
+      setLoadingSubmit(true);
+      backendService.patch(`/users/${user?.id}`, values)
+        .then(response => {
+          const responseAsUser = response as User;
+          console.log(responseAsUser)
+          if(!responseAsUser.success) {
+            toast(responseAsUser.message);
+            setLoadingSubmit(false);
+            return;
+          }
+          userEmitter.emit("user", responseAsUser.data);
+          setLoadingSubmit(false);
+        });
     }
-    if(values.lastName) {
-      Object.assign({}, fields, {lastName: values.lastName});
-    }
-    if(values.displayName) {
-      Object.assign({}, fields, {displayName: values.displayName});
-    }
-    setPersonalInformationFields(fields);
   }
 
   return <>{user && <div className="p-[1rem] !text-white">
@@ -116,25 +125,9 @@ export default function AccountSettings() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={personalInformationForm.control}
-              name="active"
-              render={({ field }) => (
-                <FormItem className="mb-[1rem]">
-                <FormControl>
-                  <div className="flex items-center">
-                      <Checkbox
-                        className="bg-white data-[state=checked]:bg-blue-500 w-[20px] h-[20px] mr-[0.4rem]"
-                        checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(checked)}
-                      />
-                      <FormLabel>Active</FormLabel>
-                  </div>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <button className="button ml-auto" type="submit">Submit</button>
+            <button className="button ml-auto" type="submit">
+              {loadingSubmit ? <Spinner className="text-white" /> : "Submit"}
+            </button>
           </form>
         </FormProvider>
       </div>
