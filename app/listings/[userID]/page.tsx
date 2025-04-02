@@ -4,7 +4,7 @@ import CreateListing from "@/app/components/CreateListing";
 import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ListingData, Listings } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -14,6 +14,8 @@ import { statuses } from "../../models/Status";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
+import { userEmitter } from "@/app/layout";
+import { UserData } from "@/app/models/User";
 // import { PaginationData } from "@/app/models/Generic";
 
 const EDIT = "Edit Attachment";
@@ -28,6 +30,7 @@ export default function MyListings() {
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
   // const [paginationData, setPaginationData] = useState<PaginationData>();
+  const [userID, setUserID] = useState("");
 
   const [listings, setListings] = useState<Listings>({
       message: "Default",
@@ -40,20 +43,23 @@ export default function MyListings() {
       }
     });
 
-  const myUserID = 1; // TODO: grab current user ID from db
-  const router = useRouter();
-  const path = usePathname();
-  const pathSplit = path.split("/");
-  const userIDInRoute = pathSplit[pathSplit.length-1];
-  if (myUserID !== parseInt(userIDInRoute)) {
-    router.push(`/listings`);
-  }
+  useEffect(() => {
+    userEmitter.on("user", (userEmitted: UserData) => {
+      setUserID(userEmitted.id);
+      const router = useRouter();
+      const path = usePathname();
+      const pathSplit = path.split("/");
+      const userIDInRoute = pathSplit[pathSplit.length-1];
+      if (userEmitted.id !== userIDInRoute) {
+        router.push(`/listings`);
+      }
+    });
+  })
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
     const responseData = (data as Listings).data;
     setListings(data as Listings);
-    // TODO: keyset pagination data
     setListingsChecked(new Map(responseData.results.map(listing => [listing, false])));
     setListingsStatus(new Map(responseData.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
   }, []);

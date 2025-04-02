@@ -20,7 +20,7 @@ import { UserData } from "../models/User";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
-const RESTORE = "Restore";
+// const RESTORE = "Restore";
 
 // TODO: separate tabs for archived inventories
 export default function Inventories() {
@@ -58,9 +58,8 @@ export default function Inventories() {
       case ARCHIVE:
         setArchiveInventoryIsOpen(true);
         break;
-      case RESTORE:
-        // TODO
-        break;
+      // case RESTORE:
+      //   break;
     }
   }
 
@@ -150,7 +149,7 @@ export default function Inventories() {
                     <div className="flex items-start h-min">
                       <h3 className="text-white hover:underline">
                         <Link
-                          href={`/inventories/inventory?org_id=${orgID}&inventory_id=${inventory.id}`}
+                          href={`/inventories/inventory?inventoryID=${inventory.id}`}
                         >
                           {inventory.name}
                         </Link>
@@ -180,7 +179,7 @@ export default function Inventories() {
                   <Menu
                     onOpenChange={(open) => onOpenChange(open, inventory)}
                     items={
-                      inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]
+                      inventory.archivedAt ? [EDIT] : [EDIT, ARCHIVE]
                     }
                     onItemClick={(item) => onMenuItemClick(item)}
                     className="text-white text-lg"

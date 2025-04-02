@@ -6,17 +6,17 @@ import { attributesToString, InventoryItemData } from "../models/InventoryItem";
 import EditInventoryItem from "./modals/EditInventoryItem";
 
 interface InventoryItemProps {
-  inventoryItem: InventoryItemData
+  inventoryItem: InventoryItemData;
+  userID: number;
   className?: string;
 }
 
 const EDIT = "Edit";
 const DELETE = "Delete";
 
-export default function InventoryItem({inventoryItem, className}: InventoryItemProps) {  
+export default function InventoryItem({inventoryItem, userID, className}: InventoryItemProps) {  
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
 
-  const userID = 1; // TODO: grab user id
   const menuItems = [EDIT, DELETE];
   const attributesAsString = attributesToString(inventoryItem.attributes);
   
