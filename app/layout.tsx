@@ -3,12 +3,9 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/Header";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense, useEffect } from "react";
-import backendService from "./services/backend.service";
-import { User } from "./models/User";
-import { toast } from "sonner";
 import ProfileSidebar from "./components/ProfileSidebar";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
@@ -21,31 +18,21 @@ const interRegular = localFont({
 });
 
 export const userEmitter = new EventEmitter();
+userEmitter.setMaxListeners(100);
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
   const {data, isLoading, isError} = useUser();
   const pathName = usePathname();
 
   useEffect(() => {
     if(data?.success) {
-      backendService.get(`/users/${data.data.id}`)
-        .then(response => {
-          const responseAsUser = response as User;
-          if(!responseAsUser.success) {
-            toast(responseAsUser.message);
-            router.push("/landing");
-            return;
-          }
-          userEmitter.emit("user", responseAsUser.data);
-        })
-      // TODO: change to grab data from "data.data" after org is returnedß
+      userEmitter.emit("user", data.data);
     }
-  }, [data]);
+  }, [pathName, data]);
 
   // User is not logged in, there was an error, or the request is still executing
   if (isLoading || isError || (!data.success && pathName != "/landing")) {

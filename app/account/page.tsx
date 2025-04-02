@@ -11,7 +11,7 @@ export default function AccountSettings() {
   const [user, setUser] = useState<UserData>();
 
   useEffect(() => {
-    userEmitter.once("user", (userEmitted: UserData) => {
+    userEmitter.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })

@@ -18,7 +18,7 @@ export default function ProfileSidebar() {
   const [appearing, setAppearing] = useState(true);
 
   useEffect(() => {
-    userEmitter.once("user", (userEmitted: UserData) => {
+    userEmitter.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })
