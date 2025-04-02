@@ -4,6 +4,7 @@ import { InventoryItemData } from "./InventoryItem";
 
 export interface Listings {
   message: string;
+  success: boolean;
   data: {
     count: number;
     totalCount: number;
@@ -27,7 +28,7 @@ export interface ListingData {
   longitude: number;
   inventoryItem: InventoryItemData;
   status: string;
-  attachment: string;
+  attachment: string | null;
 }
 
 export interface PatchListing {

@@ -12,7 +12,7 @@ import { statuses } from "../../models/Status";
 import Modal from "@/app/components/modals/Modal";
 import Dialog from "@/app/components/modals/Dialog";
 import { userEmitter } from "@/app/layout";
-import { UserData } from "@/app/models/User";
+import { User, UserData } from "@/app/models/User";
 
 const REMOVE = "Remove";
 
@@ -23,17 +23,7 @@ export default function AccountBookmarks() {
   const [removeListingIsOpen, setRemoveListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
   const [userID, setUserID] = useState(""); // TODO: change to obj that contains pagination info
-
-  const [listings, setListings] = useState<Listings>({
-      message: "Default",
-      data: {
-        count: 0,
-        totalCount: 0,
-        hasNext: false,
-        nextToken: null,
-        results: []
-      }
-    });
+  const [listings, setListings] = useState<ListingData[]>([]);
 
   useEffect(() => {
     userEmitter.on("user", (userEmitted: UserData) => {
@@ -43,10 +33,10 @@ export default function AccountBookmarks() {
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
-    const responseData = (data as Listings).data;
-    setListings(data as Listings);
-    setListingsChecked(new Map(responseData.results.map(listing => [listing, false])));
-    setListingsStatus(new Map(responseData.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
+    const dataAsListings = data as Listings;
+    setListings(dataAsListings.data.results);
+    setListingsChecked(new Map(dataAsListings.data.results.map(listing => [listing, false])));
+    setListingsStatus(new Map(dataAsListings.data.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
   }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
@@ -72,7 +62,7 @@ export default function AccountBookmarks() {
   }
 
   const onBulkRemove = () => {
-    listings.data?.results.forEach(() => {}); // TODO add api call for removing bookmark
+    listings.forEach(() => {}); // TODO add api call for removing bookmark
   }
 
   const onRemoveDialogClose = (confirm: boolean) => {
@@ -111,9 +101,8 @@ export default function AccountBookmarks() {
     {showBulkOps && <BulkOperations onCheckboxChange={onCheckAllChange} onDelete={onBulkRemove}></BulkOperations>}
 
     <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
-      {listings.data?.results.map(listing => 
+      {listings.map(listing => 
         <Listing 
-          myListing={true}
           onCheckboxChange={(checked) => onCheckboxChange(listing, checked)}
           checked={listingsChecked.get(listing)}
           onStatusChange={(status) => onStatusChange(listing, status)}
