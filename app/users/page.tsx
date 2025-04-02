@@ -5,6 +5,7 @@ import { UserData, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
 import { ConnectionData } from "../models/Connection";
+import backendService from "../services/backend.service";
 // import backendService from "../services/backend.service";
 
 const getConnectionsMap = () => {
@@ -38,6 +39,10 @@ export default function UsersPage() {
         if(user) {
             setConnectionsMap(getConnectionsMap());
         }
+    }
+
+    function getListingsNum(userId: number) {
+        
     }
     
     const [users, setUsers] = useState<Users>({

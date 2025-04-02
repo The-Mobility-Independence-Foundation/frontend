@@ -1,22 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { UserData } from "../models/User";
 import { StarFilledIcon } from "@radix-ui/react-icons"
-// import backendService from "../services/backend.service";
 
 export interface UserProps {
     user: UserData;
+    listings: number;
+    connections: number;
     onConnectButtonClicked: (userId: string) => void;
     onConnectedButtonClicked: (user: UserData) => void;
     connected: boolean;
     className?: string;
 }
 
-export default function User({user, onConnectButtonClicked, onConnectedButtonClicked, connected, className}: UserProps) {
+export default function User({user, listings, connections, onConnectButtonClicked, onConnectedButtonClicked, connected, className}: UserProps) {
     return <div className={"bg-[#DDEDFF] px-5 py-3 rounded-md drop-shadow-md w-[350px] " + className}>
         <h5 className="text-center"><a href={"/profile/listings?u_id=" + user.id}>{user.displayName}</a></h5>
 
         <div className="flex">
-            <p className="font-medium">{"@" + user.username}</p>
+            <p className="font-medium">{"@" + user.displayName}</p>
             
             <div className="flex ml-auto">
                 <StarFilledIcon className="mt-[6px]"></StarFilledIcon>
@@ -24,17 +25,17 @@ export default function User({user, onConnectButtonClicked, onConnectedButtonCli
             </div>
         </div>
 
-        <div className="bg-[#002856] text-white rounded-lg drop-shadow-md text-center mb-1">{user.organization.name}</div>
+        {user.organization && <div className="bg-[#002856] text-white rounded-lg drop-shadow-md text-center mb-1">{user.organization.name}</div>}
 
         <div className="flex mb-5">
             <div>
-                <p>{user.listingsNum + " listings"}</p>
-                <p>{user.connectionsNum + " connections"}</p>
+                <p>{listings + " listings"}</p>
+                <p>{connections + " connections"}</p>
             </div>
 
             <div className="ml-auto">
                 <p>Last Active:</p>
-                <p>{user.lastActive}</p>
+                <p>{new Date(user.lastActivity).toLocaleDateString()}</p>
             </div>
         </div>
 
