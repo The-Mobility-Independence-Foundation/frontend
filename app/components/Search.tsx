@@ -23,13 +23,14 @@ interface SearchProps {
   defaultQuery?: string;
   newButtonEvent?: (clicked: boolean) => void;
   loadingResponse?: (loading: boolean) => void;
+  className?: string;
 }
 
 const formSchema = z.object({
   query: z.string()
 })
 
-const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps, ref) => {  
+const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse, className}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [paginationCursor, setPaginationCursor] = useState("");
   // const [selectedValues, setSelectedValues] = useState(new Map());
@@ -116,7 +117,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
 
   return <div className="relative">
     <div 
-      className="w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]"
+      className={`${className} w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]`}
     >
       {newButtonEvent ? 
         <button onClick={handleNewButtonClick} className="button bg-[#D3E8FF] text-black">

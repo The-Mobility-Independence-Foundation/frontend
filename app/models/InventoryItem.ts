@@ -1,6 +1,7 @@
 // GET
 
 import { InventoryData } from "./Inventory";
+import { ModelData } from "./Model";
 import { PartData } from "./Part";
 
 export const ATTRIBUTES_STRING_REGEX = /(.+:.+\n)*(.+:.+)/;
@@ -19,9 +20,9 @@ export interface InventoryItems {
 export interface InventoryItemData {
   id: number;
   name: string;
-  inventory: InventoryData;
+  inventory: InventoryData | null;
   part: PartData;
-  modelID: number;
+  model: ModelData;
   quantity: number;
   publicCount: number;
   notes: string;
