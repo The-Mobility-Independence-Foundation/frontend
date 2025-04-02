@@ -5,27 +5,28 @@ import "./globals.css";
 import Header from "./components/Header";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import backendService from "./services/backend.service";
-import { User, UserData } from "./models/User";
+import { User } from "./models/User";
 import { toast } from "sonner";
 import ProfileSidebar from "./components/ProfileSidebar";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
+import EventEmitter from "events";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
   variable: "--font-inter",
   weight: "100 600 900"
-})
+});
+
+export const userEmitter = new EventEmitter();
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [user, setUser] = useState<UserData>();
-
   const router = useRouter();
   const {data, isLoading, isError} = useUser();
   const pathName = usePathname();
@@ -40,7 +41,7 @@ export default function RootLayout({
             router.push("/landing");
             return;
           }
-          setUser(responseAsUser.data);
+          userEmitter.emit("user", responseAsUser.data);
         })
       // TODO: change to grab data from "data.data" after org is returnedß
     }
@@ -64,15 +65,13 @@ export default function RootLayout({
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
           <div className="w-full h-screen flex flex-col">
-            {!pathName.endsWith("/landing") && user && <Header user={user} />}
+            {!pathName.endsWith("/landing") && data.success && <Header />}
             
             <div className="flex flex-1">
               {pathName.startsWith("/account") && data.success && 
-              <ProfileSidebar 
-                user={data.data}
-              />}
+              <ProfileSidebar />}
 
-              <main className="flex-1">{children}</main>
+              <main className="flex-1" >{children}</main>
             </div>
           </div>
           <Toaster richColors />

@@ -7,6 +7,7 @@ import Image from "next/image"
 import backendService from "../services/backend.service";
 import { User, UserData } from "../models/User";
 import { toast } from "sonner";
+import { userEmitter } from "../layout";
 
 interface LinkReference {
   route: string;
@@ -14,23 +15,26 @@ interface LinkReference {
   base: string;
 }
 
-interface HeaderProps {
-  user: UserData
-}
-
 // TODO: highlight "Public Listings" with query parameters (should work with all links)
-export default function Header({user}: HeaderProps) {
+export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
+  const [user, setUser] = useState<UserData>();
+
+  useEffect(() => {
+    userEmitter.once("user", (userEmitted: UserData) => {
+      setUser(userEmitted);
+    })
+  })
 
   const pathName = usePathname();
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
   const FORUM = "/forum";
-  const PRIVATE_MESSAGES = `/messages?u_id=${user.id}`;
-  const INVENTORIES = user.organization ? `/inventories?org_id=${user.organization.id}` : PUBLIC_LISTINGS;
+  const PRIVATE_MESSAGES = `/messages`;
+  const INVENTORIES = `/inventories`;
   const MY_LISTINGS = `/listings/${user?.id}`;
-  const ACCOUNT = `/account?u_id=${user?.id}`;
+  const ACCOUNT = `/account`;
 
   const links: LinkReference[] = [
     {route: PUBLIC_LISTINGS, title: "Public Listings", base: PUBLIC_LISTINGS.split("?")[0]},
