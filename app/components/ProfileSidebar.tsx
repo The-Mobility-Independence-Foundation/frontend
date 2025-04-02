@@ -3,28 +3,32 @@
 import { useEffect, useState } from "react"
 import { UserData } from "../models/User"
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-interface ProfileSidebarProps {
-  user: UserData
-}
+import { userEmitter } from "../layout";
 
 interface Tab {
   title: string,
   route: string
 }
 
-export default function ProfileSidebar({user}: ProfileSidebarProps) {
-  const [activePath, setActivePath] = useState<string>(`${usePathname()}?${useSearchParams()}`);
+export default function ProfileSidebar() {
+  const [user, setUser] = useState<UserData>();
+  const [activePath, setActivePath] = useState<string>(`${usePathname()}`);
   const [activeElementY, setActiveElementY] = useState(0);
   const [activeElementHeight, setActiveElementHeight] = useState(0);
   const [appearing, setAppearing] = useState(true);
 
+  useEffect(() => {
+    userEmitter.on("user", (userEmitted: UserData) => {
+      setUser(userEmitted);
+    })
+  })
+
   const router = useRouter();
   const tabs: Tab[] = [
-    {title: "Connections", route: `/account/connections?u_id=${user.id}`},
-    {title: "My Orders", route: `/account/my-orders?u_id=${user.id}`},
-    {title: "Received Orders", route: `/account/received-orders?u_id=${user.id}`},
-    {title: "Settings", route: `/account?u_id=${user.id}`}
+    {title: "Connections", route: `/account/connections`},
+    {title: "My Orders", route: `/account/my-orders`},
+    {title: "Received Orders", route: `/account/received-orders`},
+    {title: "Settings", route: `/account`}
   ];
 
   useEffect(() => {
@@ -38,20 +42,16 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
         setActiveElementHeight(elementRect.height);
       }
     }
-  }, [activePath]);
+  }, [activePath, user]);
 
   const clickTab = (route: string) => {
     router.push(route);
     setActivePath(route);
   }
-
-  const toggleAppearing = () => {
-    setAppearing(!appearing);
-  }
   
-  return (
+  return <>{user && 
     <div className={`relative ${appearing ? "animate-slideIn" : "animate-slideOut"}`}>
-      <div className="h-full w-min flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md">
+      <div className={`h-full flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md ${appearing ? "w-min" : "w-0 p-0 overflow-hidden"}`}>
         <div className="m-[1rem]">
           <h2 className="text-nowrap">
             {user.firstName} {user.lastName}
@@ -103,11 +103,10 @@ export default function ProfileSidebar({user}: ProfileSidebarProps) {
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
             className="ml-auto cursor-pointer"
-            onClick={toggleAppearing}
+            onClick={() => setAppearing(!appearing)}
           >
             <path d="M1.5 3C1.22386 3 1 3.22386 1 3.5C1 3.77614 1.22386 4 1.5 4H13.5C13.7761 4 14 3.77614 14 3.5C14 3.22386 13.7761 3 13.5 3H1.5ZM1 7.5C1 7.22386 1.22386 7 1.5 7H13.5C13.7761 7 14 7.22386 14 7.5C14 7.77614 13.7761 8 13.5 8H1.5C1.22386 8 1 7.77614 1 7.5ZM1 11.5C1 11.2239 1.22386 11 1.5 11H13.5C13.7761 11 14 11.2239 14 11.5C14 11.7761 13.7761 12 13.5 12H1.5C1.22386 12 1 11.7761 1 11.5Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd" />
           </svg>
       </div>
-    </div>
-  );
+    </div>}</>;
 }
