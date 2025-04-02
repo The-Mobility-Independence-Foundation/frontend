@@ -26,6 +26,7 @@ export default function ProfileSidebar() {
   const router = useRouter();
   const tabs: Tab[] = [
     {title: "Connections", route: `/account/connections`},
+    {title: "Bookmarks", route: `/account/bookmarks`},
     {title: "My Orders", route: `/account/my-orders`},
     {title: "Received Orders", route: `/account/received-orders`},
     {title: "Settings", route: `/account`}
