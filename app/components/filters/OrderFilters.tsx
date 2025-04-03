@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Filters, { FilterOptions } from "./Filters";
 import { FilterType } from "@/app/types/FilterTypes";
-import { FULLFILLED, INITIATED, PENDING, VOIDED } from "../Order";
 import { capitalize } from "@/app/models/Status";
+import { OrderStatus } from "@/app/models/Order";
 
 interface OrderFilterProps {
   onFilterValueChange: (values: Map<string, string>) => void;
@@ -17,10 +17,10 @@ export default function OrderFilters({onFilterValueChange}: OrderFilterProps) {
           title: "Status",
           filterType: FilterType.Status,
           options: [
-            capitalize(INITIATED), 
-            capitalize(FULLFILLED), 
-            capitalize(PENDING), 
-            capitalize(VOIDED)
+            capitalize(OrderStatus.INITIATED), 
+            capitalize(OrderStatus.FULLFILLED), 
+            capitalize(OrderStatus.PENDING), 
+            capitalize(OrderStatus.VOIDED)
           ]
         }
       ],

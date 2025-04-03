@@ -1,6 +1,13 @@
 import { InventoryItemData } from "./InventoryItem"
 import { UserData } from "./User"
 
+export enum OrderStatus {
+  INITIATED = "initiated",
+  FULLFILLED = "fullfilled",
+  PENDING = "pending",
+  VOIDED = "voided"
+}
+
 export interface Orders {
   message: string,
   success: boolean,
@@ -19,5 +26,5 @@ export interface OrderData {
   vendor: UserData,
   quantity: number,
   createdAt: string,
-  status: string
+  status: string | null
 }

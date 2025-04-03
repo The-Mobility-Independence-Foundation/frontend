@@ -3,7 +3,7 @@
 import KeysetPagination from "@/app/components/KeysetPagination";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
-import { Orders } from "@/app/models/Order";
+import { OrderData, Orders } from "@/app/models/Order";
 import { useEffect, useState } from "react";
 
 export default function AccountReceivedOrders() {
@@ -52,7 +52,6 @@ export default function AccountReceivedOrders() {
             },
             quantity: 25,
             createdAt: "November 25th 2001",
-            status: "Initiated"
           }],
           hasNextPage: false,
           hasPreviousPage: false,
@@ -60,7 +59,11 @@ export default function AccountReceivedOrders() {
           previousCursor: null
         }
     })
-  }, [])
+  }, []);
+
+  const onMenuItemClick = (item: string, order: OrderData) => {
+    // TODO: API call for handling an order
+  }
 
   return <>{orders && <div className="relative h-full">
     {/**TODO: API route & searchBy */}
@@ -75,7 +78,8 @@ export default function AccountReceivedOrders() {
         <Order
           order={order}
           key={order.id}
-          hideStatus={true}
+          menuItems={["Handle Order"]}
+          onMenuItemClick={(item) => onMenuItemClick(item, order)}
         />
       )}
     </div>

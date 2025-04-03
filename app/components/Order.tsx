@@ -1,62 +1,43 @@
 "use client"
 
 import Link from "next/link";
-import { OrderData } from "../models/Order";
+import { OrderData, OrderStatus } from "../models/Order";
 import { useEffect, useState } from "react";
 import Menu from "./Menu";
 import { capitalize } from "../models/Status";
 
 interface OrderProps {
   order: OrderData;
-  statusChangeMenu?: boolean;
-  hideStatus?: boolean;
+  menuItems: string[];
+  onMenuItemClick: (item: string) => void;
   className?: string;
 }
 
-// STATUSES
-export const INITIATED = "initiated";
-export const FULLFILLED = "fullfilled";
-export const PENDING = "pending";
-export const VOIDED = "voided";
-
-export default function Order({order, statusChangeMenu, hideStatus, className}: OrderProps) {
+export default function Order({order, menuItems, onMenuItemClick, className}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
-  const [orderMenuOptions, setOrderMenuOptions] = useState<string[]>([]);
 
   const menuItemTemplate = "Mark as ";
 
   useEffect(() => {
+    if(order.status) {
     switch(order.status.toLowerCase()) {
-      case INITIATED:
+      case OrderStatus.INITIATED:
         setStatusStyle(`bg-[#007BFF] text-white`);
-        setOrderMenuOptions([
-          `${menuItemTemplate}${capitalize(PENDING)}`,
-          `${menuItemTemplate}${capitalize(FULLFILLED)}`,
-          `${menuItemTemplate}${capitalize(VOIDED)}`
-        ]);
         break;
-      case FULLFILLED:
+      case OrderStatus.FULLFILLED:
         setStatusStyle(`bg-[#28A745] text-white`);
         break;
-      case PENDING:
+      case OrderStatus.PENDING:
         setStatusStyle(`bg-[#FFC107] text-white`);
-        setOrderMenuOptions([
-          `${menuItemTemplate}${capitalize(FULLFILLED)}`,
-          `${menuItemTemplate}${capitalize(VOIDED)}`
-        ]);
         break;
-      case VOIDED:
+      case OrderStatus.VOIDED:
         setStatusStyle(`bg-[#6C757D] text-white`);
         break;
       default:
         setStatusStyle(`bg-white text-black`);
     }
-  }, [order]);
-
-  const onMenuItemClick = (item: string) => {
-    const newStatus = item.split(menuItemTemplate)[1].toLowerCase();
-    // TODO: API call for changing an order status
   }
+  }, [order]);
   
   return <div
       className={`flex justify-between flex-wrap w-full bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
@@ -91,16 +72,16 @@ export default function Order({order, statusChangeMenu, hideStatus, className}: 
           <h5>{order.createdAt}</h5>
         </div>
     </div>
-    {!hideStatus && 
+    {order.status && 
       <div className="flex flex-col">
         <div
           className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
         >{capitalize(order.status)}</div>
       </div>
     }
-    {statusChangeMenu && orderMenuOptions.length > 0 && 
+    {menuItems.length > 0 && 
       <Menu 
-        items={orderMenuOptions} 
+        items={menuItems} 
         onItemClick={onMenuItemClick} 
         className="fixed !top-2 !right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
       />}

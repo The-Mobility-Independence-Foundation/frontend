@@ -3,7 +3,8 @@
 import KeysetPagination from "@/app/components/KeysetPagination";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
-import { Orders } from "@/app/models/Order";
+import { OrderData, Orders, OrderStatus } from "@/app/models/Order";
+import { capitalize } from "@/app/models/Status";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useEffect, useState } from "react";
 
@@ -63,6 +64,31 @@ export default function AccountMyOrders() {
     })
   }, [])
 
+  const getOrderStatusMenuItems = (orderStatus: string) => {
+    let items: string[] = [];
+    switch(orderStatus.toLowerCase()) {
+      case OrderStatus.INITIATED:
+        items = [
+          `Mark as ${capitalize(OrderStatus.PENDING)}`,
+          `Mark as ${capitalize(OrderStatus.FULLFILLED)}`,
+          `Mark as ${capitalize(OrderStatus.VOIDED)}`
+        ];
+        break;
+      case OrderStatus.PENDING:
+        items = [
+          `Mark as ${capitalize(OrderStatus.FULLFILLED)}`,
+          `Mark as ${capitalize(OrderStatus.VOIDED)}`
+        ];
+        break;
+    }
+    return items;
+  }
+
+  const onOrderMenuItemChange = (item: string, order: OrderData) => {
+    // TODO: API call for changing status
+    console.log(item)
+  }
+
   return <>{orders && <div className="relative h-full">
     {/**TODO: API route & searchBy */}
     <Search 
@@ -77,7 +103,8 @@ export default function AccountMyOrders() {
         <Order
           order={order}
           key={order.id}
-          statusChangeMenu={true}
+          menuItems={order.status ? getOrderStatusMenuItems(order.status) : []}
+          onMenuItemClick={(item) => onOrderMenuItemChange(item, order)}
         />
       )}
     </div>
