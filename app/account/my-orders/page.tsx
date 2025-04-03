@@ -77,6 +77,7 @@ export default function AccountMyOrders() {
         <Order
           order={order}
           key={order.id}
+          statusChangeMenu={true}
         />
       )}
     </div>

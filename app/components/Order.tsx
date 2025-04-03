@@ -8,6 +8,8 @@ import { capitalize } from "../models/Status";
 
 interface OrderProps {
   order: OrderData;
+  statusChangeMenu?: boolean;
+  hideStatus?: boolean;
   className?: string;
 }
 
@@ -17,7 +19,7 @@ export const FULLFILLED = "fullfilled";
 export const PENDING = "pending";
 export const VOIDED = "voided";
 
-export default function Order({order, className}: OrderProps) {
+export default function Order({order, statusChangeMenu, hideStatus, className}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
   const [orderMenuOptions, setOrderMenuOptions] = useState<string[]>([]);
 
@@ -89,12 +91,14 @@ export default function Order({order, className}: OrderProps) {
           <h5>{order.createdAt}</h5>
         </div>
     </div>
-    <div className="flex flex-col">
-      <div
-        className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
-      >{capitalize(order.status)}</div>
-    </div>
-    {orderMenuOptions.length > 0 && 
+    {!hideStatus && 
+      <div className="flex flex-col">
+        <div
+          className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
+        >{capitalize(order.status)}</div>
+      </div>
+    }
+    {statusChangeMenu && orderMenuOptions.length > 0 && 
       <Menu 
         items={orderMenuOptions} 
         onItemClick={onMenuItemClick} 
