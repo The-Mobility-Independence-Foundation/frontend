@@ -1,6 +1,14 @@
 // GET
 
+import { ConnectionData } from "./Connection";
 import { OrganizationData } from "./Organization";
+
+export enum UserRole {
+  GUEST = 'guest',
+  USER = 'user',
+  ADMIN = 'admin',
+  MODERATOR = 'moderator',
+}
 
 export interface Users {
   message: string;
@@ -25,7 +33,7 @@ export interface UserData {
   lastName: string,
   email: string,
   displayName: string,
-  type: string,
+  type: UserRole,
   lastActivity: string,
   inactive: boolean,
   referralCode: string | null,

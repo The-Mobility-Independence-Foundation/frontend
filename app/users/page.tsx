@@ -1,48 +1,89 @@
 "use client"
 
-import { useCallback, useState } from "react";
-import { UserData, Users } from "../models/User";
+import { useCallback, useEffect, useState } from "react";
+import { UserData, UserRole, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
-import { ConnectionData } from "../models/Connection";
+import { ConnectionData, Connections } from "../models/Connection";
 import backendService from "../services/backend.service";
-// import backendService from "../services/backend.service";
-
-const getConnectionsMap = () => {
-    const connections: ConnectionData[] = [];
-
-    //TODO Uncomment when backend is hooked up
-    // backendService.get("/connections").then(response => {
-    //     connections = (response as Connections).data?.connections;
-    // }).catch(error => {
-    //     console.log("Error getting connections");
-    // });
-
-    return new Map(connections.map(connection => [connection.user, connection]));
-}
+import { toast } from "sonner";
 
 export default function UsersPage() {
-    const [connectionsMap, setConnectionsMap] = useState<Map<UserData, ConnectionData>>(getConnectionsMap);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [connections, setConnections] = useState<string[] | null>(null);
 
-    const onConnectButtonClicked = (userId: string) => {
-        //TODO Uncomment when backend is hooked up
-        //backendService.put("/connections", {userId: userId});
-        if(userId) {
-            setConnectionsMap(getConnectionsMap());
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const response = await backendService.get("/users/@me");
+
+            const userId = response.data?.id;
+            setCurrentUserId(userId);
+        };
+
+        fetchUserId();
+    }, []);
+
+    useEffect(() => {
+        const fetchConnections = async () => {
+            if (currentUserId) {
+                setConnections(await getConnections());
+            }
         }
+
+        fetchConnections();
+    }, [currentUserId]);
+
+    const getConnections = async () => {
+        let response = await backendService.get("/users/" + currentUserId + "/connections");
+
+        console.log((response as Connections).data.results.map(connection => connection.followingId))
+    
+        return (response as Connections).data.results.map(connection => connection.followingId);
+    }
+
+    const onConnectButtonClicked = async (userId: string) => {
+        backendService.post("/users/" + currentUserId + "/connections/" + userId, {}).then(response => {
+            if(!response.success) {
+                toast("Error occurred. Please try again", {
+                    action: {
+                        label: "Close",
+                        onClick: () => {},
+                    }
+                });
+
+                return;
+            }
+
+            let currentConnections = connections;
+            currentConnections && setConnections([...currentConnections, userId]);
+        })
     }
     
-    const onConnectedButtonClicked = (user: UserData) => {
-        //TODO Uncomment when backend is hooked up
-        //backendService.delete("/connections/" + connectionsMap.get(user)?.id);
+    const onConnectedButtonClicked = async (userId: string) => {
+        backendService.delete("/users/" + currentUserId + "/connections/" + userId).then(response => {
+            if(!response.success) {
+                toast("Error occurred. Please try again", {
+                    action: {
+                        label: "Close",
+                        onClick: () => {},
+                    }
+                });
 
-        if(user) {
-            setConnectionsMap(getConnectionsMap());
-        }
+                return;
+            }
+
+            let currentConnections = connections;
+            currentConnections && setConnections([...currentConnections.slice(0, currentConnections.indexOf(userId)), 
+                ...currentConnections.slice(currentConnections.indexOf(userId) + 1)]);
+        })
     }
 
-    function getListingsNum(userId: number) {
-        
+    function getListingsNum(userId: string) {
+        return 0; //TODO
+    }
+
+    function getConnectionsNum(userId: string) {
+        return 0; //TODO
     }
     
     const [users, setUsers] = useState<Users>({
@@ -70,15 +111,18 @@ export default function UsersPage() {
         />
         <div className="flex flex-wrap sm:mx-10 mt-8 gap-10 justify-center sm:justify-start">
             {users.data?.results.map(user => 
-                <User
-                    user={user}
-                    onConnectButtonClicked={onConnectButtonClicked}
-                    onConnectedButtonClicked={onConnectedButtonClicked}
-                    connected={connectionsMap.has(user)}
-                    key={user.id}
-                    className="mb-8"
-                />
-            )}
+                (currentUserId != null && connections != null && user.id != currentUserId && user.type != UserRole.GUEST &&
+                    <User
+                        user={user}
+                        listings={getListingsNum(user.id)}
+                        connections={getConnectionsNum(user.id)}
+                        onConnectButtonClicked={onConnectButtonClicked}
+                        onConnectedButtonClicked={onConnectedButtonClicked}
+                        connected={connections.includes(user.id)}
+                        key={user.id}
+                        className="mb-8"
+                    />
+                ))}
         </div>
     </div>
 }
