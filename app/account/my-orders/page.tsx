@@ -4,6 +4,7 @@ import KeysetPagination from "@/app/components/KeysetPagination";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
 import { Orders } from "@/app/models/Order";
+import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useEffect, useState } from "react";
 
 export default function AccountMyOrders() {
@@ -64,15 +65,14 @@ export default function AccountMyOrders() {
 
   return <>{orders && <div className="relative h-full">
     {/**TODO: API route & searchBy */}
-    {/**TODO: filter */}
     <Search 
       apiRoute="" 
       searchBy=""
       receiveResponse={receiveOrders}
       placeholderText="Search Orders"
+      filterType={FilterComponentType.ORDERS}
     />
-    <div className="w-full px-[0.5rem] py-[2rem] max-h-[45rem] overflow-y-auto
-    ">
+    <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
       {orders.data.results.map(order => 
         <Order
           order={order}

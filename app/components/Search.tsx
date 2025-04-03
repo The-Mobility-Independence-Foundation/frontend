@@ -12,6 +12,7 @@ import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
+import OrderFilters from "./filters/OrderFilters";
 
 interface SearchProps {
   apiRoute: string;
@@ -176,6 +177,9 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         }
         {filterType == FilterComponentType.INVENTORY_ITEMS && 
           <InventoryItemFilters onFilterValueChange={onFilterValueChange}/>
+        }
+        {filterType == FilterComponentType.ORDERS && 
+          <OrderFilters onFilterValueChange={onFilterValueChange} />
         }
         <div className="w-full h-screen bg-black/20" onClick={() => setShowFilter(false)} />
       </div>

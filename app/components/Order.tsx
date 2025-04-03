@@ -4,6 +4,7 @@ import Link from "next/link";
 import { OrderData } from "../models/Order";
 import { useEffect, useState } from "react";
 import Menu from "./Menu";
+import { capitalize } from "../models/Status";
 
 interface OrderProps {
   order: OrderData;
@@ -11,20 +12,16 @@ interface OrderProps {
 }
 
 // STATUSES
-const INITIATED = "initiated";
-const FULLFILLED = "fullfilled";
-const PENDING = "pending";
-const VOIDED = "voided";
+export const INITIATED = "initiated";
+export const FULLFILLED = "fullfilled";
+export const PENDING = "pending";
+export const VOIDED = "voided";
 
 export default function Order({order, className}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
   const [orderMenuOptions, setOrderMenuOptions] = useState<string[]>([]);
 
   const menuItemTemplate = "Mark as ";
-
-  const capitalize = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
 
   useEffect(() => {
     switch(order.status.toLowerCase()) {

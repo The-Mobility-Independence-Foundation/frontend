@@ -50,7 +50,7 @@ export default function ProfileSidebar() {
   }
   
   return <>{user && 
-    <div className={`relative ${appearing ? "animate-slideIn" : "animate-slideOut"}`}>
+    <div className={`z-10 relative ${appearing ? "animate-slideIn" : "animate-slideOut"}`}>
       <div className={`h-full flex flex-col justify-between bg-[#DDEDFF] drop-shadow-md ${appearing ? "w-min" : "w-0 p-0 overflow-hidden"}`}>
         <div className="m-[1rem]">
           <h2 className="text-nowrap">
@@ -95,7 +95,7 @@ export default function ProfileSidebar() {
           </p>
         </div>
       </div>
-      <div className="absolute right-[-40px] top-[10px]">
+      <div className="absolute z-50 right-[-40px] top-[10px]">
         <svg 
             width="30" 
             height="30" 
