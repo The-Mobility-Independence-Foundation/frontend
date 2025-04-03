@@ -27,7 +27,7 @@ export default function ProfileSidebar() {
   const tabs: Tab[] = [
     {title: "Connections", route: `/account/connections`},
     {title: "My Orders", route: `/account/my-orders`},
-    {title: "Received Orders", route: `/account/received-orders`},
+    {title: "Received Orders", route: `/account/received-orders`}, // TODO: Grab orders from an hour ago to display exclamation
     {title: "Settings", route: `/account`}
   ];
 
