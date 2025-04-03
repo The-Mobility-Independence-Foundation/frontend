@@ -1,12 +1,64 @@
+"use client"
+
 import Link from "next/link";
 import { OrderData } from "../models/Order";
+import { useEffect, useState } from "react";
+import Menu from "./Menu";
 
 interface OrderProps {
   order: OrderData;
   className?: string;
 }
 
+// STATUSES
+const INITIATED = "initiated";
+const FULLFILLED = "fullfilled";
+const PENDING = "pending";
+const VOIDED = "voided";
+
 export default function Order({order, className}: OrderProps) {
+  const [statusStyle, setStatusStyle] = useState("");
+  const [orderMenuOptions, setOrderMenuOptions] = useState<string[]>([]);
+
+  const menuItemTemplate = "Mark as ";
+
+  const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  useEffect(() => {
+    switch(order.status.toLowerCase()) {
+      case INITIATED:
+        setStatusStyle(`bg-[#007BFF] text-white`);
+        setOrderMenuOptions([
+          `${menuItemTemplate}${capitalize(PENDING)}`,
+          `${menuItemTemplate}${capitalize(FULLFILLED)}`,
+          `${menuItemTemplate}${capitalize(VOIDED)}`
+        ]);
+        break;
+      case FULLFILLED:
+        setStatusStyle(`bg-[#28A745] text-white`);
+        break;
+      case PENDING:
+        setStatusStyle(`bg-[#FFC107] text-white`);
+        setOrderMenuOptions([
+          `${menuItemTemplate}${capitalize(FULLFILLED)}`,
+          `${menuItemTemplate}${capitalize(VOIDED)}`
+        ]);
+        break;
+      case VOIDED:
+        setStatusStyle(`bg-[#6C757D] text-white`);
+        break;
+      default:
+        setStatusStyle(`bg-white text-black`);
+    }
+  }, [order]);
+
+  const onMenuItemClick = (item: string) => {
+    const newStatus = item.split(menuItemTemplate)[1].toLowerCase();
+    // TODO: API call for changing an order status
+  }
+  
   return <div
       className={`flex justify-between flex-wrap w-full bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
   >
@@ -30,8 +82,7 @@ export default function Order({order, className}: OrderProps) {
         {/**TODO: routes to specified user pv */}
       </Link>
     </div>
-    <div className="flex flex-col justify-around items-center
-    my-[1rem]">
+    <div className="flex flex-col justify-around items-center my-[1rem]">
         <div className="text-center">
           <p>Quantity Ordered:</p>
           <h5>{order.quantity}</h5>
@@ -41,8 +92,16 @@ export default function Order({order, className}: OrderProps) {
           <h5>{order.createdAt}</h5>
         </div>
     </div>
-    <div>
-      {/**TODO: menu & status */}
+    <div className="flex flex-col">
+      <div
+        className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
+      >{capitalize(order.status)}</div>
     </div>
+    {orderMenuOptions.length > 0 && 
+      <Menu 
+        items={orderMenuOptions} 
+        onItemClick={onMenuItemClick} 
+        className="fixed !top-2 !right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+      />}
   </div>
 }

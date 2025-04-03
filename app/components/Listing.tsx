@@ -249,7 +249,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           onOpenChange={(open) => onOpenChange && onOpenChange(open, listing)}
           items={[EDIT, activeStatus == 1 ? DEACTIVATE : ACTIVATE, DELETE]} 
           onItemClick={onMenuItemClick} 
-          className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"></Menu>}
+          className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4" />}
       </div>
       <Modal
         isOpen={createOrderModalIsOpen}
