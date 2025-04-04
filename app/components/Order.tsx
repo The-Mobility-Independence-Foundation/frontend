@@ -76,7 +76,7 @@ export default function Order({order, menuItems, onMenuItemClick, className, onS
     {order.status && 
       <div className="flex flex-col">
         <div
-          className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
+          className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle} ${onStatusClick ? "cursor-pointer" : ""}`}
           onClick={() => {if(onStatusClick)onStatusClick(order.status)}}
         >{order.status == OrderStatus.INITIATED ? "Handle" : capitalize(order.status) }</div>
       </div>

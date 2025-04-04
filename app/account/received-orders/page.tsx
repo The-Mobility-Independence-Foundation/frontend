@@ -5,7 +5,7 @@ import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
-import { userEmitter } from "@/app/layout";
+import { userEmitterBus } from "@/app/layout";
 import { OrderData, Orders, OrdersPatch } from "@/app/models/Order";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
@@ -37,7 +37,7 @@ export default function AccountReceivedOrders() {
   };
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUserID(userEmitted.id);
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
@@ -80,43 +80,42 @@ export default function AccountReceivedOrders() {
   return (
     <>
       <div className="relative h-full">
-        {/**TODO: searchBy, change apiRoute to POOL when fixed */}
+        {/**TODO: searchBy */}
         {orgID && (
           <Search
-            apiRoute={`/organizations/${orgID}/orders`}
+            apiRoute={`/organizations/${orgID}/orderpool`}
             searchBy=""
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
             loadingResponse={(loading) => setLoadingOrders(loading)}
           />
         )}
-        {orders && (
-          <>
-            <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
-              {loadingOrders && <Spinner />}
-              {!loadingOrders &&
-                orders.data.results.map((order) => (
-                  <Order
-                    order={order}
-                    key={order.id}
-                    menuItems={[HANDLE_ORDER]}
-                    onMenuItemClick={(item) => onMenuItemClick(item, order)}
-                    className="mb-[1rem]"
-                    onStatusClick={() => {
-                      setOrderHandling(order.id);
-                      setHandleOrderDialogIsOpen(true);
-                    }}
-                  />
-                ))}
-            </div>
-            <KeysetPagination
-              hasNextPage={orders.data.hasNextPage}
-              hasPreviousPage={orders.data.hasPreviousPage}
-              nextCursor={orders.data.nextCursor}
-              previousCursor={orders.data.previousCursor}
-            />
-          </>
-        )}
+        <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
+          {loadingOrders && <Spinner />}
+          {!loadingOrders && orders && (
+            <>
+              {orders.data.results.map((order) => (
+                <Order
+                  order={order}
+                  key={order.id}
+                  menuItems={[HANDLE_ORDER]}
+                  onMenuItemClick={(item) => onMenuItemClick(item, order)}
+                  className="mb-[1rem]"
+                  onStatusClick={() => {
+                    setOrderHandling(order.id);
+                    setHandleOrderDialogIsOpen(true);
+                  }}
+                />
+              ))}
+              <KeysetPagination
+                hasNextPage={orders.data.hasNextPage}
+                hasPreviousPage={orders.data.hasPreviousPage}
+                nextCursor={orders.data.nextCursor}
+                previousCursor={orders.data.previousCursor}
+              />
+            </>
+          )}
+        </div>
       </div>
       <Modal
         isOpen={handleOrderDialogIsOpen}

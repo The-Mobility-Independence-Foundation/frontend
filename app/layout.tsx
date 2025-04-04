@@ -17,8 +17,8 @@ const interRegular = localFont({
   weight: "100 600 900"
 });
 
-export const userEmitter = new EventEmitter();
-userEmitter.setMaxListeners(100);
+export const userEmitterBus = new EventEmitter();
+userEmitterBus.setMaxListeners(999999);
 
 export default function RootLayout({
   children,
@@ -30,7 +30,7 @@ export default function RootLayout({
 
   useEffect(() => {
     if(data?.success) {
-      userEmitter.emit("user", data.data);
+      userEmitterBus.emit("user", data.data);
     }
   }, [pathName, data]);
 

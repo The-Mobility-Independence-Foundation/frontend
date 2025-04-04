@@ -29,19 +29,26 @@ interface SearchProps {
 
 const formSchema = z.object({
   query: z.string()
-})
+});
 
 const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse, className}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [paginationCursor, setPaginationCursor] = useState("");
   // const [selectedValues, setSelectedValues] = useState(new Map());
   const [showFilter, setShowFilter] = useState(false);
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      query: defaultQuery || "",
+    }
+  });
 
   useEffect(() => {
     paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
       setPaginationCursor(cursor);
     })
-  })
+  });
 
   // TODO: grab filters from URL?
 
@@ -74,13 +81,9 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         loading(false)
       });
   }, [searchQuery, paginationCursor, apiRoute, searchBy]);
-    
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      query: defaultQuery || "",
-    }
-  });
+  useEffect(() => {
+    backendSearch();
+  }, [backendSearch]);
 
   const handleNewButtonClick = () => {
     if(newButtonEvent) {
@@ -110,10 +113,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
       // TODO: clear filters
     }
   }));
-
-  // useEffect(() => {
-  //   backendSearch();
-  // }, [searchQuery, paginationCursor, apiRoute, searchBy])
 
   return <div className="relative">
     <div 

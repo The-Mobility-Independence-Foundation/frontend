@@ -13,7 +13,7 @@ import BulkOperations from "../../components/BulkOperations";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
-import { userEmitter } from "@/app/layout";
+import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import KeysetPagination from "@/app/components/KeysetPagination";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export default function MyListings() {
   const [listings, setListings] = useState<Listings>();
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       const router = useRouter();
       const path = usePathname();
       const pathSplit = path.split("/");

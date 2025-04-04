@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import InventoryItem from "@/app/components/InventoryItem";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
-import { userEmitter } from "@/app/layout";
+import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import KeysetPagination from "@/app/components/KeysetPagination";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ export default function Inventory() {
   const router = useRouter();
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       if(userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       } else {
