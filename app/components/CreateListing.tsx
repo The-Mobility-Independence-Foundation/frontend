@@ -21,7 +21,7 @@ interface CreateListingProps {
   onClose: (created: boolean) => void;
 }
 
-// TODO: second half
+// TODO: title, description and attributes
 export default function CreateListing({onClose}: CreateListingProps) {
   const inventoryItems = useState<InventoryItemData[]>([])[0];
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
@@ -127,7 +127,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                                 key={item.id}
                                 value={item.id.toString()}
                               >
-                                {item.name} [{item.inventory.name}]
+                                {item.name} [{item.inventory?.name}]
                               </SelectItem>
                             ))}
                           </SelectGroup>

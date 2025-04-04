@@ -13,6 +13,7 @@ import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
 import { Model } from "../models/Model";
+import OrderFilters from "./filters/OrderFilters";
 
 interface SearchProps {
   apiRoute: string;
@@ -24,13 +25,14 @@ interface SearchProps {
   defaultQuery?: string;
   newButtonEvent?: (clicked: boolean) => void;
   loadingResponse?: (loading: boolean) => void;
+  className?: string;
 }
 
 const formSchema = z.object({
   query: z.string()
 })
 
-const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse}: SearchProps, ref) => {  
+const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse, className}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [paginationCursor, setPaginationCursor] = useState("");
   // const [selectedValues, setSelectedValues] = useState(new Map());
@@ -44,7 +46,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
 
   // TODO: grab filters from URL?
 
-  const backendSearch = () => {
+  const backendSearch = useCallback(() => {
     loading(true);
     const params = [];
     if(paginationCursor) {
@@ -72,7 +74,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  };
+  }, [searchQuery, paginationCursor, apiRoute, searchBy]);
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,13 +112,13 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     }
   }));
 
-  useEffect(() => {
-    backendSearch();
-  }, [searchQuery, paginationCursor, apiRoute, searchBy])
+  // useEffect(() => {
+  //   backendSearch();
+  // }, [searchQuery, paginationCursor, apiRoute, searchBy])
 
   return <div className="relative">
     <div 
-      className="w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]"
+      className={`${className} w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]`}
     >
       {newButtonEvent ? 
         <button onClick={handleNewButtonClick} className="button bg-[#D3E8FF] text-black">
@@ -175,6 +177,9 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         }
         {filterType == FilterComponentType.INVENTORY_ITEMS && 
           <InventoryItemFilters onFilterValueChange={onFilterValueChange}/>
+        }
+        {filterType == FilterComponentType.ORDERS && 
+          <OrderFilters onFilterValueChange={onFilterValueChange} />
         }
         <div className="w-full h-screen bg-black/20" onClick={() => setShowFilter(false)} />
       </div>

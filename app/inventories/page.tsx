@@ -7,7 +7,7 @@ import EditInventoryModal from "../components/modals/EditInventory";
 import CreateInventoryModal from "../components/modals/CreateInventory";
 import Search from "../components/Search";
 import Menu from "../components/Menu";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
 import { Spinner } from "@/components/ui/spinner";

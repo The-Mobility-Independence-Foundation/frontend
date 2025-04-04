@@ -1,12 +1,11 @@
 "use client"
 
-import backendService from "@/app/services/backend.service";
 import { usePathname, useRouter } from "next/navigation";
 import {useEffect} from "react";
 import useSWR from "swr";
 
 const fetcher = (url: string) => {
-    let token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     return fetch(url, {
         method: "GET",

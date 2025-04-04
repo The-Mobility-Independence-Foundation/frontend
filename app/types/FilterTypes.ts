@@ -8,10 +8,12 @@ export enum FilterType {
   QuantityMax = "quantityMax",
   LocationLat = "locationLat",
   LocationLong = "locationLong",
-  Radius = "radius"
+  Radius = "radius",
+  Status = "Status"
 };
 
 export enum FilterComponentType {
   LISTINGS = "LISTINGS",
-  INVENTORY_ITEMS = "INVENTORY_ITEMS"
+  INVENTORY_ITEMS = "INVENTORY_ITEMS",
+  ORDERS = "ORDERS"
 }

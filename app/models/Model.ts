@@ -1,7 +1,7 @@
-export interface Model {
+export interface Models {
   success: boolean,
   message: string | null,
-  data: ModelData
+  data: ModelData[]
 }
 
 export interface ModelData {
