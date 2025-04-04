@@ -43,7 +43,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     })
   })
 
-  // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
   const backendSearch = useCallback(() => {

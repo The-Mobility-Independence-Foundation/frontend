@@ -37,9 +37,7 @@ interface PaginationProps {
 }
 
 // Every time the page changes, the page reroutes with new query params "offset", and "limit"
-// TODO: bug where existing query params are missed with Pagination on page
-// TODO: rework with keyset
-// TODO: new format is "[<] [curr] [>]"
+// TODO: DELETE WHEN NOT USED ANYMORE
 export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange, className}: PaginationProps) {
   // default page data
   const calculateCurrentPage = () => {

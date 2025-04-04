@@ -53,15 +53,14 @@ export default function ListingPage() {
               <div className="mr-[0.25rem]">
                 <h2>{listing.name}</h2>
                 <p className="max-w-[20rem] text-sm">
-                  {listing.inventoryItem.part.description}
+                  {listing.description}
                 </p>
                 <div className="flex mt-[1rem]">
                   <div>
-                    <h5>{listing.inventoryItem.part.partNumber}</h5>
+                    <h5>{listing.inventoryItem.part.name}</h5>
                     <p className="mt-[revert]">
-                      {listing.inventoryItem.part.model}
+                      {listing.inventoryItem.part.partNumber}
                     </p>
-                    <p>{listing.inventoryItem.part.partType}</p>
                   </div>
                   <ul className="ml-[3rem] max-h-[6rem] overflow-y-auto">
                     {Object.keys(listing.attributes).map((key) => (

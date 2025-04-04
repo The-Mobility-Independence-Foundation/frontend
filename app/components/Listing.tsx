@@ -125,9 +125,8 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           <div className="flex">
             <div>
               <Link href={`/listing?listing_id=${listing.id}`}><h4 className="hover:underline">{listing.name}</h4></Link>
-              <h5>{part.partNumber}</h5>
-              <p className="mt-[revert]">{part.model}</p>
-              <p>{part.partType}</p>
+              <h5>{part.name}</h5>
+              <p className="mt-[revert]">{part.partNumber}</p>
             </div>
 
             <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">

@@ -15,7 +15,6 @@ interface LinkReference {
   base: string;
 }
 
-// TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
   const [user, setUser] = useState<UserData>();
