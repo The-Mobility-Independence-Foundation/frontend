@@ -22,16 +22,10 @@ export interface ListingData {
   id: string;
   name: string;
   description: string;
-  name: string;
-  description: string;
   attributes: {[key: string]: string};
   quantity: number;
   latitude: number;
   longitude: number;
-  inactive: boolean;
-  zipCode: string;
-  state: string;
-  createdAt: string;
   inactive: boolean;
   zipCode: string;
   state: string;
@@ -56,3 +50,7 @@ export const ACTIVE = "ACTIVE";
 export const INACTIVE = "INACTIVE";
 
 export const LISTING_STATES = [ACTIVE, INACTIVE];
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
