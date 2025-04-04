@@ -12,7 +12,6 @@ import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
-import { Model } from "../models/Model";
 import OrderFilters from "./filters/OrderFilters";
 
 interface SearchProps {
