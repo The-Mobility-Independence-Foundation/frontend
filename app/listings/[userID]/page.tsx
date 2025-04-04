@@ -4,7 +4,7 @@ import CreateListing from "@/app/components/CreateListing";
 import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ListingData, Listings, LISTING_STATES } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -14,6 +14,9 @@ import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
 import KeysetPagination from "@/app/components/KeysetPagination";
+import { userEmitter } from "@/app/layout";
+import { UserData } from "@/app/models/User";
+import { toast } from "sonner";
 // import { PaginationData } from "@/app/models/Generic";
 
 const EDIT = "Edit Attachment";
@@ -36,14 +39,18 @@ export default function MyListings() {
 
   const [listings, setListings] = useState<Listings>();
 
-  const myUserID = 1; // TODO: grab current user ID from db
-  const router = useRouter();
-  const path = usePathname();
-  const pathSplit = path.split("/");
-  const userIDInRoute = pathSplit[pathSplit.length - 1];
-  if (myUserID !== parseInt(userIDInRoute)) {
-    router.push(`/listings`);
-  }
+  useEffect(() => {
+    userEmitter.on("user", (userEmitted: UserData) => {
+      const router = useRouter();
+      const path = usePathname();
+      const pathSplit = path.split("/");
+      const userIDInRoute = pathSplit[pathSplit.length - 1];
+      if (userEmitted.id !== userIDInRoute) {
+        toast("Denied from this user's listings")
+        router.push(`/listings`);
+      }  
+    })
+  })
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
