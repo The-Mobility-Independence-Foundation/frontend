@@ -5,11 +5,10 @@ import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { ListingData, Listings } from "../../models/Listings";
+import { ListingData, Listings, LISTING_STATES } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
-import { statuses } from "../../models/Status";
 // import KeysetPagination from "../../components/KeysetPagination";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
@@ -53,9 +52,8 @@ export default function MyListings() {
     // received from Search component
     const responseData = (data as Listings).data;
     setListings(data as Listings);
-    // TODO: keyset pagination data
     setListingsChecked(new Map(responseData.results.map(listing => [listing, false])));
-    setListingsStatus(new Map(responseData.results.map(listing => [listing, statuses.indexOf(listing.status)+1])));
+    setListingsStatus(new Map(responseData.results.map(listing => [listing, LISTING_STATES.indexOf(listing.state.toUpperCase())+1])));
   }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
@@ -69,7 +67,7 @@ export default function MyListings() {
     setShowBulkOps(listingsCheckedUpdate.values().toArray().includes(true));
   }
 
-  const onStatusChange = (listing: ListingData, status: number) => {
+  const onListingStateChange = (listing: ListingData, status: number) => {
     const listingsStatusUpdate = new Map(listingsStatus);
     listingsStatusUpdate.set(listing, status);
 
@@ -153,8 +151,8 @@ export default function MyListings() {
           myListing={true}
           onCheckboxChange={(checked) => onCheckboxChange(listing, checked)}
           checked={listingsChecked.get(listing)}
-          onStatusChange={(status) => onStatusChange(listing, status)}
-          activeStatus={listingsStatus.get(listing)}
+          onStateChange={(state) => onListingStateChange(listing, state)}
+          activeState={listingsStatus.get(listing)}
           listing={listing}
           onOpenChange={onOpenChange}
           onMenuItemClickModal={onMenuItemClick}
@@ -183,7 +181,7 @@ export default function MyListings() {
       <Dialog
         text={"Are you sure you would like to delete this listing?"}
         onClose={onDeleteDialogClose}
-        header={`Delete ${selectedListing.title}?`}
+        header={`Delete ${selectedListing.name}?`}
       />
     </Modal>}
 
