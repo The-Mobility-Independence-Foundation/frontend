@@ -17,8 +17,6 @@ interface OrderProps {
 export default function Order({order, menuItems, onMenuItemClick, className, onStatusClick}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
 
-  const menuItemTemplate = "Mark as ";
-
   useEffect(() => {
     if(order.status) {
     switch(order.status.toLowerCase()) {

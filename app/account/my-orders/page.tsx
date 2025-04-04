@@ -39,7 +39,7 @@ export default function AccountMyOrders() {
   } 
 
   const getOrderStatusMenuItems = (orderStatus: string) => {
-    let items: string[] = orderStatus.toLowerCase() == OrderStatus.PENDING ? 
+    const items: string[] = orderStatus.toLowerCase() == OrderStatus.PENDING ? 
     [
       `Mark as ${capitalize(OrderStatus.FULLFILLED)}`,
       `Mark as ${capitalize(OrderStatus.VOIDED)}`
