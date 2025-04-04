@@ -2,35 +2,38 @@
 
 import Search from "@/app/components/Search";
 import { InventoryItemData, InventoryItems } from "@/app/models/InventoryItem";
-// import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react";
-import Pagination from "@/app/components/Pagination";
 import InventoryItem from "@/app/components/InventoryItem";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
 import { userEmitter } from "@/app/layout";
 import { UserData } from "@/app/models/User";
+import KeysetPagination from "@/app/components/KeysetPagination";
+import { toast } from "sonner";
 
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
   const [inventoryItemsDisplaying, setInventoryItemsDisplaying] = useState<InventoryItemData[]>([]);
   const [newItemModalIsOpen, setNewItemModalIsOpen] = useState(false);
   const [orgID, setOrgID] = useState("");
-  const [userID, setUserID] = useState(-1);
+  const [userID, setUserID] = useState("");
 
   const params = useSearchParams();
   const inventoryID = params.get("inventoryID");
+  const router = useRouter();
 
   useEffect(() => {
-    // userEmitter.on("user", (userEmitted: UserData) => {
-    //   if(userEmitted.organization) {
-    //     setOrgID(userEmitted.organization.id);
-    //   }
-    //   setUserID(userEmitted.id);
-    // })
-    setOrgID("5")
+    userEmitter.on("user", (userEmitted: UserData) => {
+      if(userEmitted.organization) {
+        setOrgID(userEmitted.organization.id);
+      } else {
+        toast("Must be connected to an organization to access this inventory.");
+        router.push("/listings");
+      }
+      setUserID(userEmitted.id);
+    })
   })
 
   const receiveInventoryItems = useCallback((data: object) => {
@@ -69,18 +72,20 @@ export default function Inventory() {
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
         <>
           <div className="px-[1rem] pt-[1.25rem] h-[60vh] min-h-0 overflow-y-auto">
-            {inventoryItemsDisplaying.map(item => <InventoryItem
+            {inventoryItemsDisplaying.map(item => 
+            <InventoryItem
               inventoryItem={item}
               userID={userID}
               key={item.id}
               className="mb-[1rem] mx-auto" />
             )}
           </div>
-          <Pagination
-            count={inventoryItems.data.count}
-            totalCount={inventoryItems.data.totalCount}
-            hasNext={inventoryItems.data.hasNext}
-            nextToken={inventoryItems.data.nextToken} />
+          <KeysetPagination 
+            hasNextPage={inventoryItems.data.hasNextPage}
+            hasPreviousPage={inventoryItems.data.hasPreviousPage}
+            nextCursor={inventoryItems.data.nextCursor}
+            previousCursor={inventoryItems.data.previousCursor}
+          />
         </>
       )}
     </div>

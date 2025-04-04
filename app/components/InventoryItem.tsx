@@ -7,7 +7,7 @@ import EditInventoryItem from "./modals/EditInventoryItem";
 
 interface InventoryItemProps {
   inventoryItem: InventoryItemData;
-  userID: number;
+  userID: number | string;
   className?: string;
 }
 

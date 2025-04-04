@@ -12,6 +12,7 @@ import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner"
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
+import { Model } from "../models/Model";
 
 interface SearchProps {
   apiRoute: string;
@@ -41,7 +42,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     })
   })
 
-  // TODO: grab brands & types from DB
   // TODO: grab filters from URL?
 
   const backendSearch = () => {

@@ -7,11 +7,11 @@ export const ATTRIBUTES_STRING_REGEX = /(.+:.+\n)*(.+:.+)/;
 
 export interface InventoryItems {
   message: string;
-  data: {
-    count: number;
-    totalCount: number;
-    hasNext: boolean;
-    nextToken: string | null;
+  data: {  
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    nextCursor: string | null;
+    previousCursor: string | null;
     results: InventoryItemData[]
   }
 }
