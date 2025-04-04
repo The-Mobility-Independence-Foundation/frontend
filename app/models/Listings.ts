@@ -31,11 +31,9 @@ export interface ListingData {
   state: string;
   createdAt: string;
   inventoryItem: InventoryItemData;
-  status: string;
-  attachment: string;
 }
 
-export interface PatchListing {
+export interface ListingPatchData {
   title: string;
   description: string;
   attributes: {[key: string]: string}
