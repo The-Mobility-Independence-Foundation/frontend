@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ACTIVE, INACTIVE } from "../../models/Status";
+import { ACTIVE, INACTIVE } from "../../models/Listings";
 import Filters, { FilterOptions } from "./Filters";
 import { FilterType } from "@/app/types/FilterTypes";
 

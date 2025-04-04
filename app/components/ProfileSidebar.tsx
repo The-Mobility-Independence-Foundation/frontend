@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { UserData } from "../models/User"
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { userEmitter } from "../layout";
 
 interface Tab {
