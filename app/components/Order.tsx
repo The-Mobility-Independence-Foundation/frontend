@@ -4,7 +4,7 @@ import Link from "next/link";
 import { OrderData, OrderStatus } from "../models/Order";
 import { useEffect, useState } from "react";
 import Menu from "./Menu";
-import { capitalize } from "../models/Status";
+import { capitalize } from "../models/Listings";
 
 interface OrderProps {
   order: OrderData;

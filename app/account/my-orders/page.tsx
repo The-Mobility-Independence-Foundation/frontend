@@ -7,7 +7,7 @@ import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
 import { userEmitter } from "@/app/layout";
 import { Orders, OrdersPatch, OrderStatus } from "@/app/models/Order";
-import { capitalize } from "@/app/models/Status";
+import { capitalize } from "@/app/models/Listings";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";

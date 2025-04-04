@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Filters, { FilterOptions } from "./Filters";
 import { FilterType } from "@/app/types/FilterTypes";
-import { capitalize } from "@/app/models/Status";
+import { capitalize } from "@/app/models/Listings";
 import { OrderStatus } from "@/app/models/Order";
 
 interface OrderFilterProps {
