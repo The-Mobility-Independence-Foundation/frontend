@@ -5,10 +5,10 @@ import { InventoryItemData } from "./InventoryItem";
 export interface Listings {
   message: string;
   data: {
-    count: number;
-    totalCount: number;
-    hasNext: boolean;
-    nextToken: string | null;
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string,
+    previousCursor: string,
     results: ListingData[]
   }
 }
