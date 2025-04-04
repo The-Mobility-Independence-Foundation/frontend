@@ -20,11 +20,16 @@ export interface Listing {
 
 export interface ListingData {
   id: string;
-  title: string;
+  name: string;
+  description: string;
   attributes: {[key: string]: string};
   quantity: number;
   latitude: number;
   longitude: number;
+  inactive: boolean;
+  zipCode: string;
+  state: string;
+  createdAt: string;
   inventoryItem: InventoryItemData;
   status: string;
   attachment: string;

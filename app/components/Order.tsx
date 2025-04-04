@@ -11,9 +11,10 @@ interface OrderProps {
   menuItems: string[];
   onMenuItemClick: (item: string) => void;
   className?: string;
+  onStatusClick?: (status: string) => void;
 }
 
-export default function Order({order, menuItems, onMenuItemClick, className}: OrderProps) {
+export default function Order({order, menuItems, onMenuItemClick, className, onStatusClick}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
 
   const menuItemTemplate = "Mark as ";
@@ -22,10 +23,10 @@ export default function Order({order, menuItems, onMenuItemClick, className}: Or
     if(order.status) {
     switch(order.status.toLowerCase()) {
       case OrderStatus.INITIATED:
-        setStatusStyle(`bg-[#007BFF] text-white`);
+        setStatusStyle(`bg-[#28A745] text-white`);
         break;
       case OrderStatus.FULLFILLED:
-        setStatusStyle(`bg-[#28A745] text-white`);
+        setStatusStyle(`bg-[#007BFF] text-white`);
         break;
       case OrderStatus.PENDING:
         setStatusStyle(`bg-[#FFC107] text-white`);
@@ -43,21 +44,23 @@ export default function Order({order, menuItems, onMenuItemClick, className}: Or
       className={`flex justify-between flex-wrap w-full bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
   >
     <div>
-      <h4 className="hover:underline">{order.inventoryItem.name}</h4>
-      <h5>{order.inventoryItem.part.partNumber}</h5>
-      <p className="mt-[revert]">{order.inventoryItem.model.name}</p>
-      <p>{order.inventoryItem.part.partType}</p>
+      <Link href={`/listing?listing_id=${order.listing.id}`}>
+        <h4 className="hover:underline cursor-pointer">{order.listing.name}</h4>      
+      </Link>
+      <h5>{order.listing.inventoryItem.name}</h5>
+      <p className="mt-[revert]">{order.listing.inventoryItem.part?.partNumber}</p>
+      <p>{order.listing.inventoryItem.part?.name}</p>
     </div>
     <div
       className="flex flex-col justify-between mr-[5rem] ml-[2rem]
                 max-sm:mr-[0rem] max-sm:my-[1rem]"
     >
-      <h5>{order.vendor.firstName} {order.vendor.lastName}</h5>
+      <h5>{order.recipient.firstName} {order.recipient.lastName}</h5>
       <div>
-        <p>@{order.vendor.displayName}</p>
-        <p>{order.vendor.email}</p>
+        <p>@{order.recipient.displayName}</p>
+        <p>{order.recipient.email}</p>
       </div>
-      <Link href={`/messages?u_id=${order.vendor.id}`} className="w-full">
+      <Link href={`/messages?u_id=${order.recipient.id}`} className="w-full">
         <button className="w-full button">Message</button>{" "}
         {/**TODO: routes to specified user pv */}
       </Link>
@@ -69,14 +72,15 @@ export default function Order({order, menuItems, onMenuItemClick, className}: Or
         </div>
         <div className="text-center">
           <p>Date Ordered:</p>
-          <h5>{order.createdAt}</h5>
+          <h5>{new Date(order.dateCreated).toLocaleDateString()}</h5>
         </div>
     </div>
     {order.status && 
       <div className="flex flex-col">
         <div
           className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle}`}
-        >{capitalize(order.status)}</div>
+          onClick={() => {if(onStatusClick)onStatusClick(order.status)}}
+        >{order.status == OrderStatus.INITIATED ? "Handle" : capitalize(order.status) }</div>
       </div>
     }
     {menuItems.length > 0 && 

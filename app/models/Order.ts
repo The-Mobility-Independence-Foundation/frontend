@@ -1,4 +1,6 @@
-import { InventoryItemData } from "./InventoryItem"
+import { AddressData } from "./Address"
+import { ListingData } from "./Listings"
+import { OrganizationData } from "./Organization"
 import { UserData } from "./User"
 
 export enum OrderStatus {
@@ -9,8 +11,8 @@ export enum OrderStatus {
 }
 
 export interface Orders {
-  message: string,
   success: boolean,
+  message: string,
   data: {
     results: OrderData[],
     hasNextPage: boolean,
@@ -20,11 +22,29 @@ export interface Orders {
   }
 }
 
+export interface OrdersPatch {
+  success: boolean,
+  message: string,
+  data: OrdersPatchData
+}
+
 export interface OrderData {
   id: number,
-  inventoryItem: InventoryItemData,
-  vendor: UserData,
   quantity: number,
-  createdAt: string,
-  status: string | null
+  status: string,
+  dateCreated: string,
+  dateCompleted: string | null,
+  listing: ListingData,
+  recipient: UserData
+}
+
+export interface OrdersPatchData {
+  id: number,
+  quantity: number,
+  status: string,
+  dateCreated: string,
+  dateCompleted: string | null,
+  address: AddressData | null,
+  recipientOrganization: OrganizationData,
+  provider: UserData
 }

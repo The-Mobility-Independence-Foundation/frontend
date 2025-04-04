@@ -40,9 +40,9 @@ export default function InventoryItem({inventoryItem, className}: InventoryItemP
       <div className="flex max-sm:mt-[1rem] ml-[1.5rem]">
         <div>
           <h4>{inventoryItem.name} ({inventoryItem.quantity})</h4>
-          <h5>{inventoryItem.part.partNumber}</h5>
-          <p className="mt-[revert]">{inventoryItem.part.model}</p>
-          <p>{inventoryItem.part.partType}</p>
+          <h5>{inventoryItem.part?.partNumber}</h5>
+          <p className="mt-[revert]">{inventoryItem.part?.model}</p>
+          <p>{inventoryItem.part?.partType}</p>
         </div>
         <ul className="ml-[3rem] mr-[1rem] max-h-[10rem] min-w-[15rem] overflow-y-auto">
           <li className="mb-[0.25rem]">{attributesAsString}</li>
@@ -56,11 +56,13 @@ export default function InventoryItem({inventoryItem, className}: InventoryItemP
         </Link>
       </div>
     </div>
-    {!inventoryItem.inventory.archivedAt && <Menu 
+    {inventoryItem.inventory && !inventoryItem.inventory.archivedAt && 
+    <Menu 
       items={menuItems}
       onItemClick={onMenuItemClick}
       className="absolute right-2.5"
-    />}
+    />
+    }
 
     <Modal
       isOpen={editItemModalIsOpen}

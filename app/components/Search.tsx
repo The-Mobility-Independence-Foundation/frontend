@@ -59,6 +59,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     const url = `${apiRoute}${params.length > 0 ? `?${params.join("&")}` : ""}`;
     backendService.get(url)
       .then(response => {
+        console.log(response)
         if(!response.success) {
           toast("There was an error grabbing data", {
             action: {

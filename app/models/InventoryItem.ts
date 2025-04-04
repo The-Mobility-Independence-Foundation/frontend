@@ -21,8 +21,8 @@ export interface InventoryItemData {
   id: number;
   name: string;
   inventory: InventoryData | null;
-  part: PartData;
-  model: ModelData;
+  part: PartData | null;
+  model: ModelData | null;
   quantity: number;
   publicCount: number;
   notes: string;
