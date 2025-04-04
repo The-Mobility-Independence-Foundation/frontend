@@ -5,10 +5,8 @@ import Search from "../components/Search";
 import { useCallback, useState } from "react";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
-import Pagination from "../components/Pagination";
 import { FilterComponentType } from "../types/FilterTypes";
 import KeysetPagination from "../components/KeysetPagination";
-// import KeysetPagination from "../components/KeysetPagination";
 
 export default function PublicListings() {
   const [listings, setListings] = useState<Listings>();

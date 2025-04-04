@@ -80,9 +80,9 @@ export default function ListingPage() {
                   <h5>{listing.inventoryItem.inventory.organization.name}</h5>
                   <p>{listing.inventoryItem.inventory.organization.phoneNumber}</p>
                   {listing.inventoryItem.inventory.organization.socials.map(social => 
-                  <p>
-                    {social}
-                  </p>
+                    <p key={social}>
+                      {social}
+                    </p>
                   )}
                 </div>
                 <Link

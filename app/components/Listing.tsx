@@ -2,7 +2,7 @@
 
 import { LISTING_STATES, ListingData, ListingPatchData, ACTIVE, INACTIVE } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
-import {v4 as uuidv4} from "uuid";
+// import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox"
 import { CheckedState } from "@radix-ui/react-checkbox";

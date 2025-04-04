@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image"
-import backendService from "../services/backend.service";
-import { User, UserData } from "../models/User";
-import { toast } from "sonner";
+// import backendService from "../services/backend.service";
+import { UserData } from "../models/User";
+// import { toast } from "sonner";
 import { userEmitter } from "../layout";
 
 interface LinkReference {
