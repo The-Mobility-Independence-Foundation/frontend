@@ -34,10 +34,19 @@ export interface ListingData {
 }
 
 export interface ListingPatchData {
-  title: string;
-  description: string;
-  attributes: {[key: string]: string}
-  quantity: number;
-  inventoryItemId: number;
-  status: string;
+  name?: string;
+  description?: string;
+  attributes?: {[key: string]: string};
+  quantity?: number;
+  latitude?: number;
+  longitude?: number;
+  inactive?: boolean;
+  zipCode?: string;
+  state?: string;
+  inventoryItemID?: number;
 }
+
+export const ACTIVE = "ACTIVE";
+export const INACTIVE = "INACTIVE";
+
+export const LISTING_STATES = [ACTIVE, INACTIVE];

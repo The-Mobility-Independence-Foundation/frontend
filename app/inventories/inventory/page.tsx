@@ -28,7 +28,7 @@ export default function Inventory() {
       name: item.name,
       inventory: item.inventory,
       part: item.part,
-      modelID: item.modelID,
+      model: item.model,
       quantity: item.quantity,
       publicCount: item.publicCount,
       notes: item.notes,
@@ -42,7 +42,7 @@ export default function Inventory() {
     <div className="flex flex-col">
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
         <div className="w-full bg-[#F4F4F5] p-[1rem]">
-          <h2>{inventoryItems.data.results[0].inventory.name}</h2>
+          <h2>{inventoryItems.data.results[0].inventory?.name}</h2>
         </div>
       )}
       <Search

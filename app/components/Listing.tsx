@@ -1,6 +1,6 @@
 "use client"
 
-import { ListingData, PatchListing } from "../models/Listings";
+import { LISTING_STATES, ListingData, ListingPatchData, ACTIVE, INACTIVE } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 // import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
-import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
@@ -24,8 +23,8 @@ export interface ListingProps {
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
   checked?: boolean;
-  onStatusChange?: (status: number) => void;
-  activeStatus?: number;
+  onStateChange?: (state: number) => void;
+  activeState?: number;
   onOpenChange?: (open: boolean, listing: ListingData) => void;
   onMenuItemClickModal?: (itemClicked: string) => void; 
   className?: string;
@@ -36,19 +35,19 @@ const DEACTIVATE = "Deactivate";
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
-export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
-  // const userID = 1; // TODO: replace with real User ID
-
+export default function Listing({listing, myListing, onCheckboxChange, checked, onStateChange, activeState, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
   const part = inventoryItem.part;
+  const inventory = inventoryItem.inventory;
+  const organization = inventory?.organization;
   const images: ImageReference[] = [
-    {
-      url: listing.attachment,
-      alt: `Attachment for ${listing.title}`,
-      id: uuidv4()
-    }
+    // {
+    //   url: listing.attachment,
+    //   alt: `Attachment for ${listing.title}`,
+    //   id: uuidv4()
+    // }
   ];
 
   const quantityFormSchema = z.object({
@@ -65,34 +64,24 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
     }
   });
 
-  const patchListing = (body: PatchListing) => {
+  const patchListing = (body: ListingPatchData) => {
+    // TODO: patch listing
     // backendService.put(`/listings/${listing.id}`, body)
     //   .then(response => {
-    //     // TODO: toastr with message
     //   });
     console.log(body)
   }
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
     patchListing({
-      title: listing.title,
-      description: "",
-      attributes: listing.attributes,
-      quantity: values.quantity,
-      inventoryItemId: inventoryItem.id,
-      status: listing.status
+      quantity: values.quantity
     });
   }
 
   const onActiveChange = (newSelected: number) => {
-    if (onStatusChange) { onStatusChange(newSelected); }
+    if (onStateChange) { onStateChange(newSelected); }
     patchListing({
-      title: listing.title,
-      description: "",
-      attributes: listing.attributes,
-      quantity: listing.quantity,
-      inventoryItemId: inventoryItem.id,
-      status: statuses[newSelected-1]
+      state: LISTING_STATES[newSelected-1].toLowerCase()
     });
   }
 
@@ -114,16 +103,14 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
     }
   }
 
-  return (
+  return (<>
+    {inventoryItem && inventory && organization && part &&
     <>
       <div
-        className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
-                  max-xl:flex-col max-xl:w-max 
-                  max-sm:pl-[2rem] ${className}`}
+        className={`flex flex-wrap justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
       >
         <div
-          className="flex 
-                    max-sm:flex-col"
+          className="flex flex-wrap"
         >
           <div className="flex">
             {onCheckboxChange != null && (
@@ -134,13 +121,15 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
             )}
             <ImageCarousel images={images}></ImageCarousel>
           </div>
-          <div className="flex max-sm:mt-[1rem]">
+
+          <div className="flex">
             <div>
-              <Link href={`/listing?listing_id=${listing.id}`}><h4 className="hover:underline">{listing.title}</h4></Link>
+              <Link href={`/listing?listing_id=${listing.id}`}><h4 className="hover:underline">{listing.name}</h4></Link>
               <h5>{part.partNumber}</h5>
               <p className="mt-[revert]">{part.model}</p>
               <p>{part.partType}</p>
             </div>
+
             <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
               {Object.keys(listing.attributes).map((key) => (
                 <li
@@ -151,31 +140,33 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
                 </li>
               ))}
             </ul>
+
+            <p className="max-w-[5rem]">{listing.description}</p>
           </div>
         </div>
         <div
-          className="flex 
-                    max-xl:mt-[1rem]
-                    max-sm:flex-col"
+          className="flex flex-wrap"
         >
           <div
             className="flex
                       max-sm:justify-between"
           >
             <div className="mr-[5rem]">
-              <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
-              {inventoryItem.inventory.address &&
+              <h5 className="mb-[1rem]">{inventory.name}</h5>
+              {inventory.address &&
                 <div className="text-white">
-                  <h5>{inventoryItem.inventory.address.addressLine1}</h5>
-                  <h5>{inventoryItem.inventory.address.addressLine2}</h5>
-                  <p>{inventoryItem.inventory.address.city}, {inventoryItem.inventory.address.state}</p>
-                  <p>{inventoryItem.inventory.address.zipCode}</p>
-                </div>}            
+                  <h5>{inventory.address.addressLine1}</h5>
+                  <h5>{inventory.address.addressLine2}</h5>
+                  <p>{inventory.address.city}, {inventory.address.state}</p>
+                  <p>{inventory.address.zipCode}</p>
+                </div>}           
             </div>
+            
+
             {myListing ? (
-              <div className="flex flex-col justify-between mr-[5rem]">
+              <div className="flex flex-col mr-[5rem]">
                 <Link
-                  href={`/inventories/inventory?inventoryID=${inventoryItem.inventory.id}&inventoryItemID=${inventoryItem.id}`}
+                  href={`/inventories/inventory?inventory_id=${inventory.id}&inventoryItemID=${inventoryItem.id}`}
                   className="text-[#009D4F] text-center"
                 >
                   View Part in Inventory
@@ -183,9 +174,9 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
                 <RadioButton
                   label1={ACTIVE}
                   label2={INACTIVE}
-                  selected={activeStatus != undefined ? activeStatus : 1}
+                  selected={activeState != undefined ? activeState : 1}
                   onChange={onActiveChange}
-                  className="bg-[#FFFFFF]"
+                  className="bg-[#FFFFFF] mt-auto"
                 />
               </div>
             ) : (
@@ -193,12 +184,11 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
                 className="flex flex-col justify-between mr-[5rem]
                           max-sm:mr-[0rem]"
               >
-                <h5>{inventoryItem.inventory.organization.name}</h5>
+                <h5>{organization.name}</h5>
                 <div>
-                  <p>{inventoryItem.inventory.organization.email}</p>
-                  <p>{inventoryItem.inventory.organization.phoneNumber}</p>
+                  <p>{organization.phoneNumber}</p>
                 </div>
-                <Link href={`/messages?u_id=${inventoryItem.inventory.organization.id}`} className="w-full">
+                <Link href={`/messages?u_id=${organization.id}`} className="w-full">
                   <button className="w-full button">Message</button>{" "}
                   {/**TODO: routes to specified user pv */}
                 </Link>
@@ -247,7 +237,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
         {myListing && 
         <Menu 
           onOpenChange={(open) => onOpenChange && onOpenChange(open, listing)}
-          items={[EDIT, activeStatus == 1 ? DEACTIVATE : ACTIVATE, DELETE]} 
+          items={[EDIT, activeState == 1 ? DEACTIVATE : ACTIVATE, DELETE]} 
           onItemClick={onMenuItemClick} 
           className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"></Menu>}
       </div>
@@ -261,6 +251,6 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           onClose={() => setCreateOrderModalIsOpen(false)}
         />
       </Modal>
-    </>
+    </>}</>
   );
 }
