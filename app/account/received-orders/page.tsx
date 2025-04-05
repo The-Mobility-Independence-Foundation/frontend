@@ -1,12 +1,12 @@
 "use client";
 
-import KeysetPagination from "@/app/components/KeysetPagination";
+// import KeysetPagination from "@/app/components/KeysetPagination";
 import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
 import { userEmitterBus } from "@/app/layout";
-import { OrderData, Orders, OrdersPatch } from "@/app/models/Order";
+import { OrderData, Orderpool, OrdersPatch } from "@/app/models/Order";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,7 +18,7 @@ import { toast } from "sonner";
 const HANDLE_ORDER = "Handle Order";
 
 export default function AccountReceivedOrders() {
-  const [orders, setOrders] = useState<Orders>();
+  const [orders, setOrders] = useState<Orderpool>();
   const [orgID, setOrgID] = useState("");
   const [userID, setUserID] = useState("");
   const [handleOrderDialogIsOpen, setHandleOrderDialogIsOpen] = useState(false);
@@ -32,7 +32,8 @@ export default function AccountReceivedOrders() {
   } | null>(null);
 
   const receiveOrders = (data: object) => {
-    const dataAsOrders = data as Orders;
+    const dataAsOrders = data as Orderpool;
+    console.log(dataAsOrders)
     setOrders(dataAsOrders);
   };
 
@@ -94,7 +95,7 @@ export default function AccountReceivedOrders() {
           {loadingOrders && <Spinner />}
           {!loadingOrders && orders && (
             <>
-              {orders.data.results.map((order) => (
+              {orders.data.map((order) => (
                 <Order
                   order={order}
                   key={order.id}
@@ -107,12 +108,13 @@ export default function AccountReceivedOrders() {
                   }}
                 />
               ))}
-              <KeysetPagination
+              {/* As of now, /orderpool doesn't have pagination. Once it does implement this */}
+              {/* <KeysetPagination
                 hasNextPage={orders.data.hasNextPage}
                 hasPreviousPage={orders.data.hasPreviousPage}
                 nextCursor={orders.data.nextCursor}
                 previousCursor={orders.data.previousCursor}
-              />
+              /> */}
             </>
           )}
         </div>
