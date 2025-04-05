@@ -81,11 +81,10 @@ export default function AccountReceivedOrders() {
   return (
     <>
       <div className="relative h-full">
-        {/**TODO: searchBy */}
         {orgID && (
           <Search
             apiRoute={`/organizations/${orgID}/orderpool`}
-            searchBy=""
+            searchBy="listingName"
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
             loadingResponse={(loading) => setLoadingOrders(loading)}

@@ -90,11 +90,10 @@ export default function AccountMyOrders() {
   return (
     <>
       <div className="relative h-full">
-        {/**TODO: searchBy */}
         {userID && (
           <Search
             apiRoute={`/users/${userID}/orders`}
-            searchBy=""
+            searchBy="listingName"
             receiveResponse={receiveOrders}
             filterType={FilterComponentType.ORDERS}
             placeholderText="Search Orders"
