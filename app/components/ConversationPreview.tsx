@@ -3,7 +3,7 @@ import { ConversationData } from "../models/Conversation";
 export interface ConversationPreviewProps {
     displayName: string;
     listing: string;
-    message: string;
+    message?: string;
     lastConversation: boolean;
     time: string;
     important: boolean;
@@ -16,7 +16,7 @@ export default function ConversationPreview({displayName, listing, message, last
             <div className="px-4 pt-1">
                 <h5 className="text-xl">{displayName}</h5>
                 <p className="text-xs italic">{listing}</p>
-                <p className="text-xs mt-1">{message}</p>
+                {message && <p className="text-xs mt-1">{message}</p>}
             </div>
 
             <p className="text-xs absolute top-2 right-2 text-gray-600">{time}</p>

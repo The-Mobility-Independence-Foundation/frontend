@@ -4,7 +4,7 @@ import { TEST_MESSAGE_ONE } from "./TestMessagesData"
 export const TEST_CONVERSATION_ONE = {
     id: "1",
     type: ConversationType.INQUIRY,
-    listingId: "1",
+    listingId: "11",
     initiatorId: "1",
     participantId: "2",
     messages: [TEST_MESSAGE_ONE],

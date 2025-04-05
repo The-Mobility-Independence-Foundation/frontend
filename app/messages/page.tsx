@@ -4,17 +4,29 @@ import { useState } from "react";
 import Conversation from "../components/Conversation";
 import ConversationsList from "../components/ConversationsList";
 import { ConversationData } from "../models/Conversation";
-import { testUserData, UserData } from "../models/User";
+import { User, UserData } from "../models/User";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button";
+import Listing from "../components/Listing";
+import backendService from "../services/backend.service";
+import { ListingData, SingleListing } from "../models/Listings";
 
 export default function PrivateMessages() {
   const [conversationId, setConversationId] = useState<string>();
   const [user, setUser] = useState<UserData>();
+  const [listing, setListing] = useState<ListingData>();
 
-  const selectConversation = (conversation: ConversationData) => {
-      setConversationId(conversation.id);
-      setUser(testUserData);
+  const selectConversation = async (conversation: ConversationData) => {
+    console.log(conversation.l)
+    if(conversation.listingId != null) {
+      let response = await backendService.get("/listing/" + conversation.listingId);
+      setListing((response as SingleListing).data);
+    }
+
+    setConversationId(conversation.id);
+
+    let response = await backendService.get("/users/" + conversation.participantId);
+    setUser((response as User).data);
   }
 
   return (<div className="flex relative">
@@ -22,8 +34,12 @@ export default function PrivateMessages() {
 
     {conversationId != null && user != null && <Conversation conversationId={conversationId} user={user} className="w-full"></Conversation>}
 
-    <Button className="fixed top-10 right-10">
-      <HamburgerMenuIcon />
-    </Button>
+    {listing != null && 
+      <>
+      <Listing listing={listing} />
+      <Button variant="ghost" className="absolute top-0 right-0">
+        <HamburgerMenuIcon />
+      </Button>
+      </> }
   </div>);
 }

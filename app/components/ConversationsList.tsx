@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ConversationData, Conversations } from "../models/Conversation";
 import Search from "./Search";
 import ConversationPreview from "./ConversationPreview";
+import backendService from "../services/backend.service";
+import { MessageData, Messages } from "../models/Message";
 
 export interface ConversationsListProps {
     userId: string;
@@ -19,10 +21,19 @@ export default function ConversationsList({userId, className, selectConversation
             results: []
         }
     });
+    const [conversationMessagesMap, setConversationMessagesMap] = useState<Map<ConversationData, MessageData[]>>(new Map())
 
-    const receiveConversations = (conversations: any) => {
+    const receiveConversations = async (conversations: any) => {
         // received from Search component
         setConversations(conversations as Conversations);
+
+        const conversationMessages: [ConversationData, MessageData[]][] = await Promise.all(
+            (conversations as Conversations).data.results.map(async (conversation) => {
+                let response = await backendService.get(`/conversations/${conversation.id}/messages`);
+                return [conversation, (response as Messages).data.results];
+            })
+        );
+        setConversationMessagesMap(new Map(conversationMessages));
     }
 
     const getDisplayName = (userId: string) => {
@@ -40,19 +51,26 @@ export default function ConversationsList({userId, className, selectConversation
     return (
         <div className={"bg-[#F4F4F5] " + className}>
             <Search 
-                apiRoute={"/messages"} 
-                receiveData={receiveConversations} 
-                placeholderText="Search Conversations"
+                apiRoute={`/users/${userId}/conversations`}
+                receiveResponse={receiveConversations}
+                placeholderText="Search Conversations" 
+                searchBy={"id"}
             />
 
-            {conversations.data?.results.map((conversation, index, conversations) => (
-                <ConversationPreview 
+            {conversations.data?.results.map((conversation, index, conversations) => {
+                let messages = conversationMessagesMap.get(conversation);
+
+                return <ConversationPreview 
                     key={conversation.id}
                     displayName={getDisplayName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
                     listing={getListingName(conversation.listingId)}
-                    message={conversation.messages[conversation.messages.length - 1].messageContent}
+                    message={messages && messages.length != 0 ? conversation.messages[conversation.messages.length - 1].messageContent : undefined}
                     lastConversation={index == conversations.length - 1}
-                    time={conversation.messages[conversation.messages.length - 1].createdAt.toLocaleTimeString([], {
+                    time={messages && messages.length != 0 ? new Date(conversation.messages[conversation.messages.length - 1].createdAt).toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                    }) : new Date(conversation.createdAt).toLocaleTimeString([], {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
@@ -60,7 +78,7 @@ export default function ConversationsList({userId, className, selectConversation
                     important={index == 0}
                     onClick={() => selectConversation(conversation)}
                 />
-            ))}
+            })}
         </div>
     )
 }

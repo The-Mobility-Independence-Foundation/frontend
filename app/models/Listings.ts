@@ -13,7 +13,8 @@ export interface Listings {
   }
 }
 
-export interface Listing {
+export interface SingleListing {
+  success: boolean;
   message: string;
   data: ListingData;
 }
