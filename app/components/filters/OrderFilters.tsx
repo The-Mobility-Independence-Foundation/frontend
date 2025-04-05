@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Filters, { FilterOptions } from "./Filters";
 import { FilterType } from "@/app/types/FilterTypes";
 import { capitalize } from "@/app/models/Listings";
@@ -12,28 +12,29 @@ export default function OrderFilters({onFilterValueChange}: OrderFilterProps) {
     const [selectedValues, setSelectedValues] = useState(new Map());
   
     const orderFilterOptions: FilterOptions = {
-      multiSelects: [
+      multiSelects: [],
+      multiInputs: [],
+      radioButtons: [],
+      multiRadioButtons: [
         {
           title: "Status",
           filterType: FilterType.Status,
-          options: [
+          labels: [
             capitalize(OrderStatus.INITIATED), 
             capitalize(OrderStatus.FULLFILLED), 
             capitalize(OrderStatus.PENDING), 
             capitalize(OrderStatus.VOIDED)
           ]
         }
-      ],
-      multiInputs: [],
-      radioButtons: []
+      ]
     };
 
     const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
-      const newSelectedValues = new Map(selectedValues);
-      if (newValue == null || newValue == "") {
-        newSelectedValues.delete(field);
-      } else {
-        newSelectedValues.set(field, newValue);
+      const newSelectedValues = new Map();
+      if(typeof newValue === "string") {
+        newSelectedValues.set(field.toLowerCase(), newValue.toLowerCase())
+      } else if(typeof newValue === "boolean") {
+        newSelectedValues.set(field.toLowerCase(), newValue == true ? "true" : "false")
       }
       setSelectedValues(newSelectedValues);
       onFilterValueChange(newSelectedValues);

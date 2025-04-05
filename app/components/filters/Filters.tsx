@@ -6,9 +6,10 @@ import { useState } from "react";
 import { MultiInputInfo } from "../../types/MultiInputInfo";
 import MultiInput from "../MultiInput";
 import { MultiSelectInfo } from "../../types/MultiSelectInfo";
-import { RadioButtonInfo } from "../../types/RadioButtonInfo";
+import { MultiRadioButtonInfo, RadioButtonInfo } from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
 import { FilterType } from "@/app/types/FilterTypes";
+import MultiRadioButton from "../MultiRadioButton";
 
 export interface FiltersProps {
   options: FilterOptions;
@@ -20,13 +21,15 @@ export interface FilterOptions {
   multiSelects: MultiSelectInfo[];
   multiInputs: MultiInputInfo[];
   radioButtons: RadioButtonInfo[];
-  map?: boolean
+  multiRadioButtons: MultiRadioButtonInfo[];
+  map?: boolean;
 }
 
 export default function Filters({options, selectedValues, onValueChange}: FiltersProps) {
   const multiSelects = options.multiSelects;
   const multiInputs = options.multiInputs;
   const radioButtons = options.radioButtons;
+  const multiRadioButtons = options.multiRadioButtons;
 
   const [activeStatusSelectedList, setActiveStatusSelectedList] = useState(
     new Array(radioButtons.length).fill(1)
@@ -52,6 +55,10 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
       ...activeStatusSelectedList.slice(index + 1),
     ]);
     onValueChange(FilterType.Active, newActiveStatus == 1);
+  }
+
+  function updateMultiRadioButton(title: string, newValue: string) {
+    onValueChange(title, newValue);
   }
 
   return (
@@ -99,6 +106,13 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
               changeActiveStatus(index, newActiveStatus)
             }
             className="bg-[#F4F4F5]"
+          />
+        ))}
+        {multiRadioButtons.map((multiRadioButtonInfo) => (
+          <MultiRadioButton 
+            title={multiRadioButtonInfo.title} 
+            labels={multiRadioButtonInfo.labels}
+            onValueChange={(value: string) => updateMultiRadioButton(multiRadioButtonInfo.title, value)}          
           />
         ))}
       </div>

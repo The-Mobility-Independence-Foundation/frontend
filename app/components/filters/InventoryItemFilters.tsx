@@ -43,7 +43,8 @@ export default function InventoryItemFilters({onFilterValueChange}: InventoryIte
       ],
       divider: "-",
     }],
-    radioButtons: []
+    radioButtons: [],
+    multiRadioButtons: []
   }
 
   const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
