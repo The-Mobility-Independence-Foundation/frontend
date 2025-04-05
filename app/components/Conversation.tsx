@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     message: z.string().min(1, ""),
@@ -26,11 +27,14 @@ export interface ConversationProps {
     className?: string;
 }
 
+const fileTypes = ["jpg","jpeg","png","pdf","doc","docx"];
+const imageFileTypes = ["jpg","jpeg","png"];
+
 export default function Conversation({conversationId, user, className}: ConversationProps) {
     const fileInputRef = useRef<HTMLInputElement>(null!);
 
     const [loading, setLoading] = useState(true);
-    const [attachments, setAttachments] = useState<string[]>([])
+    const [attachments, setAttachments] = useState<{url: string, type: string, name: string}[]>([])
     const [messagesEditing, setMessagesEditing] = useState<Map<string, boolean>>()
 
     const [messages, setMessages] = useState<Messages>({
@@ -71,7 +75,13 @@ export default function Conversation({conversationId, user, className}: Conversa
         let currentAttachments = attachments;
 
         if(e.target.files != null) {
-            setAttachments(currentAttachments?.concat(URL.createObjectURL(e.target.files[0])));
+            let urlSplit = e.target.files[0].name.split(".");
+            if(fileTypes.includes(urlSplit[urlSplit.length - 1])) {
+                setAttachments(currentAttachments?.concat({url: URL.createObjectURL(e.target.files[0]), 
+                    type: urlSplit[urlSplit.length - 1], name: e.target.files[0].name}));
+            } else {
+                toast.error("Invalid file type. Must be of type jpg, jpeg, png, pdf, doc, or docx.");
+            }
         }
     }
 
@@ -216,7 +226,14 @@ export default function Conversation({conversationId, user, className}: Conversa
                             <Button variant="outline" onClick={() => removeFile(index)} className="h-6 p-1 absolute top-[2px] right-[2px] opacity-0 group-hover:opacity-100">
                                 <TrashIcon />
                             </Button>
-                            <img src={attachment} className="h-[80px]"></img>
+
+                            {imageFileTypes.includes(attachment.type) ?
+                                <img src={attachment.url} className="h-[80px]"></img> :
+                                <div>
+                                    <FileIcon className="size-20" />
+                                    <p className="text-xs text-center font-normal">{attachment.name.length <= 10 ? attachment.name : attachment.name.substring(0, 6) + "..."}</p>
+                                </div>}
+
                         </div>
                     ))}
                 </div>
@@ -265,7 +282,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                                         </Button>
 
                                         <FormControl>
-                                            <Input type="file" className="hidden" ref={fileInputRef} onChange={uploadFile} />
+                                            <Input type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" className="hidden" ref={fileInputRef} onChange={uploadFile} />
                                         </FormControl>
                                     </FormItem>
                                 )}
