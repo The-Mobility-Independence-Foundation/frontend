@@ -7,11 +7,12 @@ export interface ConversationPreviewProps {
     lastConversation: boolean;
     time: string;
     important: boolean;
+    onClick: () => void;
 }
 
-export default function ConversationPreview({displayName, listing, message, lastConversation, time, important}: ConversationPreviewProps) {
+export default function ConversationPreview({displayName, listing, message, lastConversation, time, important, onClick}: ConversationPreviewProps) {
     return (
-        <div className="bg-[#D3E8FF80] relative">
+        <div className="bg-[#D3E8FF80] relative" onClick={onClick}>
             <div className="px-4 pt-1">
                 <h5 className="text-xl">{displayName}</h5>
                 <p className="text-xs italic">{listing}</p>

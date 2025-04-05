@@ -28,6 +28,7 @@ export interface ListingProps {
   activeStatus?: number;
   onOpenChange?: (open: boolean, listing: ListingData) => void;
   onMenuItemClickModal?: (itemClicked: string) => void; 
+  appearing?: boolean;
   className?: string;
 }
 
@@ -36,7 +37,7 @@ const DEACTIVATE = "Deactivate";
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
-export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
+export default function Listing({listing, myListing, onCheckboxChange, checked, onStatusChange, activeStatus, onOpenChange, onMenuItemClickModal, appearing, className}: ListingProps) {
   const userID = 1; // TODO: replace with real User ID
 
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
@@ -116,7 +117,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
       <div
         className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
                   max-xl:flex-col max-xl:w-max 
-                  max-sm:pl-[2rem] ${className}`}
+                  max-sm:pl-[2rem] ${appearing == null || appearing ? "animate-slideIn" : "animate-slideOut"} ${className}`}
       >
         <div
           className="flex 

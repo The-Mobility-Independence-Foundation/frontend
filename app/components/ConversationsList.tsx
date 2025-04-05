@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Conversations } from "../models/Conversation";
+import { ConversationData, Conversations } from "../models/Conversation";
 import Search from "./Search";
 import ConversationPreview from "./ConversationPreview";
 
 export interface ConversationsListProps {
     userId: string;
     className: string;
+    selectConversation: (conversation: ConversationData) => void;
 }
 
-export default function ConversationsList({userId, className}: ConversationsListProps) {
+export default function ConversationsList({userId, className, selectConversation}: ConversationsListProps) {
     const [conversations, setConversations] = useState<Conversations>({
         message: "Default",
         data: {
@@ -57,6 +58,7 @@ export default function ConversationsList({userId, className}: ConversationsList
                         hour12: true,
                     })}
                     important={index == 0}
+                    onClick={() => selectConversation(conversation)}
                 />
             ))}
         </div>
