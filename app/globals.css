@@ -61,7 +61,6 @@ body {
   p {
     font-size: 16px;
     font-weight: 600;
-    color: black;
   }
 }
 
@@ -145,4 +144,43 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+      transform: translateX(0);
+  }
+  to {
+      transform: translateX(-100%);
+  }
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateX(-100%);
+  }
+  to {
+      transform: translateX(0%);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slideOut {
+  animation: slideOut 0.3s ease-in-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-in-out forwards;
 }

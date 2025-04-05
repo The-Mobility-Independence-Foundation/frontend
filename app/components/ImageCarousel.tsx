@@ -3,11 +3,12 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image"
 
 export interface ImageReference {
   url: string;
   alt: string;
-  id: any;
+  id: string | number;
 }
 
 export interface ImageCarouselProps {
@@ -43,7 +44,7 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
   return <>
     <div className={`${className}`}>
       <Carousel 
-        className={`flex items-center justify-around`}
+        className={`flex items-center justify-around mr-[1rem]`}
         opts={{loop: true}}
       >
         {images.length > 1 && <CarouselPrevious className="static" />}
@@ -51,13 +52,16 @@ export default function ImageCarousel({images, className}: ImageCarouselProps) {
           {images.map((image, index) => 
             <CarouselItem 
               key={image.id}
-              className="max-h-[10rem]"
+              className="max-h-[10rem] relative"
             >
-              <img 
+              <Image 
                 src={image.url} 
                 alt={image.alt} 
-                className="h-full mx-auto cursor-pointer rounded"
+                className="h-full mx-auto cursor-pointer rounded !relative"
                 onClick={() => setFullScreenImageStartIndex(index)}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
               />
             </CarouselItem>
           )}
@@ -102,13 +106,15 @@ function FullScreenImage({clickFullScreenBackground, images, fullScreenImageStar
           {images.map(image => 
             <CarouselItem 
               key={image.id}
-              className="w-auto flex items-center"
+              className="relative w-auto flex items-center"
             >
-              <img 
+              <Image 
                 src={image.url} 
                 alt={image.alt} 
-                className="h-auto w-auto mx-auto"
-              />
+                className="h-auto w-auto mx-auto !relative"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
             </CarouselItem>
           )}
         </CarouselContent>

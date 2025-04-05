@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { z } from "zod";
 import { InventoryItemData } from "../models/InventoryItem";
-import { FormProvider, useForm } from "react-hook-form";
+import { ControllerRenderProps, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import {
@@ -23,7 +23,7 @@ interface CreateListingProps {
 
 // TODO: second half
 export default function CreateListing({onClose}: CreateListingProps) {
-  const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
+  const inventoryItems = useState<InventoryItemData[]>([])[0];
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
   const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
@@ -59,7 +59,12 @@ export default function CreateListing({onClose}: CreateListingProps) {
     onClose(true);
   };
 
-  const onInventoryItemChange = (value: string, field: any) => {
+  const onInventoryItemChange = (value: string, field: ControllerRenderProps<{
+        inventoryItemID: number;
+        quantity: number;
+        active: boolean;
+        attachment: string;
+    }, "inventoryItemID">) => {
     field.onChange(value);
     inventoryItems.forEach((item) => {
       if (item.id.toString() == value) {
@@ -68,7 +73,12 @@ export default function CreateListing({onClose}: CreateListingProps) {
     });
   };
 
-  const onActiveChange = (value: number, field: any) => {
+  const onActiveChange = (value: number, field: ControllerRenderProps<{
+    inventoryItemID: number;
+    quantity: number;
+    active: boolean;
+    attachment: string;
+}, "active">) => {
     field.onChange(value == 1);
     setActiveButton(value);
   };

@@ -11,7 +11,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
 import { ACTIVE, INACTIVE, statuses } from "../models/Status";
 import { useState } from "react";
@@ -67,10 +67,11 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
   });
 
   const patchListing = (body: PatchListing) => {
-    backendService.put(`/listings/${listing.id}`, body)
-      .then(response => {
-        // TODO: toastr with message
-      });
+    // backendService.put(`/listings/${listing.id}`, body)
+    //   .then(response => {
+    //     // TODO: toastr with message
+    //   });
+    console.log(body)
   }
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
@@ -107,7 +108,9 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
         break;
       }
       default: {
-        onMenuItemClickModal && onMenuItemClickModal(itemClicked);
+        if(onMenuItemClickModal) {
+          onMenuItemClickModal(itemClicked);
+        }
       }
     }
   }
@@ -162,7 +165,13 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
           >
             <div className="mr-[5rem]">
               <h5 className="mb-[1rem]">{inventoryItem.inventory.name}</h5>
-              <p>{inventoryItem.inventory.location}</p>
+              {inventoryItem.inventory.address &&
+                <div className="text-white">
+                  <h5>{inventoryItem.inventory.address.addressLine1}</h5>
+                  <h5>{inventoryItem.inventory.address.addressLine2}</h5>
+                  <p>{inventoryItem.inventory.address.city}, {inventoryItem.inventory.address.state}</p>
+                  <p>{inventoryItem.inventory.address.zipCode}</p>
+                </div>}            
             </div>
             {myListing ? (
               <div className="flex flex-col justify-between mr-[5rem]">

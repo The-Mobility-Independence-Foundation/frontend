@@ -1,49 +1,59 @@
 "use client"
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Image from "next/image"
+import backendService from "../services/backend.service";
+import { User, UserData } from "../models/User";
+import { toast } from "sonner";
+import { userEmitter } from "../layout";
 
 interface LinkReference {
   route: string;
   title: string;
+  base: string;
 }
 
 // TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
-  const userID = 1; // TODO: replace with real User ID
-  const orgID = 1; // TODO: replace with real org id
+  const [hasMessages, setHasMessages] = useState(false);
+  const [user, setUser] = useState<UserData>();
+
+  useEffect(() => {
+    userEmitter.on("user", (userEmitted: UserData) => {
+      setUser(userEmitted);
+    })
+  })
+
+  const pathName = usePathname();
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
   const FORUM = "/forum";
-  const PRIVATE_MESSAGES = `/messages?u_id=${userID}`;
-  const INVENTORIES = `/inventories?org_id=${orgID}`;
-  const MY_LISTINGS = `/listings/${userID}`;
-  const ACCOUNT = "/account";
+  const PRIVATE_MESSAGES = `/messages`;
+  const INVENTORIES = `/inventories`;
+  const MY_LISTINGS = `/listings/${user?.id}`;
+  const ACCOUNT = `/account`;
 
   const links: LinkReference[] = [
-    {route: PUBLIC_LISTINGS, title: "Public Listings"},
-    {route: FORUM, title: "Forum"},
-    {route: PRIVATE_MESSAGES, title: "Private Messages"},
-    {route: INVENTORIES, title: "My Inventories"},
-    {route: MY_LISTINGS, title: "My Listings"},
+    {route: PUBLIC_LISTINGS, title: "Public Listings", base: PUBLIC_LISTINGS.split("?")[0]},
+    {route: FORUM, title: "Forum", base: FORUM.split("?")[0]},
+    {route: PRIVATE_MESSAGES, title: "Private Messages", base: PRIVATE_MESSAGES.split("?")[0]},
+    {route: INVENTORIES, title: "My Inventories", base: INVENTORIES.split("?")[0]},
+    {route: MY_LISTINGS, title: "My Listings", base: MY_LISTINGS.split("?")[0]},
   ];
 
-  const basePath = usePathname();
-  const params = useSearchParams();
-  const path = `${basePath}${params.size > 0 ? `?${params.toString()}` : ""}`;
-  const [hasMessages, setHasMessages] = useState(false);
-
   const backendUnreadMessages = () => {
-    const apiRoute = `/conversations`;
-    const filters = ["read=null"];
     // TODO: uncomment this when backend is hooked up
+    // const apiRoute = `/conversations`;
+    // const filters = ["read=null"];
     // backendService.get(apiRoute, filters)
     //   .then(response => {
-    //     setHasMessages(response.data?.length > 0);
+        // setHasMessages(response.data?.length > 0);
     //   }
     // )
+    setHasMessages(false)
   };
 
   setInterval(() => {
@@ -53,18 +63,26 @@ export default function Header() {
   return <div className="bg-[#002856] py-[1rem] w-full flex justify-around items-center font-bold text-white text-xs h-[85px] lg:h-[90px] 2xl:h-[120px]">
     <Link
       href="/listings"
-      className="w-[20%]"
-    ><img src="/assets/Header Logo.png" alt={`"The MIF Foundation" company logo`}></img>
+      className="w-[20%] relative"
+    >
+      <Image 
+        src="/assets/Header Logo.png" 
+        alt={`"The MIF Foundation" company logo`}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"        className="!relative"
+        priority
+      />
     </Link>
     <nav className="space-x-[1rem] flex flex-nowrap overflow-x-scroll">
       {links.map(link => 
       <div 
-        key={link.route}
+        key={link.title}
         className="flex items-center"
       >
         <Link 
           href={link.route}
-          className={`${path == link.route ? "text-[#009D4F]" : ""} whitespace-nowrap lg:text-lg`}
+          className={`${pathName.startsWith(link.base) ? "text-[#009D4F]" : ""} 
+                      whitespace-nowrap lg:text-lg`}
         >{link.title}</Link>
         <span
           className={`text-red-600 ml-[0.2rem] text-xl lg:text-3xl ${link.route == PRIVATE_MESSAGES && hasMessages ? "opacity-100" : "opacity-0"}`}
@@ -74,7 +92,7 @@ export default function Header() {
     </nav>
     <Link 
       href={ACCOUNT}
-      className={`${path == ACCOUNT ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
+      className={`${pathName.startsWith(ACCOUNT.split("?")[0]) ? "text-[#009D4F]" : "text-white"} lg:text-lg`}
     >Account</Link>
   </div>
 }

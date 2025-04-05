@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UserData, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
 import { ConnectionData } from "../models/Connection";
-import backendService from "../services/backend.service";
+// import backendService from "../services/backend.service";
 
 const getConnectionsMap = () => {
-    let connections: ConnectionData[] = [];
+    const connections: ConnectionData[] = [];
 
     //TODO Uncomment when backend is hooked up
     // backendService.get("/connections").then(response => {
@@ -26,15 +26,18 @@ export default function UsersPage() {
     const onConnectButtonClicked = (userId: string) => {
         //TODO Uncomment when backend is hooked up
         //backendService.put("/connections", {userId: userId});
-
-        setConnectionsMap(getConnectionsMap());
+        if(userId) {
+            setConnectionsMap(getConnectionsMap());
+        }
     }
     
     const onConnectedButtonClicked = (user: UserData) => {
         //TODO Uncomment when backend is hooked up
         //backendService.delete("/connections/" + connectionsMap.get(user)?.id);
 
-        setConnectionsMap(getConnectionsMap());
+        if(user) {
+            setConnectionsMap(getConnectionsMap());
+        }
     }
     
     const [users, setUsers] = useState<Users>({
@@ -48,15 +51,16 @@ export default function UsersPage() {
         }
     });
 
-    const receiveUsers = (users: any) => {
+    const receiveUsers = useCallback((users: object) => {
         // received from Search component
         setUsers(users as Users);
-    }
+    }, []);
 
     return <div>
         <Search 
             apiRoute={"/users"} 
-            receiveData={receiveUsers} 
+            searchBy={"name"}
+            receiveResponse={receiveUsers} 
             placeholderText="Search Users"
         />
         <div className="flex flex-wrap sm:mx-10 mt-8 gap-10 justify-center sm:justify-start">
