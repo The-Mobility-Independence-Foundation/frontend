@@ -4,6 +4,8 @@ import Search from "./Search";
 import ConversationPreview from "./ConversationPreview";
 import backendService from "../services/backend.service";
 import { MessageData, Messages } from "../models/Message";
+import { User } from "../models/User";
+import { SingleListing } from "../models/Listings";
 
 export interface ConversationsListProps {
     userId: string;
@@ -36,16 +38,14 @@ export default function ConversationsList({userId, className, selectConversation
         setConversationMessagesMap(new Map(conversationMessages));
     }
 
-    const getDisplayName = (userId: string) => {
-        //TODO api call
-
-        return "User " + userId;
+    const getName = async (userId: string) => {
+        let response = await backendService.get("/users/" + userId);
+        return (response as User).data.firstName + " " + (response as User).data.lastName;
     }
 
-    const getListingName = (listingId: string) => {
-        //TODO api call
-
-        return "Listing Title";
+    const getListingName = async (listingId: string) => {
+        let response = await backendService.get("/listing/" + listingId);
+        return (response as SingleListing).data.title;
     }
 
     return (
@@ -57,13 +57,13 @@ export default function ConversationsList({userId, className, selectConversation
                 searchBy={"id"}
             />
 
-            {conversations.data?.results.map((conversation, index, conversations) => {
+            {conversations.data?.results.map(async (conversation, index, conversations) => {
                 let messages = conversationMessagesMap.get(conversation);
 
                 return <ConversationPreview 
                     key={conversation.id}
-                    displayName={getDisplayName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
-                    listing={getListingName(conversation.listingId)}
+                    displayName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
+                    listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
                     message={messages && messages.length != 0 ? conversation.messages[conversation.messages.length - 1].messageContent : undefined}
                     lastConversation={index == conversations.length - 1}
                     time={messages && messages.length != 0 ? new Date(conversation.messages[conversation.messages.length - 1].createdAt).toLocaleTimeString([], {

@@ -2,7 +2,7 @@ import { ConversationData } from "../models/Conversation";
 
 export interface ConversationPreviewProps {
     displayName: string;
-    listing: string;
+    listing?: string;
     message?: string;
     lastConversation: boolean;
     time: string;
@@ -15,7 +15,7 @@ export default function ConversationPreview({displayName, listing, message, last
         <div className="bg-[#D3E8FF80] relative" onClick={onClick}>
             <div className="px-4 pt-1">
                 <h5 className="text-xl">{displayName}</h5>
-                <p className="text-xs italic">{listing}</p>
+                {listing && <p className="text-xs italic">{listing}</p>}
                 {message && <p className="text-xs mt-1">{message}</p>}
             </div>
 

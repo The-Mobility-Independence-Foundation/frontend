@@ -17,7 +17,6 @@ export default function PrivateMessages() {
   const [listing, setListing] = useState<ListingData>();
 
   const selectConversation = async (conversation: ConversationData) => {
-    console.log(conversation.l)
     if(conversation.listingId != null) {
       let response = await backendService.get("/listing/" + conversation.listingId);
       setListing((response as SingleListing).data);
