@@ -62,7 +62,7 @@ export default function ConversationsList({userId, className, selectConversation
 
                 return <ConversationPreview 
                     key={conversation.id}
-                    displayName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
+                    userName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
                     listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
                     message={messages && messages.length != 0 ? conversation.messages[conversation.messages.length - 1].messageContent : undefined}
                     lastConversation={index == conversations.length - 1}

@@ -15,6 +15,7 @@ import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import backendService from "../services/backend.service";
 
 const formSchema = z.object({
     message: z.string().min(1, ""),
@@ -56,16 +57,14 @@ export default function Conversation({conversationId, user, className}: Conversa
     });
 
     const getMessages = async () => {
-        setLoading(true);
-
-        // TODO api call
-        setMessages(testMessages);
-
-        setLoading(false);
+        let response = await backendService.get(`/conversations/${conversationId}/messages`);
+        setMessages(response.data.results);
     };
 
     useEffect(() => {
+        setLoading(true);
         getMessages();
+        setLoading(false);
 
         const timer = setInterval(getMessages, 2000);
         return () => clearInterval(timer);
@@ -99,12 +98,19 @@ export default function Conversation({conversationId, user, className}: Conversa
         setMessagesEditing(currentMessagesEditing);
     }
 
-    function onSend(values: z.infer<typeof formSchema>) {
-        // TODO call endpoint
+    async function onSend(values: z.infer<typeof formSchema>) {
 
-        sendForm.reset({message: ""});
-        setAttachments([]);
-        getMessages();
+
+        backendService.post(`/conversations/${conversationId}/messages`, {
+            content: values.message,
+            files: values.attachment
+        }).then(response => {
+            sendForm.reset({message: ""});
+            setAttachments([]);
+            getMessages();
+        }).catch(error => {
+            toast.error("Error sending message. Please try again.");
+        });
     }
 
     function onEditSubmit(values: z.infer<typeof formSchema>) {

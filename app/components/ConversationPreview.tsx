@@ -1,7 +1,7 @@
 import { ConversationData } from "../models/Conversation";
 
 export interface ConversationPreviewProps {
-    displayName: string;
+    userName?: string;
     listing?: string;
     message?: string;
     lastConversation: boolean;
@@ -10,20 +10,22 @@ export interface ConversationPreviewProps {
     onClick: () => void;
 }
 
-export default function ConversationPreview({displayName, listing, message, lastConversation, time, important, onClick}: ConversationPreviewProps) {
+export default function ConversationPreview({userName, listing, message, lastConversation, time, important, onClick}: ConversationPreviewProps) {
     return (
         <div className="bg-[#D3E8FF80] relative" onClick={onClick}>
-            <div className="px-4 pt-1">
-                <h5 className="text-xl">{displayName}</h5>
-                {listing && <p className="text-xs italic">{listing}</p>}
-                {message && <p className="text-xs mt-1">{message}</p>}
+            <div className="flex items-center px-4 py-1">
+                {important && <p className="text-sm text-red-600 mr-2">!</p>}
+
+                <div className="px-4">
+                    <h5 className="text-xl">{userName ? userName : listing}</h5>
+                    {listing && <p className="text-xs italic">{listing}</p>}
+                    {message && <p className="text-xs mt-1">{message}</p>}
+                </div>
+
+                <p className="text-xs absolute top-2 right-2 text-gray-600">{time}</p>
+
+                <hr className={(!lastConversation ? "w-[90%] " : "") + "mx-auto border-t-2 mt-1"}></hr>
             </div>
-
-            <p className="text-xs absolute top-2 right-2 text-gray-600">{time}</p>
-
-            {important && <p className="text-sm absolute top-6 left-1 text-red-600">!</p>}
-
-            <hr className={(!lastConversation ? "w-[90%] " : "") + "mx-auto border-t-2 mt-1"}></hr>
         </div>
     )
 }
