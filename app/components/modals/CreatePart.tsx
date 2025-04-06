@@ -231,7 +231,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
                       onValueChange={(value) => onModelChange(value, field)}
                       required={true}
                     >
-                      <SelectTrigger className="mb-[1.5rem]">
+                      <SelectTrigger className="mb-[0.25rem]">
                         <SelectValue placeholder="Model" />
                       </SelectTrigger>
                       <SelectContent>
@@ -252,10 +252,14 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
                 </FormItem>
               )}
             />
-            <button onClick={() => onClose(null)} className="button !bg-[#BBBBBB]">Cancel</button>
-            <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
-                {loading ? <Spinner className="text-white" /> : "Create Part"}
-            </button>
+            <button className="button text-xs mb-[1.75rem]" onClick={() => setCreateModelModalIsOpen(true)}>Create New Model</button>
+
+            <div>
+              <button onClick={() => onClose(null)} className="button !bg-[#BBBBBB]">Cancel</button>
+              <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
+                  {loading ? <Spinner className="text-white" /> : "Create Part"}
+              </button>
+            </div>
           </form>
         </FormProvider>
       </ModalBody>
