@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ATTRIBUTES_STRING_REGEX } from "@/app/models/InventoryItem";
 import Modal from "./Modal";
 import CreatePartModal from "./CreatePart";
-import CreateModelModal from "./CreateModel";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
@@ -25,7 +24,6 @@ interface CreateInventoryItemModalProps {
 // TODO: test form, any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
   const [createPartModalIsOpen, setCreatePartModalIsOpen] = useState(false);
-  const [createModelModalIsOpen, setCreateModelModalIsOpen] = useState(false);
 
   const parts = useState<PartData[]>([])[0];
   const models = useState<ModelData[]>([])[0];
@@ -52,10 +50,6 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
     partID: z
       .string({ // This and modelID would both be numbers but the value in SelectItem has to be a string
         required_error: "Please select from the list of parts"
-      }),
-    modelID: z
-      .string({
-        required_error: "Please select from the list of models"
       }),
     quantity: z
       .number({
@@ -169,38 +163,6 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
             <button className="button text-xs mb-[0.75rem]" onClick={() => setCreatePartModalIsOpen(true)}>Create New Part</button>
             <FormField
               control={createInventoryItemForm.control}
-              name="modelID"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Select
-                      onValueChange={(value) => field.onChange(value)}
-                      required={true}
-                    >
-                      <SelectTrigger className="mb-[0.25rem]">
-                        <SelectValue placeholder="Select a Model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Models</SelectLabel>
-                          {models.map((model) => (
-                            <SelectItem
-                              key={model.id}
-                              value={model.id.toString()}
-                            >
-                              {model.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <button className="button text-xs mb-[1.5rem]" onClick={() => setCreateModelModalIsOpen(true)}>Create New Model</button>
-            <FormField
-              control={createInventoryItemForm.control}
               name="attributes"
               render={({ field }) => (
                 <FormItem className="mb-[1.5rem]">
@@ -247,14 +209,6 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       >
         <CreatePartModal
           onClose={() => setCreatePartModalIsOpen(false)}
-        />
-      </Modal>
-      <Modal
-        isOpen={createModelModalIsOpen}
-        onClose={() => setCreateModelModalIsOpen(false)}
-      >
-        <CreateModelModal
-          onClose={() => setCreateModelModalIsOpen(false)}
         />
       </Modal>
     </>
