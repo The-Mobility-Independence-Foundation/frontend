@@ -7,6 +7,7 @@ import { PartData } from "./Part";
 export const ATTRIBUTES_STRING_REGEX = /(.+:.+\n)*(.+:.+)/;
 
 export interface InventoryItems {
+  success: boolean
   message: string;
   data: {  
     hasNextPage: boolean;
