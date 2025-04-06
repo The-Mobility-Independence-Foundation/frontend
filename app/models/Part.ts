@@ -5,7 +5,13 @@ import { ModelData } from "./Model";
 export interface Parts {
   success: boolean;
   message: string | null;
-  data: PartData[];
+  data: {
+    results: PartData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string | null,
+    previousCursor: string | null
+  };
 }
 
 export interface PartTypes {

@@ -3,10 +3,9 @@ import ModalHeader from "./ModalHeader"
 import ModalBody from "./ModalBody"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import backendService from "@/app/services/backend.service";
-import { useEffect, useState } from "react";
-import { PartData } from "@/app/models/Part";
-import { ModelData } from "@/app/models/Model";
+import backendService from "@/app/services/backend.service";
+import { useCallback, useEffect, useState } from "react";
+import { PartData, Parts } from "@/app/models/Part";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ATTRIBUTES_STRING_REGEX } from "@/app/models/InventoryItem";
 import Modal from "./Modal";
 import CreatePartModal from "./CreatePart";
+import { toast } from "sonner";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
@@ -24,23 +24,21 @@ interface CreateInventoryItemModalProps {
 // TODO: test form, any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
   const [createPartModalIsOpen, setCreatePartModalIsOpen] = useState(false);
-
-  const parts = useState<PartData[]>([])[0];
-  const models = useState<ModelData[]>([])[0];
+  const [parts, setParts] = useState<PartData[]>([]);
+  const [pendingPart, setPendingPart] = useState<string | null>();
 
   const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
 
-  useEffect(() => {
-    // TODO: comment out when backend is hooked up
-    // backendService.get("/part")
-    //   .then(response => {
-    //     setParts(response.data);
-    //   });
-    // backendService.get("/model")
-    //   .then(response => {
-    //     setModels(response.data);
-    //   });
-  })
+  const getParts = useCallback(async () => {
+    const response = await backendService.get("/parts?limit=100");
+    const responseAsParts = response as Parts;
+    if(!responseAsParts.success) {
+      toast(responseAsParts.message);
+      setParts([]);
+      return;
+    }
+    setParts(responseAsParts.data.results);
+  }, []);
   
   const createInventoryItemFormSchema = z.object({
     name: z
@@ -48,7 +46,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
         required_error: "Name is required"
       }),
     partID: z
-      .string({ // This and modelID would both be numbers but the value in SelectItem has to be a string
+      .string({ // This would be a number but the value in SelectItem has to be a string
         required_error: "Please select from the list of parts"
       }),
     quantity: z
@@ -87,6 +85,24 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       onClose();
     }
   }
+
+  const onCreatePartModalClose = async (part: PartData | null) => {
+    setCreatePartModalIsOpen(false);
+    if(part) {
+      setPendingPart(part.id.toString());
+      getParts();
+    }
+  }
+
+  useEffect(() => {
+    if(pendingPart && parts.find(p => p.id.toString() == pendingPart)) {
+      createInventoryItemForm.setValue("partID", pendingPart);
+      console.log(createInventoryItemForm.getValues())
+      setPendingPart(null);
+    }
+  }, [pendingPart, parts])
+
+  // getParts();
   
   return (
     <>
@@ -138,6 +154,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
                     <Select
                       onValueChange={(value) => field.onChange(value)}
                       required={true}
+                      value={field.value}
                     >
                       <SelectTrigger className="mb-[0.25rem]">
                         <SelectValue placeholder="Select a Part" />
@@ -208,7 +225,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
         onClose={() => setCreatePartModalIsOpen(false)}
       >
         <CreatePartModal
-          onClose={() => setCreatePartModalIsOpen(false)}
+          onClose={(part) => onCreatePartModalClose(part)}
         />
       </Modal>
     </>
