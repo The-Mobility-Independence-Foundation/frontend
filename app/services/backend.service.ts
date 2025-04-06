@@ -11,8 +11,8 @@ class BackendService {
     return this.fetcher("GET", endpoint);
   }
 
-  async post(endpoint: string, data: object) {
-    return this.fetcher("POST", endpoint, data);
+  async post(endpoint: string, data: object, contentType?: string) {
+    return this.fetcher("POST", endpoint, data, contentType);
   }
 
   async patch(endpoint: string, data: object) {
@@ -23,7 +23,7 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: any = null) {
+  private async fetcher(method: string, endpoint: string, data: any = null, contentType?: string) {
     let token = localStorage.getItem("token");
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
@@ -32,7 +32,7 @@ class BackendService {
       headers: {
         Authorization: `Bearer ${token != null ? token : ""}`,
         "accept": "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": contentType ? contentType : "application/json"
       }
     });
 

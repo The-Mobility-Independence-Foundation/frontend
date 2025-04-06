@@ -99,12 +99,13 @@ export default function Conversation({conversationId, user, className}: Conversa
     }
 
     async function onSend(values: z.infer<typeof formSchema>) {
-
+        console.log(values.message)
 
         backendService.post(`/conversations/${conversationId}/messages`, {
-            content: values.message,
-            files: values.attachment
-        }).then(response => {
+            "content": values.message?.toString(),
+            "files": []
+        }, "multipart/form-data").then(response => {
+            console.log(response)
             sendForm.reset({message: ""});
             setAttachments([]);
             getMessages();
@@ -133,20 +134,21 @@ export default function Conversation({conversationId, user, className}: Conversa
 
              <div className="grow">
                 <ChatMessageList>
-                    {messages.data?.results.map((message, index, messages) => {
+                    {messages.data?.results.slice()
+                     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map((message, index, messages) => {
                         return <>
-                            {(index == 0 || messages[index - 1].createdAt.toLocaleDateString() != message.createdAt.toLocaleDateString()) && 
+                            {(index == 0 || new Date(messages[index - 1].createdAt).toLocaleDateString() != new Date(message.createdAt).toLocaleDateString()) && 
                             <div className="flex items-center my-4">
                                 <div className="flex-grow border-t border-gray-300"></div>
                                     <span className="mx-2 text-xs text-gray-500 whitespace-nowrap">
-                                        {message.createdAt.toLocaleDateString()}
+                                        {new Date(message.createdAt).toLocaleDateString()}
                                     </span>
                                 <div className="flex-grow border-t border-gray-300"></div>
                             </div>}
 
-                            <ChatBubble key={message.id} variant={message.authorId == user.id ? "sent" : "received"} className="mb-0"> 
-                                <ChatBubbleMessage variant={message.authorId == user.id ? "sent" : "received"} 
-                                    className={message.authorId == user.id ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
+                            <ChatBubble key={message.id} variant={message.author.id != user.id ? "sent" : "received"} className="mb-0"> 
+                                <ChatBubbleMessage variant={message.author.id != user.id ? "sent" : "received"} 
+                                    className={message.author.id != user.id ? "bg-[#034FA7] mb-0" : "bg-[#002856] text-white mb-0"}>
                                     {messagesEditing?.has(message.id) && messagesEditing.get(message.id) && 
                                         <Form {...editForm}>
                                             <form onSubmit={editForm.handleSubmit(onEditSubmit)}>
@@ -196,7 +198,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                                     /> }
                                 </ChatBubbleMessage>
                                 
-                                {message.authorId == user.id && 
+                                {message.author.id != user.id && 
                                 <ChatBubbleActionWrapper>
                                     <ChatBubbleAction
                                         className="size-7"
@@ -211,14 +213,13 @@ export default function Conversation({conversationId, user, className}: Conversa
                                 </ChatBubbleActionWrapper>}
                             </ChatBubble>
 
-                            <p className={"m-0 text-xs " + (message.authorId == user.id ? "text-right" : "")}>
-                                {index == messages.length - 1 && message.readAt != null && <>Read </>}
-                                {message.createdAt.toLocaleTimeString([], {
+                            <p className={"m-0 text-xs " + (message.author.id != user.id ? "text-right" : "")}>
+                                {new Date(message.createdAt).toLocaleTimeString("en-US", {
                                     hour: "numeric",
                                     minute: "2-digit",
                                     hour12: true,
                                 })}
-                                {message.updatedAt != null && message.updatedAt.toLocaleString() != message.createdAt.toLocaleString() && <> (edited)</>}
+                                {message.updatedAt != null && message.updatedAt.toLocaleString() != new Date(message.createdAt).toLocaleString() && <> (edited)</>}
                             </p>
                         </>
                     })}
