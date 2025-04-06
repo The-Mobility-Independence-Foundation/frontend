@@ -19,20 +19,22 @@ export interface MessageData {
   id: string,
   authorId: string,
   conversationId: string,
-  messageContent: string,
-  readStatus: string,
+  content: string,
+  readAt: Date | null,
   createdAt: Date,
   updatedAt: Date,
+  deletedAt: Date | null,
   attachments: string[]
 }
 
 export interface PatchMessage {
   id: string,
   authorId: string,
-  conversationId: string,
-  messageContent: string,
-  readStatus: string,
+  conversationId: number,
+  content: string,
+  readAt: Date | null,
   createdAt: Date,
   updatedAt: Date,
+  deletedAt: Date | null,
   attachments: string[]
 }

@@ -1,4 +1,4 @@
-import { Messages } from "../models/Message";
+import { MessageData, Messages } from "../models/Message";
 import { useEffect, useRef, useState } from "react";
 import { testMessages } from "../testData/TestMessagesData";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
@@ -58,7 +58,7 @@ export default function Conversation({conversationId, user, className}: Conversa
 
     const getMessages = async () => {
         let response = await backendService.get(`/conversations/${conversationId}/messages`);
-        setMessages(response.data.results);
+        setMessages(response);
     };
 
     useEffect(() => {
@@ -160,7 +160,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                                                                 <AutosizeTextarea
                                                                     placeholder="Message"
                                                                     className="resize-none bg-transparent text-white"
-                                                                    defaultValue={message.messageContent}
+                                                                    defaultValue={message.content}
                                                                     onKeyDown={(e) => {
                                                                         if (e.key == "Enter" && !e.shiftKey) {
                                                                             e.preventDefault();
@@ -181,7 +181,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                                             </form>
                                         </Form>}
                                 
-                                    {(!messagesEditing?.has(message.id) || !messagesEditing.get(message.id)) && message.messageContent}
+                                    {(!messagesEditing?.has(message.id) || !messagesEditing.get(message.id)) && message.content}
 
                                     {message.attachments.length != 0 && 
                                     <ImageCarousel
@@ -212,7 +212,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                             </ChatBubble>
 
                             <p className={"m-0 text-xs " + (message.authorId == user.id ? "text-right" : "")}>
-                                {index == messages.length - 1 && message.readStatus == "read" && <>Read </>}
+                                {index == messages.length - 1 && message.readAt != null && <>Read </>}
                                 {message.createdAt.toLocaleTimeString([], {
                                     hour: "numeric",
                                     minute: "2-digit",

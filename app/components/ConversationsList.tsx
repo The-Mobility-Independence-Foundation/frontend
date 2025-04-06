@@ -64,9 +64,9 @@ export default function ConversationsList({userId, className, selectConversation
                     key={conversation.id}
                     userName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
                     listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
-                    message={messages && messages.length != 0 ? conversation.messages[conversation.messages.length - 1].messageContent : undefined}
+                    message={messages != null && messages.length != 0 ? messages[messages.length - 1].content : undefined}
                     lastConversation={index == conversations.length - 1}
-                    time={messages && messages.length != 0 ? new Date(conversation.messages[conversation.messages.length - 1].createdAt).toLocaleTimeString([], {
+                    time={messages && messages.length != 0 ? new Date(messages[messages.length - 1].createdAt).toLocaleTimeString([], {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
