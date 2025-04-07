@@ -4,7 +4,7 @@ import Search from "@/app/components/Search";
 import { InventoryItemData, InventoryItems } from "@/app/models/InventoryItem";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import InventoryItem from "@/app/components/InventoryItem";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
@@ -12,6 +12,7 @@ import { userEmitter } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import KeysetPagination from "@/app/components/KeysetPagination";
 import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItems>();
@@ -19,10 +20,16 @@ export default function Inventory() {
   const [newItemModalIsOpen, setNewItemModalIsOpen] = useState(false);
   const [orgID, setOrgID] = useState("");
   const [userID, setUserID] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const params = useSearchParams();
   const inventoryID = params.get("inventoryID");
   const router = useRouter();
+
+  const searchRef = useRef<{
+    executeSearch: () => void;
+    clearSearch: () => void;
+  } | null>(null);
 
   useEffect(() => {
     userEmitter.on("user", (userEmitted: UserData) => {
@@ -54,6 +61,13 @@ export default function Inventory() {
     setInventoryItems(inventoryItemData);
   }, []);
 
+  const onNewItemModalClose = (submitted: boolean) => {
+    setNewItemModalIsOpen(false);
+    if(submitted) {
+      searchRef.current?.executeSearch();
+    }
+  }
+
   return <>
     {orgID != "" && inventoryID && <>
     <div className="flex flex-col">
@@ -68,17 +82,21 @@ export default function Inventory() {
         receiveResponse={receiveInventoryItems}
         placeholderText="Search Inventory Items"
         newButtonEvent={() => setNewItemModalIsOpen(true)}
-        filterType={FilterComponentType.INVENTORY_ITEMS} />
+        filterType={FilterComponentType.INVENTORY_ITEMS} 
+        loadingResponse={(loading) => setLoading(loading)}
+        ref={searchRef}
+        />
       {inventoryItems && inventoryItems?.data.results.length > 0 && (
         <>
           <div className="px-[1rem] pt-[1.25rem] h-[60vh] min-h-0 overflow-y-auto">
-            {inventoryItemsDisplaying.map(item => 
+            {!loading && inventoryItemsDisplaying.map(item => 
             <InventoryItem
               inventoryItem={item}
               userID={userID}
               key={item.id}
               className="mb-[1rem] mx-auto" />
             )}
+            {loading && <Spinner />}
           </div>
           <KeysetPagination 
             hasNextPage={inventoryItems.data.hasNextPage}
@@ -91,10 +109,10 @@ export default function Inventory() {
     </div>
     <Modal
       isOpen={newItemModalIsOpen}
-      onClose={() => setNewItemModalIsOpen(false)}
+      onClose={() => onNewItemModalClose(false)}
     >
       <CreateInventoryItem
-        onClose={() => setNewItemModalIsOpen(false)}
+        onClose={onNewItemModalClose}
         organizationID={orgID}
         inventoryID={inventoryID} />
     </Modal>

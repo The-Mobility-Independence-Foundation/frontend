@@ -103,6 +103,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
 
   useImperativeHandle(ref, () => ({
     executeSearch: () => {
+      console.log("executeSearch")
       backendSearch();
     },
     clearSearch: () => {

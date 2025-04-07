@@ -18,7 +18,7 @@ import { toastErrors } from "@/app/models/Generic";
 import { Spinner } from "@/components/ui/spinner";
 
 interface CreateInventoryItemModalProps {
-  onClose: () => void,
+  onClose: (submitted: boolean) => void,
   organizationID: string | number,
   inventoryID: string | number
 }
@@ -90,7 +90,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
         }
         toast(responseAsInventoryItems.message);
         setLoading(false);
-        onClose();
+        onClose(true);
       });
   }
 
@@ -115,7 +115,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
   
   return (
     <>
-      <ModalHeader title="Create a New Inventory Item" onClose={onClose} />
+      <ModalHeader title="Create a New Inventory Item" onClose={() => onClose(false)} />
       <ModalBody>
         <FormProvider {...createInventoryItemForm}>
           <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
@@ -201,7 +201,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
               )}
             />
             <div className="flex">
-              <button onClick={onClose} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
+              <button onClick={() => onClose(false)} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
               <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
                   {loading ? <Spinner className="text-white" /> : "Create"}
               </button>
