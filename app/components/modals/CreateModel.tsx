@@ -85,7 +85,7 @@ export default function CreateModelModal({onClose}: CreateModelModalProps) {
       manufacturerID = responseAsManufacturers.data.id;
     }
 
-    let modelTypeID = parseInt(values.modelType);
+    const modelTypeID = parseInt(values.modelType);
     if(values.modelType.length > 0 && isNaN(modelTypeID)) { // create new model type
       const response = await backendService.post(`/model-types`, {name: values.modelType});
       const responseAsModelTypes = response as ModelTypePost;
@@ -120,7 +120,7 @@ export default function CreateModelModal({onClose}: CreateModelModalProps) {
   const onManufacturerChange = (
     value: string,
     field: {
-      onChange: any;
+      onChange: (value: string) => void;
       onBlur?: Noop;
       value?: string;
       disabled?: boolean | undefined;
@@ -134,7 +134,7 @@ export default function CreateModelModal({onClose}: CreateModelModalProps) {
   const onModelTypeChange = (
     value: string,
     field: {
-      onChange: any;
+      onChange: (value: string) => void;
       onBlur?: Noop;
       value?: string;
       disabled?: boolean | undefined;
@@ -263,7 +263,7 @@ export default function CreateModelModal({onClose}: CreateModelModalProps) {
             />
             <div className="flex">
               <button onClick={() => onClose(null)} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
-              <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
+              <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[10rem]" disabled={loading}>
                   {loading ? <Spinner className="text-white" /> : "Create Model"}
               </button>
             </div>

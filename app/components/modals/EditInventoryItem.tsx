@@ -138,11 +138,11 @@ export default function EditInventoryItemModal({
       createInventoryItemForm.setValue("partID", pendingPart);
       setPendingPart(null);
     }
-  }, [pendingPart, parts]);
+  }, [pendingPart, parts, createInventoryItemForm]);
 
   useEffect(() => {
     getParts();
-  }, []);
+  }, [getParts]);
 
   return (
     <>
@@ -195,7 +195,7 @@ export default function EditInventoryItemModal({
               control={createInventoryItemForm.control}
               name="quantity"
               render={({ field }) => (
-                <FormItem className="w-[48%]">
+                <FormItem className="w-[30%] mt-[0.5rem]">
                   <FormControl>
                     <Input
                       {...field}
@@ -213,7 +213,7 @@ export default function EditInventoryItemModal({
               control={createInventoryItemForm.control}
               name="attributes"
               render={({ field }) => (
-                <FormItem className="mb-[1.5rem]">
+                <FormItem className="my-[1.5rem]">
                   <FormLabel>Attributes</FormLabel>
                   <FormControl>
                     <Textarea

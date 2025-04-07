@@ -161,7 +161,7 @@ export default function Inventories() {
           <Search
             apiRoute={`/organizations/${orgID}/inventories`}
             searchBy="name"
-            receiveResponse={(data) => receiveInventories(data)}
+            receiveResponse={receiveInventories}
             newButtonEvent={() => setCreateInventoryIsOpen(true)}
             loadingResponse={searchLoadingResponse}
             ref={searchRef}
