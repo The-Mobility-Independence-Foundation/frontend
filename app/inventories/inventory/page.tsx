@@ -87,7 +87,7 @@ export default function Inventory() {
             </div>
             <Search
               apiRoute={`/organizations/${orgID}/inventories/${inventoryID}/items`}
-              searchBy={"name"}
+              searchBy={"partName"}
               receiveResponse={receiveInventoryItems}
               placeholderText="Search Inventory Items"
               newButtonEvent={() => setNewItemModalIsOpen(true)}

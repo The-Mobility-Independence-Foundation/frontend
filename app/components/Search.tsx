@@ -121,7 +121,6 @@ const Search = forwardRef(
     const onFilterValueChange = (
       values: Map<string, string | number | boolean>
     ) => {
-      console.log(values)
       setSelectedFilters(values);
     };
 
