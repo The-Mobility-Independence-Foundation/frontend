@@ -7,6 +7,7 @@ import { PartData, Parts } from "@/app/models/Part";
 import { ModelData, Models } from "@/app/models/Model";
 import backendService from "@/app/services/backend.service";
 import { toastErrors } from "@/app/models/Generic";
+import { toast } from "sonner";
 
 interface InventoryItemFilterProps {
   onFilterValueChange: (values: Map<string, string>) => void;
@@ -42,42 +43,20 @@ export default function InventoryItemFilters({
 
   useEffect(() => {
     setFilterOptions({
-      multiSelects: [
-        {
-          title: "Part",
-          filterType: FilterType.Part,
-          options: parts.map((part) => part.name),
-        },
-        {
-          title: "Model",
-          filterType: FilterType.Model,
-          options: models.map((model) => model.name),
-        },
-      ],
-      multiInputs: [
-        {
-          title: "Quantity",
-          inputs: [
-            {
-              placeholder: "Lower Bound",
-              type: "number",
-              minValue: "0",
-              maxValue: "100",
-              onValueChange: onFilterValueChange,
-            },
-            {
-              placeholder: "Upper Bound",
-              type: "number",
-              minValue: "0",
-              maxValue: "100",
-              onValueChange: onFilterValueChange,
-            },
-          ],
-          divider: "-",
-        },
-      ],
+      multiSelects: [],
+      multiInputs: [],
       radioButtons: [],
-      multiRadioButtons: []
+      multiRadioButtons: [        
+      {
+        title: "Part",
+        filterType: FilterType.Part,
+        labels: parts.map((part) => part.name),
+      },
+      {
+        title: "Model",
+        filterType: FilterType.Model,
+        labels: models.map((model) => model.name),
+      },]
     });
   }, [parts, models]);
 
@@ -89,7 +68,19 @@ export default function InventoryItemFilters({
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);
     } else {
-      newSelectedValues.set(field, newValue);
+      let key = field.toLowerCase();
+      let id;
+      if (key == "part") {
+        id = parts.find(part => part.name == newValue)?.id;
+        key = "partId";
+      } else if(key == "model") {
+        key = "modelId";
+        id = models.find(model => model.name == newValue)?.id;
+      }
+      if(!id) {
+        toast("There was an error finding this filter attribute");
+      }
+      newSelectedValues.set(key, id);
     }
     setSelectedValues(newSelectedValues);
     onFilterValueChange(newSelectedValues);
