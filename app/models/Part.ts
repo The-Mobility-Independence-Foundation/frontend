@@ -44,5 +44,11 @@ export interface PartPost {
 export interface PartTypeData {
   id: number,
   name: string,
-  parts: PartData[]
+  parts: PartData[] | null
+}
+
+export interface PartTypePost {
+  success: boolean,
+  message: string,
+  data: PartTypeData
 }

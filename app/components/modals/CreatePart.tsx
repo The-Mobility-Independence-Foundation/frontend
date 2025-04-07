@@ -16,7 +16,7 @@ import backendService from "@/app/services/backend.service";
 import Modal from "./Modal";
 import CreateModelModal from "./CreateModel";
 import { toast } from "sonner";
-import { PartData, PartPost, PartTypeData, PartTypes } from "@/app/models/Part";
+import { PartData, PartPost, PartTypeData, PartTypePost, PartTypes } from "@/app/models/Part";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { toastErrors } from "@/app/models/Generic";
 
 interface CreatePartModalProps {
   onClose: (part: PartData | null) => void;
@@ -50,9 +51,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
     partNumber: z.string({
       required_error: "Part number is required",
     }),
-    partTypeID: z.string({
-      required_error: "Part type is required",
-    }),
+    partType: z.string(),
     modelID: z.string({
       required_error: "Model is required",
     }),
@@ -63,7 +62,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
       name: "",
       description: "",
       partNumber: "",
-      partTypeID: "",
+      partType: "",
       modelID: ""
     }
   });
@@ -72,7 +71,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
     backendService.get(`/models?limit=100`).then((response) => {
       const responseAsModels = response as Models;
       if (!responseAsModels.success) {
-        toast(responseAsModels.message);
+        toastErrors(response)
         return;
       }
       setModels(responseAsModels.data.results);
@@ -80,31 +79,46 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
     backendService.get(`/part-types?limit=100`).then((response) => {
       const responseAsPartTypes = response as PartTypes;
       if (!responseAsPartTypes.success) {
-        toast(responseAsPartTypes.message);
+        toastErrors(response)
         return;
       }
       setPartTypes(responseAsPartTypes.data.results);
     });
   }, [])
 
-  const submitForm = (values: z.infer<typeof createPartFormSchema>) => {
+  const submitForm = async (values: z.infer<typeof createPartFormSchema>) => {
     setLoading(true);
+    let partTypeID = parseInt(values.partType);
+    if(values.partType.length > 0 && isNaN(partTypeID)) { // create new part type if doesnt exist
+      const response = await backendService.post(`/part-types`, {name: values.partType});
+      const responseAsPartType = response as PartTypePost;
+      if(!response.success) {
+        toastErrors(response);
+        setLoading(false);
+        return;
+      }
+      partTypeID = responseAsPartType.data.id;
+      console.log(partTypeID)
+    }
     const body = {
       name: values.name,
       description: values.description,
       partNumber: values.partNumber,
       modelId: parseInt(values.modelID),
       partTypeIds: [
-        parseInt(values.partTypeID)
+        partTypeID
       ]
     }
+    
     backendService.post(`/parts`, body)
       .then(response => {
+        console.log(response);
         const responseAsPart = response as PartPost;
         setLoading(false);
-        toast(responseAsPart.message);
         if(responseAsPart.success) {
           onClose(responseAsPart.data);
+        } else {
+          toastErrors(response)
         }
       })
   };
@@ -116,7 +130,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
       onBlur?: Noop;
       value?: string;
       disabled?: boolean | undefined;
-      name?: "partTypeID";
+      name?: "partType";
       ref?: RefCallBack;
     }
   ) => {
@@ -192,13 +206,14 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
             />
             <FormField
               control={createPartForm.control}
-              name="partTypeID"
+              name="partType"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
+                    <div className="flex items-baseline">
                     <Select
                       onValueChange={(value) => onPartTypeChange(value, field)}
-                      required={true}
+                      // required={true}
                     >
                       <SelectTrigger className="mb-[0.75rem]">
                         <SelectValue placeholder="Part Type" />
@@ -217,6 +232,13 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <span className="mx-[0.5rem]">OR</span>
+                    <Input 
+                      type="string"
+                      placeholder="New Part Type"
+                      onChange={field.onChange}
+                    />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
@@ -254,8 +276,8 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
             />
             <button className="button text-xs mb-[1.75rem]" onClick={() => setCreateModelModalIsOpen(true)}>Create New Model</button>
 
-            <div>
-              <button onClick={() => onClose(null)} className="button !bg-[#BBBBBB]">Cancel</button>
+            <div className="flex">
+              <button onClick={() => onClose(null)} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
               <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
                   {loading ? <Spinner className="text-white" /> : "Create Part"}
               </button>
