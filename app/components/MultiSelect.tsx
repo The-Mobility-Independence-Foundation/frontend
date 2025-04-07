@@ -13,6 +13,7 @@ interface MultiSelectProps {
 export default function MultiSelect({className, title, options, onChange}: MultiSelectProps) {
     return <div className={className}>
         <h1 className="font-sans font-semibold text-2xl mb-2">{title}</h1>
+        <div className="max-h-[10rem] overflow-y-auto">
         {options.map((option) => 
             <div key={option}>
                 <Label className="font-sans font-normal text-sm">
@@ -22,5 +23,6 @@ export default function MultiSelect({className, title, options, onChange}: Multi
                 <br></br>
             </div>
         )}
+        </div>
     </div>
 }
