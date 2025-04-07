@@ -36,13 +36,13 @@ export default function MyListings() {
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
   // const [paginationData, setPaginationData] = useState<PaginationData>();
-
   const [listings, setListings] = useState<Listings>();
+
+  const router = useRouter();
+  const path = usePathname();
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
-      const router = useRouter();
-      const path = usePathname();
       const pathSplit = path.split("/");
       const userIDInRoute = pathSplit[pathSplit.length - 1];
       if (userEmitted.id !== userIDInRoute) {

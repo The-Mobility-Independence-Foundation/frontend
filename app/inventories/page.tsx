@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Inventory, InventoryData } from "../models/Inventory";
@@ -12,116 +12,143 @@ import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
 import { Spinner } from "@/components/ui/spinner";
 import KeysetPagination from "../components/KeysetPagination";
-import { PaginationData } from "../models/Generic";
+import { PaginationData, toastErrors } from "../models/Generic";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
 import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
+import { FilterComponentType } from "../types/FilterTypes";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
-// const RESTORE = "Restore";
+const RESTORE = "Restore";
 
-// TODO: separate tabs for archived inventories
 export default function Inventories() {
   const [inventories, setInventories] = useState<InventoryData[]>([]);
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
   const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
-  const [selectedInventory, setSelectedInventory] = useState<InventoryData | null>(null);
+  const [selectedInventory, setSelectedInventory] =
+    useState<InventoryData | null>(null);
   const [loadingInventories, setLoadingInventories] = useState(false);
   const [paginationData, setPaginationData] = useState<PaginationData>();
-  const [orgID, setOrgID] = useState(-1);
+  const [orgID, setOrgID] = useState("");
+  const [restoreInventoryIsOpen, setRestoreInventoryIsOpen] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
-      if(userEmitted.organization) {
-        setOrgID(userEmitted.organization.id as unknown as number);
+      if (userEmitted.organization) {
+        setOrgID(userEmitted.organization.id);
       } else {
         router.back();
       }
-    })
-  })
+    });
+  });
 
   const searchRef = useRef<{
-    executeSearch: () => void,
-    clearSearch: () => void
+    executeSearch: () => void;
+    clearSearch: () => void;
   } | null>(null);
 
   const onMenuItemClick = (item: string) => {
-    switch(item) {
+    switch (item) {
       case EDIT:
         setEditInventoryIsOpen(true);
         break;
       case ARCHIVE:
         setArchiveInventoryIsOpen(true);
         break;
-      // case RESTORE:
-      //   break;
+      case RESTORE:
+        setRestoreInventoryIsOpen(true);
+        break;
     }
-  }
+  };
 
   const onOpenChange = (open: boolean, inventory: InventoryData) => {
-    if(open) {
+    if (open) {
       setEditInventoryIsOpen(false);
       setCreateInventoryIsOpen(false);
       setArchiveInventoryIsOpen(false);
       setSelectedInventory(inventory);
     }
-  }
+  };
 
   const archiveSelectedInventory = (confirm: boolean) => {
     setArchiveInventoryIsOpen(false);
-    if(confirm && selectedInventory) {
+    if (confirm && selectedInventory) {
       setLoadingInventories(true);
-      backendService.delete(`/organizations/${orgID}/inventories/${selectedInventory.id}`)
-        .then(response => {
+      backendService
+        .delete(`/organizations/${orgID}/inventories/${selectedInventory.id}`)
+        .then((response) => {
           const responseAsInventory = response as Inventory;
-          if(responseAsInventory.success) {
+          if (responseAsInventory.success) {
             toast(responseAsInventory.message);
             setSelectedInventory(null);
             refreshInventories();
           }
           setLoadingInventories(false);
-        })
+        });
     }
-  }
+  };
 
-  const receiveInventories = useCallback((response: object) => {
-    if(orgID > -1) {
-      const responseData = (response as Inventory).data;
-      setInventories(responseData.results);
-      setPaginationData({
-        hasNextPage: responseData.hasNextPage,
-        hasPreviousPage: responseData.hasPreviousPage,
-        nextCursor: responseData.nextCursor,
-        previousCursor: responseData.previousCursor
-      })
+  const restoreSelectedInventory = (confirm: boolean) => {
+    setRestoreInventoryIsOpen(false);
+    if (confirm && selectedInventory) {
+      backendService
+        .patch(`/organizations/${orgID}/inventories/${selectedInventory.id}`, {
+          restore: true,
+        })
+        .then((response) => {
+          const responseAsInventory = response as Inventory;
+          if (!responseAsInventory.success) {
+            toastErrors(response);
+            return;
+          }
+          toast(responseAsInventory.message);
+          setSelectedInventory(null);
+          refreshInventories();
+        });
     }
-  }, [orgID]);
+  };
+
+  const receiveInventories = useCallback(
+    (response: object) => {
+      if (orgID) {
+        const responseData = (response as Inventory).data;
+        setInventories(responseData.results);
+        setPaginationData({
+          hasNextPage: responseData.hasNextPage,
+          hasPreviousPage: responseData.hasPreviousPage,
+          nextCursor: responseData.nextCursor,
+          previousCursor: responseData.previousCursor,
+        });
+      }
+    },
+    [orgID]
+  );
 
   const refreshInventories = () => {
-    if(searchRef.current) {
+    if (searchRef.current) {
       searchRef.current.clearSearch();
       searchRef.current.executeSearch();
     }
-  }
+  };
 
   const onCreateInventoryClose = (submit: boolean) => {
     setCreateInventoryIsOpen(false);
-    if(submit) {
+    if (submit) {
       refreshInventories();
     }
-  }
+  };
 
   const onEditInventoryClose = (submit: boolean) => {
     setEditInventoryIsOpen(false);
-    if(submit) {
+    if (submit) {
       refreshInventories();
     }
-  }
+  };
 
   const searchLoadingResponse = useCallback((loading: boolean) => {
     setLoadingInventories(loading);
@@ -129,7 +156,7 @@ export default function Inventories() {
 
   return (
     <>
-      {orgID > -1 && (
+      {orgID && (
         <>
           <Search
             apiRoute={`/organizations/${orgID}/inventories`}
@@ -138,6 +165,7 @@ export default function Inventories() {
             newButtonEvent={() => setCreateInventoryIsOpen(true)}
             loadingResponse={searchLoadingResponse}
             ref={searchRef}
+            filterType={FilterComponentType.INVENTORIES}
           />
           <div className="px-[1rem] py-[2rem] max-h-[45rem] overflow-y-auto">
             {loadingInventories && <Spinner />}
@@ -145,11 +173,11 @@ export default function Inventories() {
               inventories.map((inventory, index) => (
                 <div
                   key={inventory.id}
-                  className={`animate-fadeIn flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
+                  className={`animate-fadeIn flex flex-wrap mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
                     index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"
                   }`}
                 >
-                  <div className="w-[45%]">
+                  <div className="w-80 mr-[1rem]">
                     <div className="flex items-start h-min">
                       <h3 className="text-white hover:underline">
                         <Link
@@ -167,7 +195,7 @@ export default function Inventories() {
                     <p className="text-white">{inventory.description}</p>
                   </div>
                   {inventory.address && (
-                    <div>
+                    <div className="mr-[2rem]">
                       <h5 className="text-white">
                         {inventory.address.addressLine1}
                       </h5>
@@ -183,10 +211,10 @@ export default function Inventories() {
                   <Menu
                     onOpenChange={(open) => onOpenChange(open, inventory)}
                     items={
-                      inventory.archivedAt ? [EDIT] : [EDIT, ARCHIVE]
+                      inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]
                     }
                     onItemClick={(item) => onMenuItemClick(item)}
-                    className="text-white text-lg"
+                    className="text-white text-lg absolute right-2.5"
                   />
                 </div>
               ))}
@@ -213,16 +241,32 @@ export default function Inventories() {
             />
           </Modal>
           {selectedInventory && (
-            <Modal
-              isOpen={archiveInventoryIsOpen}
-              onClose={() => setArchiveInventoryIsOpen(false)}
-            >
-              <Dialog
-                text={"Are you sure you would like to archive this inventory?"}
-                onClose={archiveSelectedInventory}
-                header={`Archive ${selectedInventory.name}?`}
-              />
-            </Modal>
+            <>
+              <Modal
+                isOpen={archiveInventoryIsOpen}
+                onClose={() => setArchiveInventoryIsOpen(false)}
+              >
+                <Dialog
+                  text={
+                    "Are you sure you would like to archive this inventory?"
+                  }
+                  onClose={archiveSelectedInventory}
+                  header={`Archive ${selectedInventory.name}?`}
+                />
+              </Modal>
+              <Modal
+                isOpen={restoreInventoryIsOpen}
+                onClose={() => setRestoreInventoryIsOpen(false)}
+              >
+                <Dialog
+                  text={
+                    "Are you sure you would like to restore this inventory?"
+                  }
+                  onClose={restoreSelectedInventory}
+                  header={`Restore ${selectedInventory.name}?`}
+                />
+              </Modal>
+            </>
           )}
           {paginationData && (
             <KeysetPagination

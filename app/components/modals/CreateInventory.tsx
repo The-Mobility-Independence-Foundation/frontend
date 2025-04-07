@@ -13,42 +13,40 @@ import { Spinner } from "@/components/ui/spinner";
 import { ErrorCallback, toastErrors } from "@/app/models/Generic";
 
 interface CreateInventoryModalProps {
-  organizationID: number,
-  onClose: (submit: boolean) => void
+  organizationID: number | string;
+  onClose: (submit: boolean) => void;
 }
 
-export default function CreateInventoryModal({organizationID, onClose}: CreateInventoryModalProps) {
+export default function CreateInventoryModal({
+  organizationID,
+  onClose,
+}: CreateInventoryModalProps) {
   const [loadingCreation, setLoadingCreation] = useState(false);
-  
+
   const createInventoryFormSchema = z.object({
-    title: z
-      .string({
-        required_error: "Title is required"
-      }),
-    description: z
-      .string({
-        required_error: "Description is required"
-      }),
-    addressLine1: z
-      .string({
-        required_error: "Address Line 1 is required"
-      }),
-    addressLine2: z
-      .string(),
-    city: z
-      .string({
-        required_error: "City is required"
-      }),
-    state: z
-      .string({
-        required_error: "State is required"
-      }),
-    zipCode: z
-      .string({
-        required_error: "Zip Code is required"
-      })
+    title: z.string({
+      required_error: "Title is required",
+    }),
+    description: z.string({
+      required_error: "Description is required",
+    }),
+    addressLine1: z.string({
+      required_error: "Address Line 1 is required",
+    }),
+    addressLine2: z.string(),
+    city: z.string({
+      required_error: "City is required",
+    }),
+    state: z.string({
+      required_error: "State is required",
+    }),
+    zipCode: z.string({
+      required_error: "Zip Code is required",
+    }),
   });
-  const createInventoryForm = useForm<z.infer<typeof createInventoryFormSchema>>({
+  const createInventoryForm = useForm<
+    z.infer<typeof createInventoryFormSchema>
+  >({
     resolver: zodResolver(createInventoryFormSchema),
     defaultValues: {
       title: "",
@@ -57,11 +55,13 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
       addressLine2: "",
       city: "",
       state: "",
-      zipCode: ""
-    }
-  })
-  
-  const onInventorySubmit = (values: z.infer<typeof createInventoryFormSchema>) => {
+      zipCode: "",
+    },
+  });
+
+  const onInventorySubmit = (
+    values: z.infer<typeof createInventoryFormSchema>
+  ) => {
     setLoadingCreation(true);
     const body = {
       addressLine1: values.addressLine1,
@@ -70,28 +70,30 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
       state: values.state,
       zipCode: values.zipCode,
       name: values.title,
-      description: values.description
-    }
-    backendService.post(`/organizations/${organizationID}/inventories`, body)
-      .then(response => {
+      description: values.description,
+    };
+    backendService
+      .post(`/organizations/${organizationID}/inventories`, body)
+      .then((response) => {
         const responseAsInventory = response as InventorySuccess;
-        if(!responseAsInventory.success) {
+        if (!responseAsInventory.success) {
           toastErrors(response as ErrorCallback);
           setLoadingCreation(false);
           return;
         }
         onClose(true);
-    });
-  }
+      });
+  };
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title="Create a New Inventory" onClose={() => onClose(false)} />
+      <ModalHeader
+        title="Create a New Inventory"
+        onClose={() => onClose(false)}
+      />
       <ModalBody>
         <FormProvider {...createInventoryForm}>
-          <form
-            onSubmit={createInventoryForm.handleSubmit(onInventorySubmit)}
-          >
+          <form onSubmit={createInventoryForm.handleSubmit(onInventorySubmit)}>
             <FormField
               control={createInventoryForm.control}
               name="title"
@@ -180,11 +182,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                   render={({ field }) => (
                     <FormItem className="w-[48%]">
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="State"
-                          required
-                        />
+                        <Input {...field} placeholder="State" required />
                       </FormControl>
                     </FormItem>
                   )}
@@ -195,11 +193,7 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
                   render={({ field }) => (
                     <FormItem className="w-[48%]">
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Zip Code"
-                          required
-                        />
+                        <Input {...field} placeholder="Zip Code" required />
                       </FormControl>
                     </FormItem>
                   )}
@@ -207,17 +201,23 @@ export default function CreateInventoryModal({organizationID, onClose}: CreateIn
               </div>
             </div>
             <div className="flex w-max ml-auto mt-[1.5rem]">
-              <button 
-                onClick={() => onClose(false)} 
+              <button
+                onClick={() => onClose(false)}
                 className="button !bg-[#BBBBBB]"
                 disabled={loadingCreation}
-              >Cancel</button>
-              <button 
-                type="submit" 
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
                 className="button ml-[1rem] h-[3rem] w-[5rem]"
                 disabled={loadingCreation}
               >
-                {loadingCreation ? <Spinner className="text-white" /> : "Create"}
+                {loadingCreation ? (
+                  <Spinner className="text-white" />
+                ) : (
+                  "Create"
+                )}
               </button>
             </div>
           </form>

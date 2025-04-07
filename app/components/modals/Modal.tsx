@@ -7,42 +7,44 @@ interface ModalProps {
   children: ReactNode;
 }
 
-const BACKGROUND_ID = "modal-background"
+const BACKGROUND_ID = "modal-background";
 
 //TODO: bug where clicking in modal and lifting outside closes modal
-export default function Modal({isOpen, onClose, children}: ModalProps) {
+export default function Modal({ isOpen, onClose, children }: ModalProps) {
   const closeModal = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if(target.id == BACKGROUND_ID) onClose();
-  }
+    if (target.id == BACKGROUND_ID) onClose();
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleKeyDown = (event: KeyboardEvent) => {
-        if(event.key === "Escape") {
+        if (event.key === "Escape") {
           onClose();
         }
-      }
+      };
       window.addEventListener("keydown", handleKeyDown);
 
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  })
-  
-  return isOpen && createPortal(
-    <div 
-      className="fixed inset-0 z-[50] bg-black/50 ease-in-out duration-200
-                flex justify-center"
-      id={BACKGROUND_ID}
-      onClick={closeModal}
-    >
-      {children && React.isValidElement(children) ?
-      <div className="mt-[10vh] h-min">
-        {React.cloneElement(children)}
-      </div>
-      : "Error parsing Modal"  
-    }
-    </div>,
-    document.body
-  )
+  });
+
+  return (
+    isOpen &&
+    createPortal(
+      <div
+        className="fixed inset-0 z-[50] bg-black/50 ease-in-out duration-200
+                flex justify-center animate-fadeIn"
+        id={BACKGROUND_ID}
+        onClick={closeModal}
+      >
+        {children && React.isValidElement(children) ? (
+          <div className="mt-[10vh] h-min">{React.cloneElement(children)}</div>
+        ) : (
+          "Error parsing Modal"
+        )}
+      </div>,
+      document.body
+    )
+  );
 }

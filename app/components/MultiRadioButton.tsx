@@ -13,7 +13,7 @@ export default function MultiRadioButton({title, labels, onValueChange}: MultiRa
       {title}
   </h1>
   <div className="flex mb-6">
-    <RadioGroup onValueChange={onValueChange}>
+    <RadioGroup onValueChange={onValueChange} className="max-h-[10rem] overflow-y-auto">
       {labels.map((label, i) => (
         <div className="flex items-center space-x-2" key={label}>
           <RadioGroupItem value={label} id={`${i}`} />
