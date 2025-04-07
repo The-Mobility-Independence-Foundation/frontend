@@ -40,7 +40,7 @@ export default function Inventory() {
         router.push("/listings");
       }
       setUserID(userEmitted.id);
-    })
+    });
   })
 
   const receiveInventoryItems = useCallback((data: object) => {
@@ -94,7 +94,9 @@ export default function Inventory() {
               inventoryItem={item}
               userID={userID}
               key={item.id}
-              className="mb-[1rem] mx-auto" />
+              className="mb-[1rem] mx-auto" 
+              triggerRefresh={() => searchRef.current?.executeSearch()}
+              />
             )}
             {loading && <Spinner />}
           </div>
