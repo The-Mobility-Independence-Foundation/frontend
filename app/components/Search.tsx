@@ -50,6 +50,12 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     })
   });
 
+  const loading = useCallback((loading: boolean) => {
+    if(loadingResponse) {
+      loadingResponse(loading);
+    }
+  }, [loadingResponse]);
+
   const backendSearch = useCallback(() => {
     loading(true);
     const params = [];
@@ -82,7 +88,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  }, [searchQuery, paginationCursor, apiRoute, searchBy, selectedFilters]);
+  }, [searchQuery, paginationCursor, apiRoute, searchBy, selectedFilters, loading, receiveResponse]);
   useEffect(() => {
     backendSearch();
   }, [backendSearch]);
@@ -98,12 +104,6 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
-
-  const loading = (loading: boolean) => {
-    if(loadingResponse) {
-      loadingResponse(loading);
-    }
-  }
 
   useImperativeHandle(ref, () => ({
     executeSearch: () => {

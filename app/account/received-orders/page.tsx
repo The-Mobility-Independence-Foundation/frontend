@@ -4,7 +4,7 @@
 import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
-import Search from "@/app/components/Search";
+// import Search from "@/app/components/Search";
 import { userEmitterBus } from "@/app/layout";
 import { toastErrors } from "@/app/models/Generic";
 import { OrderData, Orderpool, OrdersPatch } from "@/app/models/Order";
@@ -12,7 +12,7 @@ import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // MENU OPTIONS
@@ -32,7 +32,7 @@ export default function AccountReceivedOrders() {
     clearSearch: () => void;
   } | null>(null);
 
-  const receiveOrders = () => {
+  const receiveOrders = useCallback(() => {
     setLoading(true);
     backendService.get(`/organizations/${orgID}/orderpool`).then((response) => {
       setLoading(false);
@@ -43,7 +43,7 @@ export default function AccountReceivedOrders() {
       }
       setOrders(responseAsOrderpool);
     })
-  };
+  }, [orgID]);
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
@@ -60,7 +60,7 @@ export default function AccountReceivedOrders() {
     if(orgID) {
       receiveOrders();
     }
-  }, [orgID])
+  }, [orgID, receiveOrders])
 
   const handleOrder = async (orderID: number | string) => {
     setLoading(true);

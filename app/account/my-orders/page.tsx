@@ -12,7 +12,7 @@ import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function AccountMyOrders() {
@@ -36,10 +36,10 @@ export default function AccountMyOrders() {
     });
   });
 
-  const receiveOrders = (data: object) => {
+  const receiveOrders = useCallback((data: object) => {
     const dataAsOrders = data as Orders;
     setOrders(dataAsOrders);
-  };
+  }, []);
 
   const getOrderStatusMenuItems = (orderStatus: string) => {
     const items: string[] =
@@ -87,6 +87,10 @@ export default function AccountMyOrders() {
     setOrderStatusDialogIsOpen(false);
   };
 
+  const searchLoadingResponse = useCallback((loading: boolean) => {
+    setLoading(loading);
+  }, []);
+
   return (
     <>
       <div className="relative h-full">
@@ -97,7 +101,7 @@ export default function AccountMyOrders() {
             receiveResponse={receiveOrders}
             filterType={FilterComponentType.ORDERS}
             placeholderText="Search Orders"
-            loadingResponse={(loading) => setLoading(loading)}
+            loadingResponse={searchLoadingResponse}
           />
         )}
         <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">

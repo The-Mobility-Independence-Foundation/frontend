@@ -36,7 +36,6 @@ export default function MyListings() {
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
   // const [paginationData, setPaginationData] = useState<PaginationData>();
-  const [userID, setUserID] = useState("");
 
   const [listings, setListings] = useState<Listings>();
 
