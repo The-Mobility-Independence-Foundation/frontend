@@ -18,10 +18,11 @@ interface OrderProps {
 
 export default function Order({order, menuItems, userID, onMenuItemClick, className, statusOverride, onStatusClick}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
-  const [madeOrder, setMadeOrder] = useState<boolean>(order.recipient.id == userID);
+
+  const madeOrder = order.recipient.id == userID;
 
   useEffect(() => {
-    if(order.status && !madeOrder) {
+    if(order.status) {
       switch(order.status.toLowerCase()) {
         case OrderStatus.INITIATED:
           setStatusStyle(`bg-[#28A745] text-white`);
@@ -56,17 +57,19 @@ export default function Order({order, menuItems, userID, onMenuItemClick, classN
       className="flex flex-col justify-between mr-[5rem] ml-[2rem]
                 max-sm:mr-[0rem] max-sm:my-[1rem]"
     >
-      {madeOrder ? <>
-        <h5>{order.provider?.firstName} {order.provider?.lastName}</h5>
+      {madeOrder ? <>{order.provider && <>
+        <h5>{order.provider.firstName} {order.provider.lastName}</h5>
         <div>
-          <p>@{order.provider?.displayName}</p>
-          <p>{order.provider?.email}</p>
+          {order.provider && 
+            <p>@{order.provider.displayName}</p>          
+          }
+          <p>{order.provider.email}</p>
         </div>
         <Link href={`/messages?u_id=${order.provider?.id}`} className="w-full">
           <button className="w-full button">Message</button>{" "}
           {/**TODO: routes to specified user pv */}
         </Link>
-      </> : <>
+        </>}</> : <>
         <h5>{order.recipient.firstName} {order.recipient.lastName}</h5>
         <div>
           <p>@{order.recipient.displayName}</p>
