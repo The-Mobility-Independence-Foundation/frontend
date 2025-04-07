@@ -22,6 +22,12 @@ export interface Orders {
   }
 }
 
+export interface Orderpool {
+  success: boolean,
+  message: string,
+  data: OrderData[]
+}
+
 export interface OrdersPatch {
   success: boolean,
   message: string,

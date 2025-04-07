@@ -29,23 +29,28 @@ interface SearchProps {
 
 const formSchema = z.object({
   query: z.string()
-})
+});
 
 const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, placeholderText, newButtonText, defaultQuery, newButtonEvent, loadingResponse, className}: SearchProps, ref) => {  
   const [searchQuery, setSearchQuery] = useState("");
   const [paginationCursor, setPaginationCursor] = useState("");
-  // const [selectedValues, setSelectedValues] = useState(new Map());
+  const [selectedFilters, setSelectedFilters] = useState<Map<string, string | number | boolean>>(new Map());
   const [showFilter, setShowFilter] = useState(false);
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      query: defaultQuery || "",
+    }
+  });
 
   useEffect(() => {
     paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
       setPaginationCursor(cursor);
     })
-  })
+  });
 
-  // TODO: grab filters from URL?
-
-  const backendSearch = () => {
+  const backendSearch = useCallback(() => {
     loading(true);
     const params = [];
     if(paginationCursor) {
@@ -54,7 +59,11 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     if(searchQuery) {
       params.push(`${searchBy}=${searchQuery}`);
     }
-    // TODO: add parsing of filters
+    if(selectedFilters.size > 0) {
+      selectedFilters.forEach((value, key) => {
+        params.push(`${key}=${value}`);
+      });
+    }
     const url = `${apiRoute}${params.length > 0 ? `?${params.join("&")}` : ""}`;
     backendService.get(url)
       .then(response => {
@@ -73,14 +82,10 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
         receiveResponse(response);
         loading(false)
       });
-  };
-    
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      query: defaultQuery || "",
-    }
-  });
+  }, [searchQuery, paginationCursor, apiRoute, searchBy, selectedFilters]);
+  useEffect(() => {
+    backendSearch();
+  }, [backendSearch]);
 
   const handleNewButtonClick = () => {
     if(newButtonEvent) {
@@ -88,9 +93,8 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     }
   }
 
-  const onFilterValueChange = (values: Map<string, string>) => {
-    // setSelectedValues(values);
-    if (values) {}
+  const onFilterValueChange = (values: Map<string, string | number | boolean>) => {
+    setSelectedFilters(values);
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
@@ -108,13 +112,9 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
     },
     clearSearch: () => {
       setSearchQuery("");
-      // TODO: clear filters
+      setSelectedFilters(new Map());
     }
   }));
-
-  useEffect(() => {
-    backendSearch();
-  }, [searchQuery, paginationCursor, apiRoute, searchBy])
 
   return <div className="relative">
     <div 

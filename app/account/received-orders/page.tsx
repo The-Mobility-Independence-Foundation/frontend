@@ -1,12 +1,12 @@
 "use client";
 
-import KeysetPagination from "@/app/components/KeysetPagination";
+// import KeysetPagination from "@/app/components/KeysetPagination";
 import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
-import { userEmitter } from "@/app/layout";
-import { OrderData, Orders, OrdersPatch } from "@/app/models/Order";
+import { userEmitterBus } from "@/app/layout";
+import { OrderData, Orderpool, OrdersPatch } from "@/app/models/Order";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,7 +18,7 @@ import { toast } from "sonner";
 const HANDLE_ORDER = "Handle Order";
 
 export default function AccountReceivedOrders() {
-  const [orders, setOrders] = useState<Orders>();
+  const [orders, setOrders] = useState<Orderpool>();
   const [orgID, setOrgID] = useState("");
   const [userID, setUserID] = useState("");
   const [handleOrderDialogIsOpen, setHandleOrderDialogIsOpen] = useState(false);
@@ -32,12 +32,13 @@ export default function AccountReceivedOrders() {
   } | null>(null);
 
   const receiveOrders = (data: object) => {
-    const dataAsOrders = data as Orders;
+    const dataAsOrders = data as Orderpool;
+    console.log(dataAsOrders)
     setOrders(dataAsOrders);
   };
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUserID(userEmitted.id);
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
@@ -80,43 +81,42 @@ export default function AccountReceivedOrders() {
   return (
     <>
       <div className="relative h-full">
-        {/**TODO: searchBy, change apiRoute to POOL when fixed */}
         {orgID && (
           <Search
-            apiRoute={`/organizations/${orgID}/orders`}
-            searchBy=""
+            apiRoute={`/organizations/${orgID}/orderpool`}
+            searchBy="listingName"
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
             loadingResponse={(loading) => setLoadingOrders(loading)}
           />
         )}
-        {orders && (
-          <>
-            <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
-              {loadingOrders && <Spinner />}
-              {!loadingOrders &&
-                orders.data.results.map((order) => (
-                  <Order
-                    order={order}
-                    key={order.id}
-                    menuItems={[HANDLE_ORDER]}
-                    onMenuItemClick={(item) => onMenuItemClick(item, order)}
-                    className="mb-[1rem]"
-                    onStatusClick={() => {
-                      setOrderHandling(order.id);
-                      setHandleOrderDialogIsOpen(true);
-                    }}
-                  />
-                ))}
-            </div>
-            <KeysetPagination
-              hasNextPage={orders.data.hasNextPage}
-              hasPreviousPage={orders.data.hasPreviousPage}
-              nextCursor={orders.data.nextCursor}
-              previousCursor={orders.data.previousCursor}
-            />
-          </>
-        )}
+        <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
+          {loadingOrders && <Spinner />}
+          {!loadingOrders && orders && (
+            <>
+              {orders.data.map((order) => (
+                <Order
+                  order={order}
+                  key={order.id}
+                  menuItems={[HANDLE_ORDER]}
+                  onMenuItemClick={(item) => onMenuItemClick(item, order)}
+                  className="mb-[1rem]"
+                  onStatusClick={() => {
+                    setOrderHandling(order.id);
+                    setHandleOrderDialogIsOpen(true);
+                  }}
+                />
+              ))}
+              {/* As of now, /orderpool doesn't have pagination. Once it does implement this */}
+              {/* <KeysetPagination
+                hasNextPage={orders.data.hasNextPage}
+                hasPreviousPage={orders.data.hasPreviousPage}
+                nextCursor={orders.data.nextCursor}
+                previousCursor={orders.data.previousCursor}
+              /> */}
+            </>
+          )}
+        </div>
       </div>
       <Modal
         isOpen={handleOrderDialogIsOpen}

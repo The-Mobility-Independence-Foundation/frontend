@@ -100,6 +100,7 @@ export default function ListingFilters({onFilterValueChange}: ListingFiltersProp
             label2: INACTIVE,
           },
         ],
+        multiRadioButtons: [],
         map: true
       }
     )

@@ -77,6 +77,7 @@ export default function InventoryItemFilters({
         },
       ],
       radioButtons: [],
+      multiRadioButtons: []
     });
   }, [parts, models]);
 

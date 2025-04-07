@@ -7,7 +7,7 @@ import Image from "next/image"
 // import backendService from "../services/backend.service";
 import { UserData } from "../models/User";
 // import { toast } from "sonner";
-import { userEmitter } from "../layout";
+import { userEmitterBus } from "../layout";
 
 interface LinkReference {
   route: string;
@@ -20,7 +20,7 @@ export default function Header() {
   const [user, setUser] = useState<UserData>();
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })

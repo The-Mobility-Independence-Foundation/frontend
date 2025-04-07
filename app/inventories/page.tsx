@@ -15,7 +15,7 @@ import KeysetPagination from "../components/KeysetPagination";
 import { PaginationData } from "../models/Generic";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
-import { userEmitter } from "../layout";
+import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
 
 const EDIT = "Edit";
@@ -36,7 +36,7 @@ export default function Inventories() {
   const router = useRouter();
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       if(userEmitted.organization) {
         setOrgID(userEmitted.organization.id as unknown as number);
       } else {

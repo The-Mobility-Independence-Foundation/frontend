@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { UserData } from "../models/User"
 import { usePathname, useRouter } from "next/navigation";
-import { userEmitter } from "../layout";
+import { userEmitterBus } from "../layout";
 
 interface Tab {
   title: string,
@@ -18,7 +18,7 @@ export default function ProfileSidebar() {
   const [appearing, setAppearing] = useState(true);
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })

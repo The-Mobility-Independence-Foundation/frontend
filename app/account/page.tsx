@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod"
 import { User, UserData } from "../models/User";
 import { useEffect, useState } from "react";
-import { userEmitter } from "../layout";
+import { userEmitterBus } from "../layout";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "../services/backend.service";
@@ -17,7 +17,7 @@ export default function AccountSettings() {
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })
@@ -59,7 +59,7 @@ export default function AccountSettings() {
             setLoadingSubmit(false);
             return;
           }
-          userEmitter.emit("user", responseAsUser.data);
+          userEmitterBus.emit("user", responseAsUser.data);
           setLoadingSubmit(false);
         });
     }
