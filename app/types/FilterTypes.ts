@@ -1,5 +1,6 @@
 export enum FilterType {
   Active = "Active",
+  Archived = "Archived",
   Part = "Part",
   Model = "Model",
   Width = "Width",
@@ -15,5 +16,6 @@ export enum FilterType {
 export enum FilterComponentType {
   LISTINGS = "LISTINGS",
   INVENTORY_ITEMS = "INVENTORY_ITEMS",
-  ORDERS = "ORDERS"
+  ORDERS = "ORDERS",
+  INVENTORIES = "INVENTORIES"
 }

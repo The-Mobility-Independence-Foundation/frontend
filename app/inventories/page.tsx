@@ -17,6 +17,7 @@ import backendService from "../services/backend.service";
 import { toast } from "sonner";
 import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
+import { FilterComponentType } from "../types/FilterTypes";
 
 const EDIT = "Edit";
 const ARCHIVE = "Archive";
@@ -134,6 +135,7 @@ export default function Inventories() {
             newButtonEvent={() => setCreateInventoryIsOpen(true)}
             loadingResponse={(loading) => setLoadingInventories(loading)}
             ref={searchRef}
+            filterType={FilterComponentType.INVENTORIES}
           />
           <div className="px-[1rem] py-[2rem] max-h-[45rem] overflow-y-auto">
             {loadingInventories && <Spinner />}

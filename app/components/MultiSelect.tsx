@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 interface MultiSelectProps {
     className: string
@@ -17,7 +18,7 @@ export default function MultiSelect({className, title, options, onChange}: Multi
         {options.map((option) => 
             <div key={option}>
                 <Label className="font-sans font-normal text-sm">
-                    <Checkbox className="mr-2" onClick={() => onChange(option)} />
+                    <Checkbox className="mr-2" onCheckedChange={(val: CheckedState) => onChange(val ? option : "")} />
                     {option}
                 </Label>
                 <br></br>

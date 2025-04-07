@@ -40,7 +40,7 @@ interface CreateInventoryItemModalProps {
   inventoryID: string | number;
 }
 
-// TODO: any changes here should be made to the EditInventoryItemModal as well
+// any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({
   onClose,
   organizationID,

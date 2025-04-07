@@ -19,6 +19,7 @@ import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner";
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
 import OrderFilters from "./filters/OrderFilters";
+import InventoryFilters from "./filters/InventoryFilters";
 
 interface SearchProps {
   apiRoute: string;
@@ -120,6 +121,7 @@ const Search = forwardRef(
     const onFilterValueChange = (
       values: Map<string, string | number | boolean>
     ) => {
+      console.log(values)
       setSelectedFilters(values);
     };
 
@@ -148,15 +150,13 @@ const Search = forwardRef(
         <div
           className={`${className} w-full py-[1rem] px-[2%] flex place-content-around items-center bg-[#D1D5DB]`}
         >
-          {newButtonEvent ? (
+          {newButtonEvent && (
             <button
               onClick={handleNewButtonClick}
               className="button bg-[#D3E8FF] text-black"
             >
               + {newButtonText || "New"}
             </button>
-          ) : (
-            ""
           )}
           <FormProvider {...form}>
             <form
@@ -224,6 +224,9 @@ const Search = forwardRef(
             )}
             {filterType == FilterComponentType.ORDERS && (
               <OrderFilters onFilterValueChange={onFilterValueChange} />
+            )}
+            {filterType == FilterComponentType.INVENTORIES && (
+              <InventoryFilters onFilterValueChange={onFilterValueChange} />
             )}
             <div
               className="w-full h-screen bg-black/20"
