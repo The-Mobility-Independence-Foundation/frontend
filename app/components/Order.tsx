@@ -11,10 +11,11 @@ interface OrderProps {
   menuItems: string[];
   onMenuItemClick: (item: string) => void;
   className?: string;
+  statusOverride?: string;
   onStatusClick?: (status: string) => void;
 }
 
-export default function Order({order, menuItems, onMenuItemClick, className, onStatusClick}: OrderProps) {
+export default function Order({order, menuItems, onMenuItemClick, className, statusOverride, onStatusClick}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function Order({order, menuItems, onMenuItemClick, className, onS
         <div
           className={`mt-auto p-2 rounded font-bold border-2 border-[#00000026] ${statusStyle} ${onStatusClick ? "cursor-pointer" : ""}`}
           onClick={() => {if(onStatusClick)onStatusClick(order.status)}}
-        >{order.status == OrderStatus.INITIATED ? "Handle" : capitalize(order.status) }</div>
+        >{statusOverride || capitalize(order.status)}</div>
       </div>
     }
     {menuItems.length > 0 && 
