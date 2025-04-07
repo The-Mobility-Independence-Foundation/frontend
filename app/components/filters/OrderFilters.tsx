@@ -12,7 +12,13 @@ export default function OrderFilters({onFilterValueChange}: OrderFilterProps) {
     const [selectedValues, setSelectedValues] = useState(new Map());
   
     const orderFilterOptions: FilterOptions = {
-      multiSelects: [],
+      multiSelects: [
+        {
+          title: "Sent Only",
+          filterType: FilterType.Sent_Only,
+          options: ["Sent Only"]
+        }
+      ],
       multiInputs: [],
       radioButtons: [],
       multiRadioButtons: [
@@ -31,10 +37,27 @@ export default function OrderFilters({onFilterValueChange}: OrderFilterProps) {
 
     const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
       const newSelectedValues = new Map();
+      let key, value;
       if(typeof newValue === "string") {
-        newSelectedValues.set(field.toLowerCase(), newValue.toLowerCase())
+        key = field.toLowerCase();
+        value = newValue.toLowerCase();
       } else if(typeof newValue === "boolean") {
-        newSelectedValues.set(field.toLowerCase(), newValue == true ? "true" : "false")
+        key = field.toLowerCase();
+        value = newValue == true ? "true" : "false";
+      } else if(field == FilterType.Sent_Only) {
+        const newValueAsArray = newValue as string[];
+        const containsSentOnly = newValueAsArray.find(value => value == "Sent Only")?.length;
+        if(containsSentOnly) {
+          const valuesForParent = new Map<string, string>();
+          valuesForParent.set(field, containsSentOnly > 0 ? "true" : "false");
+          onFilterValueChange(valuesForParent);
+          newSelectedValues.set(field, newValueAsArray);
+          setSelectedValues(newSelectedValues);
+          return;
+        }
+      }
+      if(key && value) {
+        newSelectedValues.set(key, value);
       }
       setSelectedValues(newSelectedValues);
       onFilterValueChange(newSelectedValues);

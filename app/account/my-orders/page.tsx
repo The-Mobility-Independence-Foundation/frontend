@@ -124,7 +124,7 @@ export default function AccountMyOrders() {
             </>
           )}
           {orders?.data.results.length == 0 && !loading && 
-            <h4 className="text-gray-400">No received orders</h4>
+            <h4 className="text-gray-400">You have no orders</h4>
           }
         </div>
       </div>

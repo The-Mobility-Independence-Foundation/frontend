@@ -9,7 +9,8 @@ export enum FilterType {
   LocationLat = "locationLat",
   LocationLong = "locationLong",
   Radius = "radius",
-  Status = "Status"
+  Status = "Status",
+  Sent_Only = "sentOnly"
 };
 
 export enum FilterComponentType {

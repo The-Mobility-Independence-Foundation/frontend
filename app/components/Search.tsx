@@ -65,6 +65,7 @@ const Search = forwardRef(({apiRoute, searchBy, receiveResponse, filterType, pla
       });
     }
     const url = `${apiRoute}${params.length > 0 ? `?${params.join("&")}` : ""}`;
+    console.log(url)
     backendService.get(url)
       .then(response => {
         if(!response.success) {
