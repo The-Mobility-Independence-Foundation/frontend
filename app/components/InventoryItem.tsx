@@ -2,31 +2,37 @@ import Link from "next/link";
 import Menu from "./Menu";
 import { useState } from "react";
 import Modal from "./modals/Modal";
-import { attributesToString, InventoryItemData } from "../models/InventoryItem";
+import {
+  attributesToString,
+  InventoryItemData,
+  InventoryItemsDelete,
+} from "../models/InventoryItem";
 import EditInventoryItem from "./modals/EditInventoryItem";
 import Dialog from "./modals/Dialog";
 import backendService from "../services/backend.service";
+import { toast } from "sonner";
+import { toastErrors } from "../models/Generic";
 
 interface InventoryItemProps {
   inventoryItem: InventoryItemData;
   userID: number | string;
-  triggerRefresh: () => void
+  triggerRefresh: () => void;
   className?: string;
 }
 
 const EDIT = "Edit";
-const DELETE = "Delete";
+const ARCHIVE = "Archive";
 
 export default function InventoryItem({
   inventoryItem,
   userID,
   className,
-  triggerRefresh
+  triggerRefresh,
 }: InventoryItemProps) {
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
-  const [deleteItemDialogIsOpen, setDeleteItemDialogIsOpen] = useState(false);
+  const [archiveItemDialogIsOpen, setArchiveItemDialogIsOpen] = useState(false);
 
-  const menuItems = [EDIT, DELETE];
+  const menuItems = [EDIT, ARCHIVE];
   const attributesAsString = attributesToString(inventoryItem.attributes);
 
   const onMenuItemClick = (item: string) => {
@@ -34,26 +40,44 @@ export default function InventoryItem({
       case EDIT:
         setEditItemModalIsOpen(true);
         break;
-      case DELETE:
-        setDeleteItemDialogIsOpen(true);
+      case ARCHIVE:
+        setArchiveItemDialogIsOpen(true);
         break;
     }
   };
 
   const onEditItemClose = (submitted: boolean) => {
     setEditItemModalIsOpen(false);
-    if(submitted) {
+    if (submitted) {
       triggerRefresh();
     }
-  }
+  };
 
-  const onDeleteItemClose = (confirm: boolean) => {
-    setDeleteItemDialogIsOpen(false);
-    if(confirm) {
-      // TODO: delete inventory item
-      triggerRefresh()
+  const onArchiveItemClose = (confirm: boolean) => {
+    if (!inventoryItem.inventory) {
+      toast(
+        "There was an error grabbing the inventory associated with this inventory item."
+      );
+      return;
     }
-  }
+    setArchiveItemDialogIsOpen(false);
+    if (confirm) {
+      backendService
+        .delete(
+          `/organizations/${inventoryItem.inventory.organization.id}/inventories/${inventoryItem.inventory.id}/items/${inventoryItem.id}`
+        )
+        .then((response) => {
+          const responseAsInventoryItems = response as InventoryItemsDelete;
+          if (!responseAsInventoryItems.success) {
+            toastErrors(response);
+            return;
+          }
+          toast(responseAsInventoryItems.message);
+          setArchiveItemDialogIsOpen(false);
+          triggerRefresh();
+        });
+    }
+  };
 
   return (
     <div
@@ -70,9 +94,9 @@ export default function InventoryItem({
             <h4>
               {inventoryItem.part?.name} ({inventoryItem.quantity})
             </h4>
-            {inventoryItem.part?.partNumber && 
-            <h5>#{inventoryItem.part.partNumber}</h5>
-            }
+            {inventoryItem.part?.partNumber && (
+              <h5>#{inventoryItem.part.partNumber}</h5>
+            )}
             <p className="mt-[revert]">{inventoryItem.part?.model?.name}</p>
           </div>
           <ul className="ml-[3rem] mr-[1rem] max-h-[10rem] min-w-[15rem] overflow-y-auto">
@@ -108,13 +132,13 @@ export default function InventoryItem({
         />
       </Modal>
       <Modal
-        isOpen={deleteItemDialogIsOpen}
-        onClose={() => onDeleteItemClose(false)}
+        isOpen={archiveItemDialogIsOpen}
+        onClose={() => onArchiveItemClose(false)}
       >
-        <Dialog 
-          text="Are you sure you would like to delete this inventory item?"
-          onClose={onDeleteItemClose}
-          header={`Delete ${inventoryItem.part?.name}?`}
+        <Dialog
+          text="Are you sure you would like to archive this inventory item?"
+          onClose={onArchiveItemClose}
+          header={`Archive ${inventoryItem.part?.name}?`}
         />
       </Modal>
     </div>

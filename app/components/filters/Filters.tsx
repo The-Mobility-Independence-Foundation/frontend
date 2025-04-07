@@ -6,7 +6,10 @@ import { useState } from "react";
 import { MultiInputInfo } from "../../types/MultiInputInfo";
 import MultiInput from "../MultiInput";
 import { MultiSelectInfo } from "../../types/MultiSelectInfo";
-import { MultiRadioButtonInfo, RadioButtonInfo } from "../../types/RadioButtonInfo";
+import {
+  MultiRadioButtonInfo,
+  RadioButtonInfo,
+} from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
 import { FilterType } from "@/app/types/FilterTypes";
 import MultiRadioButton from "../MultiRadioButton";
@@ -14,7 +17,10 @@ import MultiRadioButton from "../MultiRadioButton";
 export interface FiltersProps {
   options: FilterOptions;
   selectedValues: Map<string, string | number | string[] | boolean>;
-  onValueChange: (field: string, newValue: string | number | string[] | boolean) => void;
+  onValueChange: (
+    field: string,
+    newValue: string | number | string[] | boolean
+  ) => void;
 }
 
 export interface FilterOptions {
@@ -25,7 +31,11 @@ export interface FilterOptions {
   map?: boolean;
 }
 
-export default function Filters({options, selectedValues, onValueChange}: FiltersProps) {
+export default function Filters({
+  options,
+  selectedValues,
+  onValueChange,
+}: FiltersProps) {
   const multiSelects = options.multiSelects;
   const multiInputs = options.multiInputs;
   const radioButtons = options.radioButtons;
@@ -37,7 +47,7 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
 
   function updateMultiSelect(key: string, selectedOption: string) {
     const selectedOptions: string[] = selectedValues.has(key)
-      ? selectedValues.get(key) as string[]
+      ? (selectedValues.get(key) as string[])
       : [];
     if (!selectedOptions.includes(selectedOption)) {
       selectedOptions.push(selectedOption);
@@ -109,10 +119,13 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
           />
         ))}
         {multiRadioButtons.map((multiRadioButtonInfo) => (
-          <MultiRadioButton 
-            title={multiRadioButtonInfo.title} 
+          <MultiRadioButton
+            key={multiRadioButtonInfo.title}
+            title={multiRadioButtonInfo.title}
             labels={multiRadioButtonInfo.labels}
-            onValueChange={(value: string) => updateMultiRadioButton(multiRadioButtonInfo.title, value)}          
+            onValueChange={(value: string) =>
+              updateMultiRadioButton(multiRadioButtonInfo.title, value)
+            }
           />
         ))}
       </div>

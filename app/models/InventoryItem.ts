@@ -7,21 +7,27 @@ import { PartData } from "./Part";
 export const ATTRIBUTES_STRING_REGEX = /(.+:.+\n)*(.+:.+)/;
 
 export interface InventoryItems {
-  success: boolean
+  success: boolean;
   message: string;
-  data: {  
+  data: {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     nextCursor: string | null;
     previousCursor: string | null;
-    results: InventoryItemData[]
-  }
+    results: InventoryItemData[];
+  };
 }
 
 export interface InventoryItemsPost {
-  success: boolean
-  message: string
-  data: InventoryItemData
+  success: boolean;
+  message: string;
+  data: InventoryItemData;
+}
+
+export interface InventoryItemsDelete {
+  success: boolean;
+  message: string;
+  data: null;
 }
 
 export interface InventoryItemData {
@@ -36,7 +42,9 @@ export interface InventoryItemData {
   attributes: { [key: string]: string | number };
 }
 
-export function attributesToString(attributes: { [key: string]: string | number }) {
+export function attributesToString(attributes: {
+  [key: string]: string | number;
+}) {
   return Object.keys(attributes)
     .map((attributeKey) => `${attributeKey}: ${attributes[attributeKey]}`)
     .join("\n");
