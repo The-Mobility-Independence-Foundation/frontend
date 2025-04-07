@@ -4,6 +4,8 @@ import { useState } from "react";
 import Modal from "./modals/Modal";
 import { attributesToString, InventoryItemData } from "../models/InventoryItem";
 import EditInventoryItem from "./modals/EditInventoryItem";
+import Dialog from "./modals/Dialog";
+import backendService from "../services/backend.service";
 
 interface InventoryItemProps {
   inventoryItem: InventoryItemData;
@@ -22,6 +24,7 @@ export default function InventoryItem({
   triggerRefresh
 }: InventoryItemProps) {
   const [editItemModalIsOpen, setEditItemModalIsOpen] = useState(false);
+  const [deleteItemDialogIsOpen, setDeleteItemDialogIsOpen] = useState(false);
 
   const menuItems = [EDIT, DELETE];
   const attributesAsString = attributesToString(inventoryItem.attributes);
@@ -31,6 +34,9 @@ export default function InventoryItem({
       case EDIT:
         setEditItemModalIsOpen(true);
         break;
+      case DELETE:
+        setDeleteItemDialogIsOpen(true);
+        break;
     }
   };
 
@@ -38,6 +44,14 @@ export default function InventoryItem({
     setEditItemModalIsOpen(false);
     if(submitted) {
       triggerRefresh();
+    }
+  }
+
+  const onDeleteItemClose = (confirm: boolean) => {
+    setDeleteItemDialogIsOpen(false);
+    if(confirm) {
+      // TODO: delete inventory item
+      triggerRefresh()
     }
   }
 
@@ -91,6 +105,16 @@ export default function InventoryItem({
         <EditInventoryItem
           onClose={onEditItemClose}
           inventoryItem={inventoryItem}
+        />
+      </Modal>
+      <Modal
+        isOpen={deleteItemDialogIsOpen}
+        onClose={() => onDeleteItemClose(false)}
+      >
+        <Dialog 
+          text="Are you sure you would like to delete this inventory item?"
+          onClose={onDeleteItemClose}
+          header={`Delete ${inventoryItem.part?.name}?`}
         />
       </Modal>
     </div>
