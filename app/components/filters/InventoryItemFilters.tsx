@@ -7,7 +7,6 @@ import { PartData, Parts } from "@/app/models/Part";
 import { ModelData, Models } from "@/app/models/Model";
 import backendService from "@/app/services/backend.service";
 import { toastErrors } from "@/app/models/Generic";
-import { toast } from "sonner";
 
 interface InventoryItemFilterProps {
   onFilterValueChange: (values: Map<string, string>) => void;
