@@ -41,7 +41,8 @@ export interface OrderData {
   dateCreated: string,
   dateCompleted: string | null,
   listing: ListingData,
-  recipient: UserData
+  recipient: UserData,
+  providerOrganization: OrganizationData
 }
 
 export interface OrdersPatchData {

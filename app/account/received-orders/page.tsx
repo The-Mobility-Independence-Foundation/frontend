@@ -23,7 +23,7 @@ export default function AccountReceivedOrders() {
   const [userID, setUserID] = useState("");
   const [handleOrderDialogIsOpen, setHandleOrderDialogIsOpen] = useState(false);
   const [orderHandling, setOrderHandling] = useState<number>();
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const searchRef = useRef<{
@@ -49,14 +49,14 @@ export default function AccountReceivedOrders() {
   });
 
   const handleOrder = async (orderID: number | string) => {
-    setLoadingOrders(true);
+    setLoading(true);
     const body = {
       providerId: userID,
     };
     const response = await backendService.patch(`/orders/${orderID}`, body);
     const responseAsOrders = response as OrdersPatch;
     toast(responseAsOrders.message);
-    setLoadingOrders(false);
+    setLoading(false);
     return responseAsOrders.success;
   };
 
@@ -87,12 +87,12 @@ export default function AccountReceivedOrders() {
             searchBy="listingName"
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
-            loadingResponse={(loading) => setLoadingOrders(loading)}
+            loadingResponse={(loading) => setLoading(loading)}
           />
         )}
         <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
-          {loadingOrders && <Spinner />}
-          {!loadingOrders && orders && (
+          {loading && <Spinner />}
+          {!loading && orders && (
             <>
               {orders.data.map((order) => (
                 <Order
@@ -116,6 +116,9 @@ export default function AccountReceivedOrders() {
               /> */}
             </>
           )}
+          {orders?.data.length == 0 && !loading && 
+            <h4 className="text-gray-400">No received orders</h4>
+          }
         </div>
       </div>
       <Modal

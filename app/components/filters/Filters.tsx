@@ -110,6 +110,7 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
         ))}
         {multiRadioButtons.map((multiRadioButtonInfo) => (
           <MultiRadioButton 
+            key={multiRadioButtonInfo.title}
             title={multiRadioButtonInfo.title} 
             labels={multiRadioButtonInfo.labels}
             onValueChange={(value: string) => updateMultiRadioButton(multiRadioButtonInfo.title, value)}          

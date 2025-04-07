@@ -45,9 +45,8 @@ export default function Order({order, menuItems, onMenuItemClick, className, onS
       <Link href={`/listing?listing_id=${order.listing.id}`}>
         <h4 className="hover:underline cursor-pointer">{order.listing.name}</h4>      
       </Link>
-      <h5>{order.listing.inventoryItem.name}</h5>
-      <p className="mt-[revert]">{order.listing.inventoryItem.part?.partNumber}</p>
-      <p>{order.listing.inventoryItem.part?.name}</p>
+      <h5>{order.listing.description}</h5>
+      <p className="mt-[revert]">{order.listing.inventoryItem?.part?.name}</p>
     </div>
     <div
       className="flex flex-col justify-between mr-[5rem] ml-[2rem]
