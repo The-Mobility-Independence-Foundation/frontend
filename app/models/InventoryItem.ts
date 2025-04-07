@@ -18,6 +18,12 @@ export interface InventoryItems {
   }
 }
 
+export interface InventoryItemsPost {
+  success: boolean
+  message: string
+  data: InventoryItemData
+}
+
 export interface InventoryItemData {
   id: number;
   name: string;
@@ -40,7 +46,8 @@ export function stringToAttributes(string: string) {
   if (!ATTRIBUTES_STRING_REGEX.test(string)) {
     throw new Error("String isn't in proper format.");
   }
-  return new Map(
+  const map = new Map(
     string.split("\n").map((pair) => [pair.split(":")[0], pair.split(":")[1]])
   );
+  return Object.fromEntries(map);
 }

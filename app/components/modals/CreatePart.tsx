@@ -167,7 +167,11 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
       createPartForm.setValue("modelID", pendingModel);
       setPendingModel(null);
     }
-  }, [pendingModel, models])
+  }, [pendingModel, models]);
+
+  useEffect(() => {
+    getModels();
+  }, [])
 
   return (
     <>

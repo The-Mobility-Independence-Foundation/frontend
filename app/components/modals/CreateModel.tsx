@@ -264,7 +264,7 @@ export default function CreateModelModal({onClose}: CreateModelModalProps) {
             <div className="flex">
               <button onClick={() => onClose(null)} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
               <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
-                  {loading ? <Spinner className="text-white" /> : "Create Part"}
+                  {loading ? <Spinner className="text-white" /> : "Create Model"}
               </button>
             </div>
         </form>

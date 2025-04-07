@@ -10,10 +10,12 @@ import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/for
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ATTRIBUTES_STRING_REGEX } from "@/app/models/InventoryItem";
+import { ATTRIBUTES_STRING_REGEX, InventoryItemsPost, stringToAttributes } from "@/app/models/InventoryItem";
 import Modal from "./Modal";
 import CreatePartModal from "./CreatePart";
 import { toast } from "sonner";
+import { toastErrors } from "@/app/models/Generic";
+import { Spinner } from "@/components/ui/spinner";
 
 interface CreateInventoryItemModalProps {
   onClose: () => void,
@@ -21,35 +23,33 @@ interface CreateInventoryItemModalProps {
   inventoryID: string | number
 }
 
-// TODO: test form, any changes here should be made to the EditInventoryItemModal as well
+// TODO: any changes here should be made to the EditInventoryItemModal as well
 export default function CreateInventoryItemModal({onClose, organizationID, inventoryID}: CreateInventoryItemModalProps) {
   const [createPartModalIsOpen, setCreatePartModalIsOpen] = useState(false);
   const [parts, setParts] = useState<PartData[]>([]);
   const [pendingPart, setPendingPart] = useState<string | null>();
+  const [loading, setLoading] = useState(false);
 
   const attributesPlaceholder = "Each attribute must be separated by new lines and formatted as \"key:value\" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in."
 
-  const getParts = useCallback(async () => {
-    const response = await backendService.get("/parts?limit=100");
-    const responseAsParts = response as Parts;
-    if(!responseAsParts.success) {
-      toast(responseAsParts.message);
-      setParts([]);
-      return;
-    }
-    setParts(responseAsParts.data.results);
+  const getParts = useCallback(() => {
+    backendService.get("/parts?limit=100").then((response) => {
+      const responseAsParts = response as Parts;
+      if(!responseAsParts.success) {
+        toast(responseAsParts.message);
+        setParts([]);
+        return;
+      }
+      setParts(responseAsParts.data.results);
+    });
   }, []);
   
   const createInventoryItemFormSchema = z.object({
-    name: z
-      .string({
-        required_error: "Name is required"
-      }),
     partID: z
       .string({ // This would be a number but the value in SelectItem has to be a string
         required_error: "Please select from the list of parts"
       }),
-    quantity: z
+    quantity: z.coerce
       .number({
         required_error: "Quantity is required"
       })
@@ -61,29 +61,37 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       .string()
   });
   const createInventoryItemForm = useForm<z.infer<typeof createInventoryItemFormSchema>>({
-    resolver: zodResolver(createInventoryItemFormSchema)
+    resolver: zodResolver(createInventoryItemFormSchema),
+    defaultValues: {
+      partID: "",
+      quantity: undefined,
+      attributes: "",
+      notes: ""
+    }
   });
 
   const onFormSubmit = (values: z.infer<typeof createInventoryItemFormSchema>) => {
-    // TODO: Uncomment when API is hooked up
-    // const body = {
-    //   name: values.name,
-    //   inventoryID: inventoryID,
-    //   partID: values.partID,
-    //   modelID: values.modelID,
-    //   quantity: values.quantity,
-    //   publicCount: 0,
-    //   notes: values.notes,
-    //   attributes: values.attributes
-    // }
-    // backendService.post(`/organizations/${organizationID}/inventories/${inventoryID}/items`, body)
-    //   .then(response => {
-    //     // TODO: toastr with message
-    //     onClose();
-    //   });
-    if(organizationID && values && inventoryID) {
-      onClose();
+    setLoading(true);
+    const body = {
+      partId: values.partID,
+      modelId: parts.find(part => part.id == parseInt(values.partID))?.model?.id,
+      quantity: values.quantity,
+      publicCount: values.quantity,
+      notes: values.notes,
+      attributes: stringToAttributes(values.attributes)
     }
+    backendService.post(`/organizations/${organizationID}/inventories/${inventoryID}/items`, body)
+      .then(response => {
+        const responseAsInventoryItems = response as InventoryItemsPost;
+        if(!responseAsInventoryItems.success) {
+          toastErrors(response);
+          setLoading(false);
+          return;
+        }
+        toast(responseAsInventoryItems.message);
+        setLoading(false);
+        onClose();
+      });
   }
 
   const onCreatePartModalClose = async (part: PartData | null) => {
@@ -100,6 +108,10 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       setPendingPart(null);
     }
   }, [pendingPart, parts])
+
+  useEffect(() => {
+    getParts();
+  }, [])
   
   return (
     <>
@@ -107,42 +119,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
       <ModalBody>
         <FormProvider {...createInventoryItemForm}>
           <form onSubmit={createInventoryItemForm.handleSubmit(onFormSubmit)}>
-            <div className="w-full flex mb-[0.75rem]">
-              <FormField
-                control={createInventoryItemForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem className="w-[48%] mr-auto">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="string"
-                        required={true}
-                        placeholder="Name"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={createInventoryItemForm.control}
-                name="quantity"
-                render={({ field }) => (
-                  <FormItem className="w-[48%]">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        required={true}
-                        placeholder="Quantity"
-                        min="0"
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
+          <FormField
               control={createInventoryItemForm.control}
               name="partID"
               render={({ field }) => (
@@ -175,6 +152,23 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
               )}
             />
             <button className="button text-xs mb-[0.75rem]" onClick={() => setCreatePartModalIsOpen(true)}>Create New Part</button>
+              <FormField
+                control={createInventoryItemForm.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem className="w-[48%] mb-[0.75rem]">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        required={true}
+                        placeholder="Quantity"
+                        min="0"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             <FormField
               control={createInventoryItemForm.control}
               name="attributes"
@@ -195,7 +189,7 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
               control={createInventoryItemForm.control}
               name="notes"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-[1.75rem]">
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
                     <Textarea
@@ -206,12 +200,10 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
                 </FormItem>
               )}
             />
-            <div className="flex w-max ml-auto mt-[1.5rem]">
-              <button onClick={onClose} className="button !bg-[#BBBBBB]">
-                Cancel
-              </button>
-              <button type="submit" className="button ml-[1rem]">
-                Create
+            <div className="flex">
+              <button onClick={onClose} className="button ml-auto !bg-[#BBBBBB]">Cancel</button>
+              <button type="submit" className="button ml-[1rem] h-[2.75rem] w-[8rem]" disabled={loading}>
+                  {loading ? <Spinner className="text-white" /> : "Create"}
               </button>
             </div>
           </form>
