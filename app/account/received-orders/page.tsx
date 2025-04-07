@@ -6,6 +6,7 @@ import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
 import Search from "@/app/components/Search";
 import { userEmitterBus } from "@/app/layout";
+import { toastErrors } from "@/app/models/Generic";
 import { OrderData, Orderpool, OrdersPatch } from "@/app/models/Order";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
@@ -31,10 +32,17 @@ export default function AccountReceivedOrders() {
     clearSearch: () => void;
   } | null>(null);
 
-  const receiveOrders = (data: object) => {
-    const dataAsOrders = data as Orderpool;
-    console.log(dataAsOrders)
-    setOrders(dataAsOrders);
+  const receiveOrders = () => {
+    setLoading(true);
+    backendService.get(`/organizations/${orgID}/orderpool`).then((response) => {
+      setLoading(false);
+      const responseAsOrderpool = response as Orderpool;
+      if(!responseAsOrderpool.success) {
+        toastErrors(response);
+        return;
+      }
+      setOrders(responseAsOrderpool);
+    })
   };
 
   useEffect(() => {
@@ -47,6 +55,12 @@ export default function AccountReceivedOrders() {
       }
     });
   });
+
+  useEffect(() => {
+    if(orgID) {
+      receiveOrders();
+    }
+  }, [orgID])
 
   const handleOrder = async (orderID: number | string) => {
     setLoading(true);
@@ -81,16 +95,16 @@ export default function AccountReceivedOrders() {
   return (
     <>
       <div className="relative h-full">
-        {orgID && (
+        {/* {orgID && (
           <Search
             apiRoute={`/organizations/${orgID}/orderpool`}
-            searchBy="listingName"
+            searchBy=""
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
             loadingResponse={(loading) => setLoading(loading)}
-          />
-        )}
-        <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
+          /> 
+        )} */}
+        <div className="mt-[2rem] w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
           {loading && <Spinner />}
           {!loading && orders && (
             <>
