@@ -112,7 +112,6 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
     
     backendService.post(`/parts`, body)
       .then(response => {
-        console.log(response);
         const responseAsPart = response as PartPost;
         setLoading(false);
         if(responseAsPart.success) {

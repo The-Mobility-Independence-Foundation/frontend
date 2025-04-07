@@ -1,4 +1,4 @@
-export interface Manufacturer {
+export interface Manufacturers {
   success: boolean,
   message: string,
   data: {

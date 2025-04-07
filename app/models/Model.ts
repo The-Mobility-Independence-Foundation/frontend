@@ -18,11 +18,11 @@ export interface ModelData {
   name: string,
   year: number,
   manufacturer: ManufacturerData,
-  types: ModelType[],
+  types: ModelTypes[],
   parts: PartData[]
 }
 
-export interface ModelType {
+export interface ModelTypes {
   success: boolean,
   message: string,
   data: {
