@@ -150,6 +150,10 @@ export default function Inventories() {
     }
   };
 
+  const searchLoadingResponse = useCallback((loading: boolean) => {
+    setLoadingInventories(loading);
+  }, []);
+
   return (
     <>
       {orgID && (
@@ -157,9 +161,9 @@ export default function Inventories() {
           <Search
             apiRoute={`/organizations/${orgID}/inventories`}
             searchBy="name"
-            receiveResponse={(data) => receiveInventories(data)}
+            receiveResponse={receiveInventories}
             newButtonEvent={() => setCreateInventoryIsOpen(true)}
-            loadingResponse={(loading) => setLoadingInventories(loading)}
+            loadingResponse={searchLoadingResponse}
             ref={searchRef}
             filterType={FilterComponentType.INVENTORIES}
           />

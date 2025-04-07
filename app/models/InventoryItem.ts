@@ -32,15 +32,14 @@ export interface InventoryItemsDelete {
 
 export interface InventoryItemData {
   id: number;
-  name: string;
+  quantity: number;
+  publicCount: number;
+  archivedAt: string | null;
+  notes: string;
+  attributes: { [key: string]: string | number };
   inventory: InventoryData | null;
   part: PartData | null;
   model: ModelData | null;
-  quantity: number;
-  publicCount: number;
-  notes: string;
-  attributes: { [key: string]: string | number };
-  archivedAt: string | null;
 }
 
 export function attributesToString(attributes: {

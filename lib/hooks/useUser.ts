@@ -33,7 +33,7 @@ export const useUser = () => {
                 router.push("/listings");
             }
         }
-    }, [error, data, pathName]);
+    }, [error, data, pathName, router]);
 
     return {data: data, mutate, isLoading: !error && !data, isError: error};
 };

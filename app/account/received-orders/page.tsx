@@ -4,14 +4,15 @@
 import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
-import Search from "@/app/components/Search";
+// import Search from "@/app/components/Search";
 import { userEmitterBus } from "@/app/layout";
+import { toastErrors } from "@/app/models/Generic";
 import { OrderData, Orderpool, OrdersPatch } from "@/app/models/Order";
 import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // MENU OPTIONS
@@ -23,7 +24,7 @@ export default function AccountReceivedOrders() {
   const [userID, setUserID] = useState("");
   const [handleOrderDialogIsOpen, setHandleOrderDialogIsOpen] = useState(false);
   const [orderHandling, setOrderHandling] = useState<number>();
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const searchRef = useRef<{
@@ -31,11 +32,18 @@ export default function AccountReceivedOrders() {
     clearSearch: () => void;
   } | null>(null);
 
-  const receiveOrders = (data: object) => {
-    const dataAsOrders = data as Orderpool;
-    console.log(dataAsOrders)
-    setOrders(dataAsOrders);
-  };
+  const receiveOrders = useCallback(() => {
+    setLoading(true);
+    backendService.get(`/organizations/${orgID}/orderpool`).then((response) => {
+      setLoading(false);
+      const responseAsOrderpool = response as Orderpool;
+      if(!responseAsOrderpool.success) {
+        toastErrors(response);
+        return;
+      }
+      setOrders(responseAsOrderpool);
+    })
+  }, [orgID]);
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
@@ -48,15 +56,21 @@ export default function AccountReceivedOrders() {
     });
   });
 
+  useEffect(() => {
+    if(orgID) {
+      receiveOrders();
+    }
+  }, [orgID, receiveOrders])
+
   const handleOrder = async (orderID: number | string) => {
-    setLoadingOrders(true);
+    setLoading(true);
     const body = {
       providerId: userID,
     };
     const response = await backendService.patch(`/orders/${orderID}`, body);
     const responseAsOrders = response as OrdersPatch;
     toast(responseAsOrders.message);
-    setLoadingOrders(false);
+    setLoading(false);
     return responseAsOrders.success;
   };
 
@@ -81,18 +95,18 @@ export default function AccountReceivedOrders() {
   return (
     <>
       <div className="relative h-full">
-        {orgID && (
+        {/* {orgID && (
           <Search
             apiRoute={`/organizations/${orgID}/orderpool`}
-            searchBy="listingName"
+            searchBy=""
             receiveResponse={receiveOrders}
             placeholderText="Search Orders"
-            loadingResponse={(loading) => setLoadingOrders(loading)}
-          />
-        )}
-        <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
-          {loadingOrders && <Spinner />}
-          {!loadingOrders && orders && (
+            loadingResponse={(loading) => setLoading(loading)}
+          /> 
+        )} */}
+        <div className="mt-[2rem] w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
+          {loading && <Spinner />}
+          {!loading && orders && (
             <>
               {orders.data.map((order) => (
                 <Order
@@ -105,6 +119,8 @@ export default function AccountReceivedOrders() {
                     setOrderHandling(order.id);
                     setHandleOrderDialogIsOpen(true);
                   }}
+                  statusOverride="Handle"
+                  userID={userID}
                 />
               ))}
               {/* As of now, /orderpool doesn't have pagination. Once it does implement this */}
@@ -116,6 +132,9 @@ export default function AccountReceivedOrders() {
               /> */}
             </>
           )}
+          {orders?.data.length == 0 && !loading && 
+            <h4 className="text-gray-400">No received orders</h4>
+          }
         </div>
       </div>
       <Modal

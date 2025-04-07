@@ -68,11 +68,17 @@ const Search = forwardRef(
       },
     });
 
-    useEffect(() => {
-      paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
-        setPaginationCursor(cursor);
-      });
-    });
+  useEffect(() => {
+    paginationEventBus.once(PAGE_CHANGE_EVENT, (cursor: string) => {
+      setPaginationCursor(cursor);
+    })
+  });
+
+  const loading = useCallback((loading: boolean) => {
+    if(loadingResponse) {
+      loadingResponse(loading);
+    }
+  }, [loadingResponse]);
 
     const backendSearch = useCallback(() => {
       loading(true);
@@ -107,10 +113,10 @@ const Search = forwardRef(
         receiveResponse(response);
         loading(false);
       });
-    }, [searchQuery, paginationCursor, apiRoute, searchBy, selectedFilters]);
-    useEffect(() => {
-      backendSearch();
-    }, [backendSearch]);
+  }, [searchQuery, paginationCursor, apiRoute, searchBy, selectedFilters, loading, receiveResponse]);
+  useEffect(() => {
+    backendSearch();
+  }, [backendSearch]);
 
     const handleNewButtonClick = () => {
       if (newButtonEvent) {
@@ -124,14 +130,7 @@ const Search = forwardRef(
       setSelectedFilters(values);
     };
 
-    const onSubmit = (values: z.infer<typeof formSchema>) =>
-      setSearchQuery(values.query);
-
-    const loading = (loading: boolean) => {
-      if (loadingResponse) {
-        loadingResponse(loading);
-      }
-    };
+  const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
 
     useImperativeHandle(ref, () => ({
       executeSearch: () => {

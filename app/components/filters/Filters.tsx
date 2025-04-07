@@ -46,8 +46,8 @@ export default function Filters({
   );
 
   function updateMultiSelect(key: string, selectedOption: string) {
-    const selectedOptions: string[] = selectedValues.has(key)
-      ? (selectedValues.get(key) as string[])
+    const selectedOptions: string[] = selectedValues.has(key) 
+      ? selectedValues.get(key) as string[] 
       : [];
     if (!selectedOptions.includes(selectedOption)) {
       selectedOptions.push(selectedOption);

@@ -30,7 +30,7 @@ export interface ListingData {
   zipCode: string;
   state: string;
   createdAt: string;
-  inventoryItem: InventoryItemData;
+  inventoryItem: InventoryItemData | null;
 }
 
 export interface ListingPatchData {

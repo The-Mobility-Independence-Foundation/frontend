@@ -12,13 +12,13 @@ import { UserData } from "@/app/models/User";
 import backendService from "@/app/services/backend.service";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function AccountMyOrders() {
   const [orders, setOrders] = useState<Orders>();
   const [userID, setUserID] = useState("");
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [orderStatusDialogIsOpen, setOrderStatusDialogIsOpen] = useState(false);
   const [orderAndStatusSelected, setOrderAndStatusSelected] = useState<{
     orderID: number | string;
@@ -36,10 +36,10 @@ export default function AccountMyOrders() {
     });
   });
 
-  const receiveOrders = (data: object) => {
+  const receiveOrders = useCallback((data: object) => {
     const dataAsOrders = data as Orders;
     setOrders(dataAsOrders);
-  };
+  }, []);
 
   const getOrderStatusMenuItems = (orderStatus: string) => {
     const items: string[] =
@@ -56,14 +56,14 @@ export default function AccountMyOrders() {
     orderID: number | string,
     status: string
   ) => {
-    setLoadingOrders(true);
+    setLoading(true);
     const body = {
       status: status,
     };
     const response = await backendService.patch(`/orders/${orderID}`, body);
     const responseAsOrders = response as OrdersPatch;
     toast(responseAsOrders.message);
-    setLoadingOrders(false);
+    setLoading(false);
     return responseAsOrders.success;
   };
 
@@ -87,6 +87,10 @@ export default function AccountMyOrders() {
     setOrderStatusDialogIsOpen(false);
   };
 
+  const searchLoadingResponse = useCallback((loading: boolean) => {
+    setLoading(loading);
+  }, []);
+
   return (
     <>
       <div className="relative h-full">
@@ -97,12 +101,12 @@ export default function AccountMyOrders() {
             receiveResponse={receiveOrders}
             filterType={FilterComponentType.ORDERS}
             placeholderText="Search Orders"
-            loadingResponse={(loading) => setLoadingOrders(loading)}
+            loadingResponse={searchLoadingResponse}
           />
         )}
         <div className="w-full px-[0.75rem] py-[2rem] max-h-[45rem] overflow-y-auto">
-          {loadingOrders && <Spinner />}
-          {!loadingOrders && orders && (
+          {loading && <Spinner />}
+          {!loading && orders && (
             <>
               {orders.data.results.map((order) => (
                 <Order
@@ -113,6 +117,7 @@ export default function AccountMyOrders() {
                     onOrderMenuItemChange(item, order.id)
                   }
                   className="mb-[1rem]"
+                  userID={userID}
                 />
               ))}
               <KeysetPagination
@@ -123,6 +128,9 @@ export default function AccountMyOrders() {
               />
             </>
           )}
+          {orders?.data.results.length == 0 && !loading && 
+            <h4 className="text-gray-400">You have no orders</h4>
+          }
         </div>
       </div>
       {orderAndStatusSelected && (

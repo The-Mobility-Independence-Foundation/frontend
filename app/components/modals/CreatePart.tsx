@@ -128,7 +128,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
   const onPartTypeChange = (
     value: string,
     field: {
-      onChange: any;
+      onChange: (value: string) => void;
       onBlur?: Noop;
       value?: string;
       disabled?: boolean | undefined;
@@ -142,7 +142,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
   const onModelChange = (
     value: string,
     field: {
-      onChange: any;
+      onChange: (value: string) => void;
       onBlur?: Noop;
       value?: string;
       disabled?: boolean | undefined;
@@ -166,11 +166,11 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
       createPartForm.setValue("modelID", pendingModel);
       setPendingModel(null);
     }
-  }, [pendingModel, models]);
+  }, [pendingModel, models, createPartForm]);
 
   useEffect(() => {
     getModels();
-  }, [])
+  }, [getModels])
 
   return (
     <>

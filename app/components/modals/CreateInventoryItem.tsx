@@ -135,11 +135,11 @@ export default function CreateInventoryItemModal({
       createInventoryItemForm.setValue("partID", pendingPart);
       setPendingPart(null);
     }
-  }, [pendingPart, parts]);
+  }, [pendingPart, parts, createInventoryItemForm]);
 
   useEffect(() => {
     getParts();
-  }, []);
+  }, [getParts]);
 
   return (
     <>

@@ -51,7 +51,6 @@ export default function Inventory() {
       inventoryItemData.data.results.map((item) => {
         return {
           id: item.id,
-          name: item.name,
           inventory: item.inventory,
           part: item.part,
           model: item.model,
@@ -74,6 +73,10 @@ export default function Inventory() {
     }
   };
 
+  const searchLoadingResponse = useCallback((loading: boolean) => {
+    setLoading(loading);
+  }, []);
+
   return (
     <>
       {orgID != "" && inventoryID && (
@@ -92,7 +95,7 @@ export default function Inventory() {
               placeholderText="Search Inventory Items"
               newButtonEvent={() => setNewItemModalIsOpen(true)}
               filterType={FilterComponentType.INVENTORY_ITEMS}
-              loadingResponse={(loading) => setLoading(loading)}
+              loadingResponse={searchLoadingResponse}
               ref={searchRef}
             />
             {inventoryItems && inventoryItems?.data.results.length > 0 && (
