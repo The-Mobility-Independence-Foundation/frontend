@@ -43,7 +43,13 @@ export default function InventoryItemFilters({
 
   useEffect(() => {
     setFilterOptions({
-      multiSelects: [],
+      multiSelects: [
+        {
+          title: "Archived",
+          filterType: FilterType.Archived,
+          options: ["Archived"]
+        }
+      ],
       multiInputs: [],
       radioButtons: [],
       multiRadioButtons: [        
@@ -69,18 +75,22 @@ export default function InventoryItemFilters({
       newSelectedValues.delete(field);
     } else {
       let key = field.toLowerCase();
-      let id;
+      let value;
       if (key == "part") {
-        id = parts.find(part => part.name == newValue)?.id;
+        value = parts.find(part => part.name == newValue)?.id;
         key = "partId";
       } else if(key == "model") {
         key = "modelId";
-        id = models.find(model => model.name == newValue)?.id;
+        value = models.find(model => model.name == newValue)?.id;
+      } else if(key == FilterType.Archived.toLowerCase()) {
+        const selectedValues = newValue as string[];
+        const findArchived = selectedValues.find(value => value == "Archived")?.length;
+        key = "status";
+        value = findArchived && findArchived > 0 ? "archived" : "unarchived";
       }
-      if(!id) {
-        toast("There was an error finding this filter attribute");
+      if(value) {
+        newSelectedValues.set(key, value);
       }
-      newSelectedValues.set(key, id);
     }
     setSelectedValues(newSelectedValues);
     onFilterValueChange(newSelectedValues);

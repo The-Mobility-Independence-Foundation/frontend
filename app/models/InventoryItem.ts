@@ -40,6 +40,7 @@ export interface InventoryItemData {
   publicCount: number;
   notes: string;
   attributes: { [key: string]: string | number };
+  archivedAt: string | null;
 }
 
 export function attributesToString(attributes: {

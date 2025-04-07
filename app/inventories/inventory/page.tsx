@@ -46,7 +46,6 @@ export default function Inventory() {
   });
 
   const receiveInventoryItems = useCallback((data: object) => {
-    console.log(data);
     const inventoryItemData = data as InventoryItems;
     setInventoryItemsDisplaying(
       inventoryItemData.data.results.map((item) => {
@@ -60,6 +59,7 @@ export default function Inventory() {
           publicCount: item.publicCount,
           notes: item.notes,
           attributes: item.attributes,
+          archivedAt: item.archivedAt,
           checked: false,
         };
       })

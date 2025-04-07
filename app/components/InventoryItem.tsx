@@ -89,9 +89,16 @@ export default function InventoryItem({
       >
         <div className="flex">
           <div className="w-64">
-            <h4>
-              {inventoryItem.part?.name} ({inventoryItem.quantity})
-            </h4>
+            <div className="flex items-start">
+              <h4>
+                {inventoryItem.part?.name} ({inventoryItem.quantity})
+              </h4>
+              {inventoryItem.archivedAt && (
+                <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem] mt-[0.75rem]">
+                  Archived
+                </span>
+              )}
+            </div>
             {inventoryItem.part?.partNumber && (
               <h5>#{inventoryItem.part.partNumber}</h5>
             )}
