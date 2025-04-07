@@ -21,24 +21,24 @@ export default function Order({order, menuItems, userID, onMenuItemClick, classN
   const [madeOrder, setMadeOrder] = useState<boolean>(order.recipient.id == userID);
 
   useEffect(() => {
-    if(order.status) {
-    switch(order.status.toLowerCase()) {
-      case OrderStatus.INITIATED:
-        setStatusStyle(`bg-[#28A745] text-white`);
-        break;
-      case OrderStatus.FULLFILLED:
-        setStatusStyle(`bg-[#007BFF] text-white`);
-        break;
-      case OrderStatus.PENDING:
-        setStatusStyle(`bg-[#FFC107] text-white`);
-        break;
-      case OrderStatus.VOIDED:
-        setStatusStyle(`bg-[#6C757D] text-white`);
-        break;
-      default:
-        setStatusStyle(`bg-white text-black`);
+    if(order.status && !madeOrder) {
+      switch(order.status.toLowerCase()) {
+        case OrderStatus.INITIATED:
+          setStatusStyle(`bg-[#28A745] text-white`);
+          break;
+        case OrderStatus.FULLFILLED:
+          setStatusStyle(`bg-[#007BFF] text-white`);
+          break;
+        case OrderStatus.PENDING:
+          setStatusStyle(`bg-[#FFC107] text-white`);
+          break;
+        case OrderStatus.VOIDED:
+          setStatusStyle(`bg-[#6C757D] text-white`);
+          break;
+        default:
+          setStatusStyle(`bg-white text-black`);
+      }
     }
-  }
   }, [order]);
   
   return <div
