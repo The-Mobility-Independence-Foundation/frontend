@@ -1,5 +1,6 @@
 // GET
 
+import { AttachmentData } from "./Attachment";
 import { UserData } from "./User";
 
 export interface Messages {
@@ -22,17 +23,11 @@ export interface MessageData {
   author: UserData,
   conversationId: string,
   content: string,
-  attachments: string[],
+  attachments: AttachmentData[],
   createdAt: Date,
   updatedAt: Date
 }
 
 export interface PatchMessage {
-  id: string,
-  author: UserData,
-  conversationId: string,
-  content: string,
-  attachments: string[],
-  createdAt: Date,
-  updatedAt: Date
+  content: string
 }

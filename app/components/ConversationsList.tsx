@@ -64,18 +64,18 @@ export default function ConversationsList({userId, className, selectConversation
                     key={conversation.id}
                     userName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
                     listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
-                    message={messages != null && messages.length != 0 ? messages[messages.length - 1].content : undefined}
+                    message={messages != null && messages.length != 0 ? messages[0].content : undefined}
                     lastConversation={index == conversations.length - 1}
-                    time={messages && messages.length != 0 ? new Date(messages[messages.length - 1].createdAt).toLocaleTimeString([], {
+                    time={messages && messages.length != 0 ? new Date(new Date(messages[0].createdAt).getTime() - 14400000).toLocaleTimeString([], {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
-                    }) : new Date(conversation.createdAt).toLocaleTimeString([], {
+                    }) : new Date(new Date(conversation.createdAt).getTime() - 14400000).toLocaleTimeString([], {
                         hour: "numeric",
                         minute: "2-digit",
                         hour12: true,
                     })}
-                    important={index == 0}
+                    important={false} // Not used currently
                     onClick={() => selectConversation(conversation)}
                 />
             })}
