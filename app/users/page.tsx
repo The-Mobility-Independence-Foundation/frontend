@@ -36,9 +36,8 @@ export default function UsersPage() {
     const getConnections = async () => {
         let response = await backendService.get("/users/" + currentUserId + "/connections");
 
-        console.log((response as Connections).data.results.map(connection => connection.followingId))
-    
-        return (response as Connections).data.results.map(connection => connection.followingId);
+        return (response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
+            connection.followingId : connection.followerId);
     }
 
     const onConnectButtonClicked = async (userId: string) => {
