@@ -12,7 +12,6 @@ import { useState } from "react";
 import { LandingFormType } from "../types/LandingFormType";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const formSchema = z.object({
@@ -28,7 +27,6 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [invalidLogin, setInvalidLogin] = useState(false);
     const [loginFailed, setLoginFailed] = useState(false);
-    const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema)
@@ -49,6 +47,7 @@ export default function SignUpForm({setCurrentForm}: LoginFormProps) {
                 setInvalidLogin(true);
             }
         }).catch(error => {
+            console.error(error)
             setLoginFailed(true);
             setInvalidLogin(false);
         })

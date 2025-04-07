@@ -45,23 +45,22 @@ export default function ListingPage() {
 
   return (
     <>
-      {listing && (
+      {listing && listing.inventoryItem && listing.inventoryItem.part && listing.inventoryItem.inventory && listing.inventoryItem.inventory.organization && (
         <>
           <div className="flex flex-col h-screen">
             {/** TOP BAR */}
             <div className="w-full min-h-min flex justify-between p-[0.65rem] bg-[#F4F4F5] drop-shadow-md overflow-hidden">
               <div className="mr-[0.25rem]">
-                <h2>{listing.title}</h2>
+                <h2>{listing.name}</h2>
                 <p className="max-w-[20rem] text-sm">
-                  {listing.inventoryItem.part.description}
+                  {listing.description}
                 </p>
                 <div className="flex mt-[1rem]">
                   <div>
-                    <h5>{listing.inventoryItem.part.partNumber}</h5>
+                    <h5>{listing.inventoryItem.part.name}</h5>
                     <p className="mt-[revert]">
-                      {listing.inventoryItem.part.model}
+                      {listing.inventoryItem.part.partNumber}
                     </p>
-                    <p>{listing.inventoryItem.part.partType}</p>
                   </div>
                   <ul className="ml-[3rem] max-h-[6rem] overflow-y-auto">
                     {Object.keys(listing.attributes).map((key) => (
@@ -78,10 +77,12 @@ export default function ListingPage() {
               <div className="flex flex-col my-[1rem] mx-[0.25rem] justify-between">
                 <div>
                   <h5>{listing.inventoryItem.inventory.organization.name}</h5>
-                  <p>{listing.inventoryItem.inventory.organization.email}</p>
-                  <p>
-                    {listing.inventoryItem.inventory.organization.phoneNumber}
-                  </p>
+                  <p>{listing.inventoryItem.inventory.organization.phoneNumber}</p>
+                  {listing.inventoryItem.inventory.organization.socials.map(social => 
+                    <p key={social}>
+                      {social}
+                    </p>
+                  )}
                 </div>
                 <Link
                   href={`/messages?u_id=${listing.inventoryItem.inventory.organization.id}`}

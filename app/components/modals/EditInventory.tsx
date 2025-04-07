@@ -13,60 +13,67 @@ import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 
 interface EditInventoryModalProps {
-  organizationID: number,
-  inventoryData: InventoryData,
-  onClose: (submit: boolean) => void
+  organizationID: number | string;
+  inventoryData: InventoryData;
+  onClose: (submit: boolean) => void;
 }
 
-export default function EditInventoryModal({organizationID, inventoryData, onClose}: EditInventoryModalProps) {
+export default function EditInventoryModal({
+  organizationID,
+  inventoryData,
+  onClose,
+}: EditInventoryModalProps) {
   const [loadingEdit, setLoadingEdit] = useState(false);
 
   const editInventoryFormSchema = z.object({
-    title: z
-      .string()
-      .min(1, "Title is required"),
-      description: z
-      .string({
-        required_error: "Description is required"
-      }),
+    title: z.string().min(1, "Title is required"),
+    description: z.string({
+      required_error: "Description is required",
+    }),
   });
   const editInventoryForm = useForm<z.infer<typeof editInventoryFormSchema>>({
     resolver: zodResolver(editInventoryFormSchema),
     defaultValues: {
       title: inventoryData.name,
-      description: inventoryData.description
-    }
-  })
-  
-  const onInventorySubmit = (values: z.infer<typeof editInventoryFormSchema>) => {
+      description: inventoryData.description,
+    },
+  });
+
+  const onInventorySubmit = (
+    values: z.infer<typeof editInventoryFormSchema>
+  ) => {
     setLoadingEdit(true);
     const body = {
       name: values.title,
       description: values.description,
-      restore: false
+      restore: false,
     };
-    backendService.patch(`/organizations/${organizationID}/inventories/${inventoryData.id}`, body)
-      .then(response => {
+    backendService
+      .patch(
+        `/organizations/${organizationID}/inventories/${inventoryData.id}`,
+        body
+      )
+      .then((response) => {
         const responseAsInventory = response as InventorySuccess;
-        if(!responseAsInventory.success) {
+        if (!responseAsInventory.success) {
           toastErrors(response as ErrorCallback);
           setLoadingEdit(false);
           return;
         }
         onClose(true);
-      }
-    );
-  }
+      });
+  };
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title={`Edit ${inventoryData.name}`} onClose={() => onClose(false)} />
+      <ModalHeader
+        title={`Edit ${inventoryData.name}`}
+        onClose={() => onClose(false)}
+      />
       <ModalBody>
         <>
           <FormProvider {...editInventoryForm}>
-            <form
-              onSubmit={editInventoryForm.handleSubmit(onInventorySubmit)}
-            >
+            <form onSubmit={editInventoryForm.handleSubmit(onInventorySubmit)}>
               <FormField
                 control={editInventoryForm.control}
                 name="title"
@@ -90,22 +97,21 @@ export default function EditInventoryModal({organizationID, inventoryData, onClo
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea 
-                        {...field} 
-                        placeholder="Description" 
-                      />
+                      <Textarea {...field} placeholder="Description" />
                     </FormControl>
                   </FormItem>
                 )}
               />
               <div className="flex w-max ml-auto mt-[1.5rem]">
-                <button 
-                  onClick={() => onClose(false)} 
+                <button
+                  onClick={() => onClose(false)}
                   className="button !bg-[#BBBBBB]"
                   disabled={loadingEdit}
-                >Cancel</button>
-                <button 
-                  type="submit" 
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
                   className="button ml-[1rem] h-[3rem] w-[5rem]"
                   disabled={loadingEdit}
                 >
