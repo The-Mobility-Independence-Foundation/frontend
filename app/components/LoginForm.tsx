@@ -13,7 +13,6 @@ import { LandingFormType } from "../types/LandingFormType";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 
 const formSchema = z.object({
