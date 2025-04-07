@@ -120,6 +120,7 @@ export default function AccountReceivedOrders() {
                     setHandleOrderDialogIsOpen(true);
                   }}
                   statusOverride="Handle"
+                  userID={userID}
                 />
               ))}
               {/* As of now, /orderpool doesn't have pagination. Once it does implement this */}

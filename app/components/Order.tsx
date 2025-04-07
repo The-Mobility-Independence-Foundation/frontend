@@ -9,14 +9,16 @@ import { capitalize } from "../models/Listings";
 interface OrderProps {
   order: OrderData;
   menuItems: string[];
+  userID: string | number;
   onMenuItemClick: (item: string) => void;
   className?: string;
   statusOverride?: string;
   onStatusClick?: (status: string) => void;
 }
 
-export default function Order({order, menuItems, onMenuItemClick, className, statusOverride, onStatusClick}: OrderProps) {
+export default function Order({order, menuItems, userID, onMenuItemClick, className, statusOverride, onStatusClick}: OrderProps) {
   const [statusStyle, setStatusStyle] = useState("");
+  const [madeOrder, setMadeOrder] = useState<boolean>(order.recipient.id == userID);
 
   useEffect(() => {
     if(order.status) {
@@ -42,26 +44,39 @@ export default function Order({order, menuItems, onMenuItemClick, className, sta
   return <div
       className={`flex justify-between flex-wrap w-full bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
   >
-    <div>
+    <div className="flex flex-col">
       <Link href={`/listing?listing_id=${order.listing.id}`}>
         <h4 className="hover:underline cursor-pointer">{order.listing.name}</h4>      
       </Link>
       <h5>{order.listing.description}</h5>
       <p className="mt-[revert]">{order.listing.inventoryItem?.part?.name}</p>
+      <p className="mt-auto italic font-bold border rounded w-min border-black p-[0.2rem]">{madeOrder ? "Sent" : "Handeling"}</p>
     </div>
     <div
       className="flex flex-col justify-between mr-[5rem] ml-[2rem]
                 max-sm:mr-[0rem] max-sm:my-[1rem]"
     >
-      <h5>{order.recipient.firstName} {order.recipient.lastName}</h5>
-      <div>
-        <p>@{order.recipient.displayName}</p>
-        <p>{order.recipient.email}</p>
-      </div>
-      <Link href={`/messages?u_id=${order.recipient.id}`} className="w-full">
-        <button className="w-full button">Message</button>{" "}
-        {/**TODO: routes to specified user pv */}
-      </Link>
+      {madeOrder ? <>
+        <h5>{order.provider?.firstName} {order.provider?.lastName}</h5>
+        <div>
+          <p>@{order.provider?.displayName}</p>
+          <p>{order.provider?.email}</p>
+        </div>
+        <Link href={`/messages?u_id=${order.provider?.id}`} className="w-full">
+          <button className="w-full button">Message</button>{" "}
+          {/**TODO: routes to specified user pv */}
+        </Link>
+      </> : <>
+        <h5>{order.recipient.firstName} {order.recipient.lastName}</h5>
+        <div>
+          <p>@{order.recipient.displayName}</p>
+          <p>{order.recipient.email}</p>
+        </div>
+        <Link href={`/messages?u_id=${order.recipient.id}`} className="w-full">
+          <button className="w-full button">Message</button>{" "}
+          {/**TODO: routes to specified user pv */}
+        </Link>
+      </>}
     </div>
     <div className="flex flex-col justify-around items-center my-[1rem]">
         <div className="text-center">

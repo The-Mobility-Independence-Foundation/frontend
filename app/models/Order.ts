@@ -42,6 +42,8 @@ export interface OrderData {
   dateCompleted: string | null,
   listing: ListingData,
   recipient: UserData,
+  recipientOrganization: OrganizationData | null,
+  provider: UserData | null,
   providerOrganization: OrganizationData
 }
 
