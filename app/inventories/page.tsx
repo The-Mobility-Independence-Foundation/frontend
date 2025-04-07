@@ -169,11 +169,11 @@ export default function Inventories() {
               inventories.map((inventory, index) => (
                 <div
                   key={inventory.id}
-                  className={`animate-fadeIn flex justify-between mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
+                  className={`animate-fadeIn flex flex-wrap mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
                     index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"
                   }`}
                 >
-                  <div className="w-[45%]">
+                  <div className="w-80 mr-[1rem]">
                     <div className="flex items-start h-min">
                       <h3 className="text-white hover:underline">
                         <Link
@@ -191,7 +191,7 @@ export default function Inventories() {
                     <p className="text-white">{inventory.description}</p>
                   </div>
                   {inventory.address && (
-                    <div>
+                    <div className="mr-[2rem]">
                       <h5 className="text-white">
                         {inventory.address.addressLine1}
                       </h5>
@@ -210,7 +210,7 @@ export default function Inventories() {
                       inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]
                     }
                     onItemClick={(item) => onMenuItemClick(item)}
-                    className="text-white text-lg"
+                    className="text-white text-lg absolute right-2.5"
                   />
                 </div>
               ))}

@@ -82,15 +82,13 @@ export default function InventoryItem({
   return (
     <div
       className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
-      flex-wrap
-      max-sm:pl-[2rem] ${className}`}
+      ${className}`}
     >
       <div
-        className="flex w-full
-                  max-sm:flex-col"
+        className="flex flex-wrap w-full"
       >
-        <div className="flex max-sm:mt-[1rem] ml-[1.5rem]">
-          <div>
+        <div className="flex">
+          <div className="w-64">
             <h4>
               {inventoryItem.part?.name} ({inventoryItem.quantity})
             </h4>
@@ -99,7 +97,7 @@ export default function InventoryItem({
             )}
             <p className="mt-[revert]">{inventoryItem.part?.model?.name}</p>
           </div>
-          <ul className="ml-[3rem] mr-[1rem] max-h-[10rem] min-w-[15rem] overflow-y-auto">
+          <ul className="ml-[2rem] mr-[1rem] max-h-[10rem] w-[8rem] overflow-y-auto">
             <li className="mb-[0.25rem]">{attributesAsString}</li>
             <li>{inventoryItem.notes}</li>
           </ul>

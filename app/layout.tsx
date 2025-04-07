@@ -51,7 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${interRegular.variable} antialiased`}>
         <Suspense fallback={<div>Loading...</div>}>
-          <div className="w-full h-screen flex flex-col">
+          <div className="w-full h-screen overflow-y-hidden flex flex-col">
             {!pathName.endsWith("/landing") && data.success && <Header />}
             
             <div className="flex flex-1">
