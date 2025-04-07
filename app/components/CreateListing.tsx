@@ -1,6 +1,6 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
-import { InventoryItemData } from "../models/InventoryItem";
+import { InventoryItemData, InventoryItems } from "../models/InventoryItem";
 import { ControllerRenderProps, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -16,19 +16,50 @@ import {
 import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
+import backendService from "../services/backend.service";
+import { userEmitter } from "../layout";
+import { UserData } from "../models/User";
+import { Inventory } from "../models/Inventory";
 
 interface CreateListingProps {
   onClose: (created: boolean) => void;
 }
 
-// TODO: second half
+// TODO: title, description and attributes
 export default function CreateListing({onClose}: CreateListingProps) {
-  const inventoryItems = useState<InventoryItemData[]>([])[0];
+  const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
   const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
+  const [orgID, setOrgID] = useState("");
 
-  // TODO: API call for grabbing all items from all inventories
+  useEffect(() => {
+    userEmitter.on("user", (userEmitted: UserData) => {
+      if(userEmitted.organization) {
+        setOrgID(userEmitted.organization.id);
+      }
+    });
+  })
+
+  useEffect(() => {
+    // Grabs all items from every inventory
+    if(orgID) {
+      backendService.get(`/organizations/${orgID}/inventories`)
+      .then(async response => {
+        const responseAsInventory = response as Inventory;
+        if(responseAsInventory.success) {
+          const allItemsResponses = await Promise.all(
+            responseAsInventory.data.results.map(async inventory => {
+              const response = await backendService.get(`/organizations/${orgID}/inventories/${inventory.id}/items`);
+              const responseAsInventoryItems = response as InventoryItems;
+              return responseAsInventoryItems.success ? responseAsInventoryItems.data.results : [];
+            })
+          )
+          setInventoryItems(allItemsResponses.flat());
+        }
+      });
+    }
+  }, [orgID]);
 
   const createListingSchema = z.object({
     inventoryItemID: z.number({
@@ -127,7 +158,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                                 key={item.id}
                                 value={item.id.toString()}
                               >
-                                {item.name} [{item.inventory.name}]
+                                {item.name} [{item.inventory?.name}]
                               </SelectItem>
                             ))}
                           </SelectGroup>

@@ -36,10 +36,7 @@ interface PaginationProps {
   className?: string
 }
 
-// Every time the page changes, the page reroutes with new query params "offset", and "limit"
-// TODO: bug where existing query params are missed with Pagination on page
-// TODO: rework with keyset
-// TODO: new format is "[<] [curr] [>]"
+// TODO: DELETE THIS ONCE NO PAGES REFERENCE IT: RENAME KeysetPagination.tsx to Pagination.tsx
 export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange, className}: PaginationProps) {
   // default page data
   const calculateCurrentPage = () => {

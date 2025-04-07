@@ -5,10 +5,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod"
 import { User, UserData } from "../models/User";
 import { useEffect, useState } from "react";
-import { userEmitter } from "../layout";
+import { userEmitterBus } from "../layout";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,7 +17,7 @@ export default function AccountSettings() {
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })
@@ -51,7 +50,7 @@ export default function AccountSettings() {
         fields = {...fields, displayName: values.displayName};
       }
       setLoadingSubmit(true);
-      backendService.patch(`/users/${user?.id}`, values)
+      backendService.patch(`/users/${user?.id}`, fields)
         .then(response => {
           const responseAsUser = response as User;
           console.log(responseAsUser)
@@ -60,7 +59,7 @@ export default function AccountSettings() {
             setLoadingSubmit(false);
             return;
           }
-          userEmitter.emit("user", responseAsUser.data);
+          userEmitterBus.emit("user", responseAsUser.data);
           setLoadingSubmit(false);
         });
     }

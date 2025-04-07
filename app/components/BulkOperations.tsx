@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { ACTIVE, INACTIVE, statuses } from "../models/Status";
+import { ACTIVE, INACTIVE, LISTING_STATES } from "../models/Listings";
 
 export interface BulkOperationsProps {
     onCheckboxChange: (checked: CheckedState) => void;

@@ -6,35 +6,48 @@ import { useState } from "react";
 import { MultiInputInfo } from "../../types/MultiInputInfo";
 import MultiInput from "../MultiInput";
 import { MultiSelectInfo } from "../../types/MultiSelectInfo";
-import { RadioButtonInfo } from "../../types/RadioButtonInfo";
+import {
+  MultiRadioButtonInfo,
+  RadioButtonInfo,
+} from "../../types/RadioButtonInfo";
 import LocationRadius from "../LocationRadius";
 import { FilterType } from "@/app/types/FilterTypes";
+import MultiRadioButton from "../MultiRadioButton";
 
 export interface FiltersProps {
   options: FilterOptions;
   selectedValues: Map<string, string | number | string[] | boolean>;
-  onValueChange: (field: string, newValue: string | number | string[] | boolean) => void;
+  onValueChange: (
+    field: string,
+    newValue: string | number | string[] | boolean
+  ) => void;
 }
 
 export interface FilterOptions {
   multiSelects: MultiSelectInfo[];
   multiInputs: MultiInputInfo[];
   radioButtons: RadioButtonInfo[];
-  map?: boolean
+  multiRadioButtons: MultiRadioButtonInfo[];
+  map?: boolean;
 }
 
-export default function Filters({options, selectedValues, onValueChange}: FiltersProps) {
+export default function Filters({
+  options,
+  selectedValues,
+  onValueChange,
+}: FiltersProps) {
   const multiSelects = options.multiSelects;
   const multiInputs = options.multiInputs;
   const radioButtons = options.radioButtons;
+  const multiRadioButtons = options.multiRadioButtons;
 
   const [activeStatusSelectedList, setActiveStatusSelectedList] = useState(
     new Array(radioButtons.length).fill(1)
   );
 
   function updateMultiSelect(key: string, selectedOption: string) {
-    const selectedOptions: string[] = selectedValues.has(key)
-      ? selectedValues.get(key) as string[]
+    const selectedOptions: string[] = selectedValues.has(key) 
+      ? selectedValues.get(key) as string[] 
       : [];
     if (!selectedOptions.includes(selectedOption)) {
       selectedOptions.push(selectedOption);
@@ -52,6 +65,10 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
       ...activeStatusSelectedList.slice(index + 1),
     ]);
     onValueChange(FilterType.Active, newActiveStatus == 1);
+  }
+
+  function updateMultiRadioButton(title: string, newValue: string) {
+    onValueChange(title, newValue);
   }
 
   return (
@@ -99,6 +116,16 @@ export default function Filters({options, selectedValues, onValueChange}: Filter
               changeActiveStatus(index, newActiveStatus)
             }
             className="bg-[#F4F4F5]"
+          />
+        ))}
+        {multiRadioButtons.map((multiRadioButtonInfo) => (
+          <MultiRadioButton
+            key={multiRadioButtonInfo.title}
+            title={multiRadioButtonInfo.title}
+            labels={multiRadioButtonInfo.labels}
+            onValueChange={(value: string) =>
+              updateMultiRadioButton(multiRadioButtonInfo.title, value)
+            }
           />
         ))}
       </div>
