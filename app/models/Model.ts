@@ -13,6 +13,12 @@ export interface Models {
   }
 }
 
+export interface ModelsPost {
+  success: boolean,
+  message: string,
+  data: ModelData
+}
+
 export interface ModelData {
   id: number,
   name: string,
@@ -32,6 +38,12 @@ export interface ModelTypes {
     nextCursor: string | null,
     previousCursor: string | null
   }
+}
+
+export interface ModelTypePost {
+  success: boolean,
+  message: string,
+  data: ModelTypeData
 }
 
 export interface ModelTypeData {

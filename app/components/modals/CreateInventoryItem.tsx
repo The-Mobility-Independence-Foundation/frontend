@@ -97,12 +97,9 @@ export default function CreateInventoryItemModal({onClose, organizationID, inven
   useEffect(() => {
     if(pendingPart && parts.find(p => p.id.toString() == pendingPart)) {
       createInventoryItemForm.setValue("partID", pendingPart);
-      console.log(createInventoryItemForm.getValues())
       setPendingPart(null);
     }
   }, [pendingPart, parts])
-
-  // getParts();
   
   return (
     <>

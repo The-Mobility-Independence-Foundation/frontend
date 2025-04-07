@@ -10,6 +10,12 @@ export interface Manufacturers {
   }
 }
 
+export interface ManufacturerPost {
+  success: boolean,
+  message: string,
+  data: ManufacturerData
+}
+
 export interface ManufacturerData {
   id: number,
   name: string,

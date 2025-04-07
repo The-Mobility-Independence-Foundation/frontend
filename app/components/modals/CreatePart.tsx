@@ -10,7 +10,7 @@ import {
 import ModalBody from "./ModalBody";
 import ModalHeader from "./ModalHeader";
 import { z } from "zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ModelData, Models } from "@/app/models/Model";
 import backendService from "@/app/services/backend.service";
 import Modal from "./Modal";
@@ -42,6 +42,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
   const [createModelModalIsOpen, setCreateModelModalIsOpen] = useState(false);
   const [partTypes, setPartTypes] = useState<PartTypeData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pendingModel, setPendingModel] = useState<string | null>();
 
   const createPartFormSchema = z.object({
     name: z.string({
@@ -68,14 +69,6 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
   });
 
   useEffect(() => {
-    backendService.get(`/models?limit=100`).then((response) => {
-      const responseAsModels = response as Models;
-      if (!responseAsModels.success) {
-        toastErrors(response)
-        return;
-      }
-      setModels(responseAsModels.data.results);
-    });
     backendService.get(`/part-types?limit=100`).then((response) => {
       const responseAsPartTypes = response as PartTypes;
       if (!responseAsPartTypes.success) {
@@ -83,6 +76,17 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
         return;
       }
       setPartTypes(responseAsPartTypes.data.results);
+    });
+  }, [])
+
+  const getModels = useCallback(() => {
+    backendService.get(`/models?limit=100`).then((response) => {
+      const responseAsModels = response as Models;
+      if (!responseAsModels.success) {
+        toastErrors(response)
+        return;
+      }
+      setModels(responseAsModels.data.results);
     });
   }, [])
 
@@ -98,7 +102,6 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
         return;
       }
       partTypeID = responseAsPartType.data.id;
-      console.log(partTypeID)
     }
     const body = {
       name: values.name,
@@ -115,6 +118,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
         const responseAsPart = response as PartPost;
         setLoading(false);
         if(responseAsPart.success) {
+          toast(responseAsPart.message);
           onClose(responseAsPart.data);
         } else {
           toastErrors(response)
@@ -149,6 +153,21 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
   ) => {
     field.onChange(value);
   };
+
+  const onCreateModelModalClose = async (model: ModelData | null) => {
+    setCreateModelModalIsOpen(false);
+    if(model) {
+      setPendingModel(model.id.toString());
+      getModels();
+    }
+  }
+
+  useEffect(() => {
+    if(pendingModel && models.find(m => m.id.toString() == pendingModel)) {
+      createPartForm.setValue("modelID", pendingModel);
+      setPendingModel(null);
+    }
+  }, [pendingModel, models])
 
   return (
     <>
@@ -209,12 +228,11 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="flex items-baseline">
+                    <div className="flex items-baseline mb-[0.75rem]">
                     <Select
                       onValueChange={(value) => onPartTypeChange(value, field)}
-                      // required={true}
                     >
-                      <SelectTrigger className="mb-[0.75rem]">
+                      <SelectTrigger>
                         <SelectValue placeholder="Part Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -251,6 +269,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
                     <Select
                       onValueChange={(value) => onModelChange(value, field)}
                       required={true}
+                      value={field.value}
                     >
                       <SelectTrigger className="mb-[0.25rem]">
                         <SelectValue placeholder="Model" />
@@ -288,7 +307,7 @@ export default function CreatePartModal({ onClose }: CreatePartModalProps) {
         isOpen={createModelModalIsOpen}
         onClose={() => setCreateModelModalIsOpen(false)}
       >
-        <CreateModelModal onClose={() => setCreateModelModalIsOpen(false)} />
+        <CreateModelModal onClose={(model) => onCreateModelModalClose(model)} />
       </Modal>
     </>
   );
