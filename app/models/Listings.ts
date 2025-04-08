@@ -1,6 +1,5 @@
 import { AddressData } from "./Address";
 import { AttachmentData } from "./Attachment";
-import { InventoryData } from "./Inventory";
 import { InventoryItemData } from "./InventoryItem";
 import { OrganizationData } from "./Organization";
 import { PartData } from "./Part";

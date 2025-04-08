@@ -6,13 +6,12 @@ import {
   ListingPatchData,
   ACTIVE,
   INACTIVE,
-  Listings,
   SingleListing,
 } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import Link from "next/link";
-import { Checkbox } from "@/components/ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { CheckedState } from "@radix-ui/react-checkbox";
 import { Input } from "@/components/ui/input";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,7 +29,7 @@ import { useEffect, useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "../models/User";
 import { toastErrors } from "../models/Generic";
 import { toast } from "sonner";
@@ -56,7 +55,7 @@ export default function Listing({
   listing,
   myListing,
   // onCheckboxChange,
-  checked,
+  // checked,
   onStateChange,
   activeState,
   onOpenChange,

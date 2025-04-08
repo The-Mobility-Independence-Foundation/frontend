@@ -15,7 +15,7 @@ import PaginationComponent from "../components/Pagination";
 import { toastErrors } from "../models/Generic";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "../models/User";
 import { FilterComponentType } from "../types/FilterTypes";
 

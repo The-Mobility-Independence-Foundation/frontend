@@ -10,7 +10,7 @@ import ImageCarousel, { ImageReference } from "../components/ImageCarousel";
 import Listing from "../components/Listing";
 import backendService from "../services/backend.service";
 import { toastErrors } from "../models/Generic";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "../models/User";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -18,9 +18,9 @@ export default function ListingPage() {
   const [listing, setListing] = useState<ListingData>();
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
   const [images, setImages] = useState<ImageReference[]>([]);
-  const [recommendedListings, setRecommendedListings] = useState<ListingData[]>(
-    []
-  );
+  // const [recommendedListings, setRecommendedListings] = useState<ListingData[]>(
+  //   []
+  // );
   const [listingsFromOrg, setListingsFromOrg] = useState<ListingData[]>([]);
   const [loadingListing, setLoadingListing] = useState(false);
   const [loadingOrgListings, setLoadingOrgListings] = useState(false);

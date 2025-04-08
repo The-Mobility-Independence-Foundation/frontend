@@ -16,7 +16,7 @@ import Listing from "../components/Listing";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
-import { userEmitterBus } from "@/app/layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "@/app/models/User";
 import PaginationComponent from "@/app/components/Pagination";
 import { Spinner } from "@/components/ui/spinner";
@@ -181,7 +181,7 @@ export default function MyListings() {
           <div>
             <Search
               apiRoute={`/listings?organizationId=${orgID}`}
-              searchBy={"name"}
+              searchBy={"query"}
               receiveResponse={receiveListings}
               filterType={FilterComponentType.LISTINGS}
               placeholderText="Search My Listings"

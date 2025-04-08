@@ -19,7 +19,7 @@ import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import backendService from "../services/backend.service";
 import { UserData } from "../models/User";
 import { Inventory } from "../models/Inventory";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import { SingleListing } from "../models/Listings";

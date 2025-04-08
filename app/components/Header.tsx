@@ -2,12 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image"
-// import backendService from "../services/backend.service";
-import { UserData } from "../models/User";
-// import { toast } from "sonner";
-import { userEmitterBus } from "../layout";
 
 interface LinkReference {
   route: string;
@@ -17,13 +13,6 @@ interface LinkReference {
 
 export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
-  const [user, setUser] = useState<UserData>();
-
-  useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
-      setUser(userEmitted);
-    })
-  })
 
   const pathName = usePathname();
 
