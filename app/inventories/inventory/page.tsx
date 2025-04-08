@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import InventoryItem from "@/app/components/InventoryItem";
 import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
-import { userEmitterBus } from "@/app/layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "@/app/models/User";
 import PaginationComponent from "@/app/components/Pagination";
 import { toast } from "sonner";

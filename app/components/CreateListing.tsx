@@ -1,9 +1,9 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
-import { InventoryItemData, InventoryItems } from "../models/InventoryItem";
+import { ATTRIBUTES_STRING_REGEX, InventoryItemData, InventoryItems, stringToAttributes } from "../models/InventoryItem";
 import { ControllerRenderProps, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -17,21 +17,59 @@ import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import backendService from "../services/backend.service";
-import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
 import { Inventory } from "../models/Inventory";
+import { userEmitterBus } from "@/lib/userEmitterBus";
+import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
+import { SingleListing } from "../models/Listings";
+import { toastErrors } from "../models/Generic";
+import { toast } from "sonner";
 
 interface CreateListingProps {
   onClose: (created: boolean) => void;
 }
 
-// TODO: title, description and attributes
 export default function CreateListing({onClose}: CreateListingProps) {
   const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
   const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
   const [orgID, setOrgID] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const attributesPlaceholder =
+    'Each attribute must be separated by new lines and formatted as "key:value" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in.';
+
+    const createListingSchema = z.object({
+      name: z.string({
+        required_error: "Name is required"
+      }),
+      description: z.string({
+        required_error: "Description is required"
+      }),
+      inventoryItemID: z.number({
+        required_error: "Select an item from your inventories",
+      }),
+      quantity: z
+        .number({
+          required_error: "Include how much you would like to list",
+        })
+        .min(1),
+      active: z.boolean({
+        required_error:
+          "Indicate whether or not this listing will be active upon creation",
+      }),
+      attributes: z.string().regex(ATTRIBUTES_STRING_REGEX),
+      attachment: z.string(),
+    });
+  
+    const createListingForm = useForm<z.infer<typeof createListingSchema>>({
+      resolver: zodResolver(createListingSchema),
+      defaultValues: {
+        active: true,
+      },
+    });
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
@@ -61,33 +99,26 @@ export default function CreateListing({onClose}: CreateListingProps) {
     }
   }, [orgID]);
 
-  const createListingSchema = z.object({
-    inventoryItemID: z.number({
-      required_error: "Select an item from your inventories",
-    }),
-    quantity: z
-      .number({
-        required_error: "Include how much you would like to list",
-      })
-      .min(1),
-    active: z.boolean({
-      required_error:
-        "Indicate whether or not this listing will be active upon creation",
-    }),
-    attachment: z.string(),
-  });
-
-  const createListingForm = useForm<z.infer<typeof createListingSchema>>({
-    resolver: zodResolver(createListingSchema),
-    defaultValues: {
-      active: true,
-    },
-  });
-
   const onFormSubmit = (values: z.infer<typeof createListingSchema>) => {
-    console.log(values);
-    // TODO: POST call for creating a listing
-    onClose(true);
+    setLoading(true);
+    const body = {
+      files: [values.attachment],
+      inventoryItemId: values.inventoryItemID,
+      name: values.name,
+      description: values.description,
+      quantity: values.quantity,
+      attributes: stringToAttributes(values.attributes)
+    }
+    backendService.post(`/listings`, body).then((response) => {
+      setLoading(false);
+      const responseAsListing = response as SingleListing;
+      if(!responseAsListing.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsListing.message);
+      onClose(true);
+    })
   };
 
   const onInventoryItemChange = (value: string, field: ControllerRenderProps<{
@@ -95,6 +126,9 @@ export default function CreateListing({onClose}: CreateListingProps) {
         quantity: number;
         active: boolean;
         attachment: string;
+        name: string;
+        description: string;
+        attributes: string;
     }, "inventoryItemID">) => {
     field.onChange(value);
     inventoryItems.forEach((item) => {
@@ -109,6 +143,9 @@ export default function CreateListing({onClose}: CreateListingProps) {
     quantity: number;
     active: boolean;
     attachment: string;
+    name: string;
+    description: string;
+    attributes: string;
 }, "active">) => {
     field.onChange(value == 1);
     setActiveButton(value);
@@ -134,6 +171,37 @@ export default function CreateListing({onClose}: CreateListingProps) {
           <div className="flex justify-around items-center w-full
                     max-md:flex-col">
           <div className="w-[25rem] flex flex-col justify-between h-full">
+          <FormField
+              control={createListingForm.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl className="mb-[0.75rem]">
+                    <Input
+                      {...field}
+                      type="string"
+                      required={true}
+                      placeholder="Name"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createListingForm.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl className="mb-[0.75rem]">
+                    <Textarea
+                      {...field}
+                      required={false}
+                      placeholder="Description"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={createListingForm.control}
               name="inventoryItemID"
@@ -158,7 +226,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                                 key={item.id}
                                 value={item.id.toString()}
                               >
-                                {item.name} [{item.inventory?.name}]
+                                {item.part?.name} [{item.inventory?.name}]
                               </SelectItem>
                             ))}
                           </SelectGroup>
@@ -213,6 +281,22 @@ export default function CreateListing({onClose}: CreateListingProps) {
                 </FormItem>
               )}
             />
+            <FormField
+              control={createListingForm.control}
+              name="attributes"
+              render={({ field }) => (
+                <FormItem className="mb-[1.5rem]">
+                  <FormLabel>Attributes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder={attributesPlaceholder}
+                      className="h-[10rem]"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
           <div
             className="w-[2px] h-[80%] bg-[#d9d9d9] rounded
@@ -245,9 +329,12 @@ export default function CreateListing({onClose}: CreateListingProps) {
             <div className="flex ml-auto mt-[1rem]
                             max-md:mx-auto">
             <button onClick={() => onClose(false)} className="button !bg-[#BBBBBB]">Cancel</button>
-              <button type="submit" className="button ml-[1rem]">
-                Create Listing
-              </button>
+                <button 
+                  type="submit" 
+                  className="button ml-[1rem] h-[3rem] w-[8rem]"
+                >
+                    {loading ? <Spinner className="text-white" /> : "Create Listing"}
+                </button>
             </div>
           </div>
           </div>

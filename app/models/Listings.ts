@@ -1,6 +1,5 @@
 import { AddressData } from "./Address";
 import { AttachmentData } from "./Attachment";
-import { InventoryData } from "./Inventory";
 import { InventoryItemData } from "./InventoryItem";
 import { OrganizationData } from "./Organization";
 import { PartData } from "./Part";
@@ -25,31 +24,36 @@ export interface SingleListing {
 
 export interface ListingData {
   id: string;
+  inventoryItemId: number;
+  organizationId: number,
   name: string;
   description: string;
   attributes: {[key: string]: string};
   quantity: number;
-  address: AddressData;
   status: string;
   createdAt: string;
-  organization: OrganizationData;
-  inventory: InventoryData;
+  point: {
+    type: string,
+    coordinates: number[]
+  }
+  ftsVector: string;
+  deletedAt: string | null;
   inventoryItem: InventoryItemData | null;
+  organization: OrganizationData;
+  address: AddressData;
   attachments: AttachmentData[],
-  part: PartData
+  part: PartData;
 }
 
 export interface ListingPatchData {
-  name?: string;
-  description?: string;
-  attributes?: {[key: string]: string};
+  status?: string;
   quantity?: number;
-  latitude?: number;
-  longitude?: number;
-  inactive?: boolean;
-  zipCode?: string;
-  state?: string;
-  inventoryItemID?: number;
+}
+
+export interface ListingDelete {
+  success: boolean;
+  message: string;
+  data: null;
 }
 
 export interface Bookmarks {

@@ -2,17 +2,15 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-// import backendService from "../services/backend.service";
 import { SingleListing, ListingData, Listings } from "../models/Listings";
 import Link from "next/link";
 import Modal from "../components/modals/Modal";
 import CreateOrder from "../components/modals/CreateOrder";
 import ImageCarousel, { ImageReference } from "../components/ImageCarousel";
-// import {v4 as uuidv4} from "uuid";
 import Listing from "../components/Listing";
 import backendService from "../services/backend.service";
 import { toastErrors } from "../models/Generic";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { UserData } from "../models/User";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -20,14 +18,14 @@ export default function ListingPage() {
   const [listing, setListing] = useState<ListingData>();
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
   const [images, setImages] = useState<ImageReference[]>([]);
-  const [recommendedListings, setRecommendedListings] = useState<ListingData[]>(
-    []
-  );
+  // const [recommendedListings, setRecommendedListings] = useState<ListingData[]>(
+  //   []
+  // );
   const [listingsFromOrg, setListingsFromOrg] = useState<ListingData[]>([]);
   const [loadingListing, setLoadingListing] = useState(false);
   const [loadingOrgListings, setLoadingOrgListings] = useState(false);
-  const [loadingRecommendedListings, setLoadingRecommendedListings] =
-    useState(false);
+  // const [loadingRecommendedListings, setLoadingRecommendedListings] =
+  //   useState(false);
   const [userID, setUserID] = useState("");
 
   const params = useSearchParams();
@@ -136,9 +134,9 @@ export default function ListingPage() {
                   </Link>
                 </div>
                 <div className="flex flex-col my-[1rem] mx-[0.25rem] justify-between">
-                  <div>
-                    <h5>{listing.inventory.name}</h5>
-                    {listing.inventory.address && (
+                  {listing.inventoryItem?.inventory && <>
+                    <h5>{listing.inventoryItem.inventory.name}</h5>
+                    {listing.inventoryItem.inventory.address && (
                       <div className="text-white">
                         <h5>
                           {listing.address.addressLine1}
@@ -153,7 +151,7 @@ export default function ListingPage() {
                         <p>{listing.address.zipCode}</p>
                       </div>
                     )}
-                  </div>
+                  </>}
                   <div>
                     <p className="w-max mx-auto">Quantity Available:</p>
                     <h5 className="w-min mx-auto">{listing.quantity}</h5>
@@ -190,7 +188,7 @@ export default function ListingPage() {
                   </div>
                 </div>
                 {/** RECOMMENDED LISTINGS */}
-                <div>
+                {/* <div>
                   <h5 className="mb-[1rem]">Recommended Listings</h5>
                   <div className="flex flex-nowrap overflow-x-scroll">
                     {loadingRecommendedListings && <Spinner />}
@@ -204,7 +202,7 @@ export default function ListingPage() {
                         />
                       ))}
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             {/** ETC */}

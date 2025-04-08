@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod"
 import { User, UserData } from "../models/User";
 import { useEffect, useState } from "react";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "../services/backend.service";

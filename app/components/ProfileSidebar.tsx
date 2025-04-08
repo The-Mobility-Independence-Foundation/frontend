@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { UserData } from "../models/User"
 import { usePathname, useRouter } from "next/navigation";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 
 interface Tab {
   title: string,
