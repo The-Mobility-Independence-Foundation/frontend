@@ -10,7 +10,7 @@ import Modal from "@/app/components/modals/Modal";
 import CreateInventoryItem from "@/app/components/modals/CreateInventoryItem";
 import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
-import KeysetPagination from "@/app/components/KeysetPagination";
+import PaginationComponent from "@/app/components/Pagination";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -115,7 +115,7 @@ export default function Inventory() {
                     ))}
                   {loading && <Spinner />}
                 </div>
-                <KeysetPagination
+                <PaginationComponent
                   hasNextPage={inventoryItems.data.hasNextPage}
                   hasPreviousPage={inventoryItems.data.hasPreviousPage}
                   nextCursor={inventoryItems.data.nextCursor}

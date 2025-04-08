@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
 import { Spinner } from "@/components/ui/spinner";
-import KeysetPagination from "../components/KeysetPagination";
+import PaginationComponent from "../components/Pagination";
 import { PaginationData, toastErrors } from "../models/Generic";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
@@ -269,7 +269,7 @@ export default function Inventories() {
             </>
           )}
           {paginationData && (
-            <KeysetPagination
+            <PaginationComponent
               hasNextPage={paginationData.hasNextPage}
               hasPreviousPage={paginationData.hasPreviousPage}
               nextCursor={paginationData.nextCursor}

@@ -1,135 +1,37 @@
-"use client";
+import { Pagination, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import EventEmitter from "events";
+import { useEffect } from "react";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import {v4 as uuidv4} from "uuid";
-
-export interface PageChangeEvent {
-  currentPage: number;
+interface KeysetPaginationProps {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  nextCursor: string | null;
+  previousCursor: string | null;
 }
 
-export enum PaginationSearchParams {
-  OFFSET = "offset",
-  LIMIT = "limit"
-}
+export const paginationEventBus = new EventEmitter();
+export const PAGE_CHANGE_EVENT = "pageChange";
 
-interface Box {
-  value: number | string;
-  id: string;
-}
+export default function PaginationComponent({hasNextPage, hasPreviousPage, nextCursor, previousCursor}: KeysetPaginationProps) {  
+  useEffect(() => { // Appeases the build script
+    const noop = () => {};
+    noop();
+  }, [hasPreviousPage, previousCursor])
 
-interface PaginationProps {
-  count: number;
-  totalCount: number;
-  hasNext: boolean;
-  nextToken: string | null;
-  onPageChange?: (event: PageChangeEvent) => void;
-  className?: string
-}
-
-// TODO: DELETE THIS ONCE NO PAGES REFERENCE IT: RENAME KeysetPagination.tsx to Pagination.tsx
-export default function PaginationComponent({count, totalCount, hasNext, nextToken, onPageChange, className}: PaginationProps) {
-  // default page data
-  const calculateCurrentPage = () => {
-    let currentPage;
-    if(nextToken) {
-      currentPage = Math.floor((parseInt(nextToken)-1)/count);
-    } else {
-      if(totalCount == 0) {
-        currentPage = 1;
-      } else {
-        currentPage = Math.ceil(totalCount/count);
-      }
-    }
-    return currentPage;
-  }
-
-  const [page, setPage] = useState(calculateCurrentPage());
-  const numberOfPages = Math.ceil(totalCount / count);
-  const router = useRouter();
-  const pathname = usePathname();
-  const params = useSearchParams();
-
-  const reroutePage = useCallback((offset: number, limit: number) => {
-    let paramsAsString = `${PaginationSearchParams.OFFSET}=${offset}&${PaginationSearchParams.LIMIT}=${limit}`;
-    params.forEach((value, key) => {
-      if(key != PaginationSearchParams.OFFSET && key != PaginationSearchParams.LIMIT) {
-        paramsAsString += `&${key}=${value}`;
-      }
-    });
-    router.push(`${pathname}?${paramsAsString}`);
-  }, [params, pathname, router]);
-
-  const getAllBoxes = useCallback((currentPage: number): Box[] => {
-    // set the new boxes that are rendered
-    const newBoxes: Box[] = [];
-    if (totalCount == count) {
-      newBoxes.push({value: 1, id: uuidv4()});
-      return newBoxes
-    }
-    // always include the first 2 pages
-    // always include the current page and its neighbors
-    // always include the last two pages
-    // insert ellipsis where there is a gap between pages
-    let ellipsisAdded = false;
-    for(let i = 1; i <= numberOfPages; i++) {
-      if (i <= 2 
-          || i >= numberOfPages - 1 
-          || Math.abs(i - currentPage) <= 1) {
-        newBoxes.push({value: i, id: uuidv4()});
-        ellipsisAdded = false;
-      } else if (!ellipsisAdded) {
-        newBoxes.push({value: "...", id: uuidv4()});
-        ellipsisAdded = true;
-      }
-    }
-    return newBoxes;
-  }, [count, numberOfPages, totalCount]);
-  const [boxes, setBoxes] = useState(getAllBoxes(calculateCurrentPage()));
-
-  useEffect(() => {
-    setBoxes(getAllBoxes(page));
-    reroutePage((page - 1) * count, count);
-    if(onPageChange) {
-      onPageChange({currentPage: page});
-    }
-  }, [page, totalCount, count, setBoxes, reroutePage, onPageChange, getAllBoxes]);
-
-  return <Pagination className={`w-[34rem] absolute left-[1rem] bottom-[1rem] justify-start ${className}`}>
-    <PaginationContent className="w-full">
-      <PaginationItem 
-        onClick={() => setPage(page - 1)}
-        className={`cursor-pointer ${page == 1 ? "pointer-events-none" : "pointer-events-auto"}`}
-        >
-        <PaginationPrevious/>
-      </PaginationItem>
-      {boxes.map(box => {
-        return box.value === "..." ? <PaginationItem key={box.id}><PaginationEllipsis/></PaginationItem> : 
-        <PaginationItem 
-          key={box.id}  
-          onClick={() => setPage(box.value as number)}
-          className="cursor-pointer"
-        >
-          <PaginationLink isActive={page == box.value}>
-            {box.value}
-          </PaginationLink>
-        </PaginationItem>
-      })}
-      <PaginationItem 
-        onClick={() => setPage(page + 1)}
-        className={`cursor-pointer !ml-auto ${!hasNext ? "pointer-events-none" : "pointer-events-auto"}`}
-      >
-        <PaginationNext />
-      </PaginationItem>
-    </PaginationContent>
+  return <Pagination className="absolute left-[1rem] bottom-[1rem] justify-start items-center">
+    {/* As of now there is no functionality in the backend for going back a page. In the event that gets figured out just uncomment this and it'll work **/}
+    {/* <PaginationItem
+      onClick={() => paginationEventBus.emit(PAGE_CHANGE_EVENT, previousCursor)}
+      className={`list-none ${hasPreviousPage ? "cursor-pointer" : "pointer-events-none"} border rounded`}
+    >
+      <PaginationPrevious />
+    </PaginationItem> */}
+    <div className="w-[1px] h-[2rem] bg-[#d9d9d9] mx-[1rem]"/>
+    <PaginationItem
+      onClick={() => paginationEventBus.emit(PAGE_CHANGE_EVENT, nextCursor)}
+      className={`list-none ${hasNextPage ? "cursor-pointer" : "pointer-events-none"} border rounded`}
+    >
+      <PaginationNext />
+    </PaginationItem>
   </Pagination>
 }

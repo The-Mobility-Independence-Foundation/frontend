@@ -9,13 +9,13 @@ import { ListingData, Listings, LISTING_STATES } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
-// import KeysetPagination from "../../components/KeysetPagination";
+// import PaginationComponent from "../../components/PaginationComponent";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
 import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
-import KeysetPagination from "@/app/components/KeysetPagination";
+import PaginationComponent from "@/app/components/Pagination";
 import { toast } from "sonner";
 // import { PaginationData } from "@/app/models/Generic";
 
@@ -222,7 +222,7 @@ export default function MyListings() {
             </Modal>
           )}
 
-          <KeysetPagination
+          <PaginationComponent
             hasNextPage={listings.data.hasNextPage}
             hasPreviousPage={listings.data.hasPreviousPage}
             nextCursor={listings.data.nextCursor}
