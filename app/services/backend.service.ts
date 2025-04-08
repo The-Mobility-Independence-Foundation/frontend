@@ -11,8 +11,8 @@ class BackendService {
     return this.fetcher("GET", endpoint);
   }
 
-  async post(endpoint: string, data: object, formData?: boolean) {
-    return this.fetcher("POST", endpoint, data, formData);
+  async post(endpoint: string, data: object) {
+    return this.fetcher("POST", endpoint, data);
   }
 
   async patch(endpoint: string, data: object) {
@@ -23,7 +23,7 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: object | null = null, formData?: boolean) {
+  private async fetcher(method: string, endpoint: string, data: object | FormData | null = null) {
     const token = localStorage.getItem("token");
 
     const headers: Record<string, string> = {
@@ -31,13 +31,13 @@ class BackendService {
       "accept": "application/json",
     }
 
-    if(!formData) {
+    if(!(data instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
       method: method,
-      body: data ? (formData ? data : JSON.stringify(data)) : null,
+      body: data ? ((data instanceof FormData) ? data : JSON.stringify(data)) : null,
       headers: headers
     });
 

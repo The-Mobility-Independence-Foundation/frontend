@@ -111,7 +111,7 @@ export default function Conversation({conversationId, user, className}: Conversa
             });
         }
 
-        backendService.post(`/conversations/${conversationId}/messages`, formData, true).then(response => {
+        backendService.post(`/conversations/${conversationId}/messages`, formData).then(response => {
             sendForm.reset({message: ""});
             setAttachments([]);
             getMessages();
