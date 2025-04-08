@@ -1,6 +1,9 @@
-// GET
-
+import { AddressData } from "./Address";
+import { AttachmentData } from "./Attachment";
+import { InventoryData } from "./Inventory";
 import { InventoryItemData } from "./InventoryItem";
+import { OrganizationData } from "./Organization";
+import { PartData } from "./Part";
 
 export interface Listings {
   message: string;
@@ -24,13 +27,14 @@ export interface ListingData {
   description: string;
   attributes: {[key: string]: string};
   quantity: number;
-  latitude: number;
-  longitude: number;
-  inactive: boolean;
-  zipCode: string;
-  state: string;
+  address: AddressData;
+  status: string;
   createdAt: string;
+  organization: OrganizationData;
+  inventory: InventoryData;
   inventoryItem: InventoryItemData | null;
+  attachments: AttachmentData[],
+  part: PartData
 }
 
 export interface ListingPatchData {
