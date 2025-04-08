@@ -1,13 +1,14 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
-import { UserRole, Users } from "../../models/User";
+import { UserData, UserRole, Users } from "../../models/User";
 import Search from "../../components/Search";
 import User from "../../components/User";
 import { Connections } from "../../models/Connection";
 import backendService from "../../services/backend.service";
 import Modal from "@/app/components/modals/Modal";
 import CreateConnectionModal from "@/app/components/modals/CreateConnectionModal";
+import { userEmitterBus } from "@/app/layout";
 
 export default function AccountConnections() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -15,15 +16,10 @@ export default function AccountConnections() {
     const [createConnectionIsOpen, setCreateConnectionIsOpen] = useState(false);
 
     useEffect(() => {
-        const fetchUserId = async () => {
-            const response = await backendService.get("/users/@me");
-
-            const userId = response.data?.id;
-            setCurrentUserId(userId);
-        };
-
-        fetchUserId();
-    }, []);
+      userEmitterBus.on("user", (userEmitted: UserData) => {
+        setCurrentUserId(userEmitted.id);
+      })
+    });
 
     useEffect(() => {
         const fetchConnections = async () => {

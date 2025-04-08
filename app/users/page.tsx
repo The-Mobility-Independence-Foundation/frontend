@@ -1,27 +1,23 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
-import { UserRole, Users } from "../models/User";
+import { UserData, UserRole, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
 import { Connections } from "../models/Connection";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
+import { userEmitterBus } from "../layout";
 
 export default function UsersPage() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [connections, setConnections] = useState<string[] | null>(null);
 
     useEffect(() => {
-        const fetchUserId = async () => {
-            const response = await backendService.get("/users/@me");
-
-            const userId = response.data?.id;
-            setCurrentUserId(userId);
-        };
-
-        fetchUserId();
-    }, []);
+        userEmitterBus.on("user", (userEmitted: UserData) => {
+        setCurrentUserId(userEmitted.id);
+        })
+    });
 
     useEffect(() => {
         const fetchConnections = async () => {
