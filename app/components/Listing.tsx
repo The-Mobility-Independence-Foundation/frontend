@@ -26,7 +26,7 @@ export interface ListingProps {
   checked?: boolean;
   onStateChange?: (state: number) => void;
   activeState?: number;
-  onOpenChange?: (open: boolean, listing: ListingData) => void;
+  onOpenMenuChange?: (open: boolean, listing: ListingData) => void;
   onMenuItemClickModal?: (itemClicked: string) => void; 
   className?: string;
 }
@@ -36,7 +36,7 @@ const DEACTIVATE = "Deactivate";
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
-export default function Listing({listing, myListing, onCheckboxChange, checked, onStateChange, activeState, onOpenChange, onMenuItemClickModal, className}: ListingProps) {
+export default function Listing({listing, myListing, onCheckboxChange, checked, onStateChange, activeState, onOpenMenuChange, onMenuItemClickModal, className}: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
@@ -240,7 +240,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
 
         {myListing && 
         <Menu 
-          onOpenChange={(open) => onOpenChange && onOpenChange(open, listing)}
+          onOpenChange={(open) => onOpenMenuChange && onOpenMenuChange(open, listing)}
           items={[EDIT, activeState == 1 ? DEACTIVATE : ACTIVATE, DELETE]} 
           onItemClick={onMenuItemClick} 
           className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4" />}

@@ -134,7 +134,6 @@ const Search = forwardRef(
 
     useImperativeHandle(ref, () => ({
       executeSearch: () => {
-        console.log("executeSearch");
         backendSearch();
       },
       clearSearch: () => {

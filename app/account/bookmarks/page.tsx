@@ -2,10 +2,11 @@
 
 import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BookmarkData,
   Bookmarks,
+  BookmarksDelete,
   LISTING_STATES,
   ListingData,
   Listings,
@@ -19,6 +20,9 @@ import Dialog from "@/app/components/modals/Dialog";
 import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import { Spinner } from "@/components/ui/spinner";
+import backendService from "@/app/services/backend.service";
+import { toastErrors } from "@/app/models/Generic";
+import { toast } from "sonner";
 
 const ARCHIVE = "Archive";
 
@@ -31,18 +35,30 @@ export default function AccountBookmarks() {
   );
   const [showBulkOps, setShowBulkOps] = useState(false);
   const [archiveListingIsOpen, setArchiveListingIsOpen] = useState(false);
-  const [selectedListing, setSelectedListing] = useState<ListingData>();
+  const [selectedBookmark, setSelectedBookmark] = useState<BookmarkData>();
   const [userID, setUserID] = useState("");
   const [bookmarks, setBookmarks] = useState<Bookmarks>();
   const [loading, setLoading] = useState(false);
 
+  const searchRef = useRef<{
+    executeSearch: () => void;
+    clearSearch: () => void;
+  } | null>(null);
+  
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
       setUserID(userEmitted.id);
     });
   });
 
-  const receiveListings = useCallback((data: object) => {
+  const refreshBookmarks = () => {
+    if(searchRef.current) {
+      searchRef.current.clearSearch();
+      searchRef.current.executeSearch();
+    }
+  }
+
+  const receiveBookmarks = useCallback((data: object) => {
     const dataAsBookmarks = data as Bookmarks;
     console.log(dataAsBookmarks);
     setBookmarks(dataAsBookmarks);
@@ -87,20 +103,40 @@ export default function AccountBookmarks() {
     setShowBulkOps(bookmarksCheckedUpdate.values().toArray().includes(true));
   };
 
+  const archiveBookmark = (bookmark: BookmarkData) => {
+    setLoading(true);
+    backendService.delete(`/users/${userID}/bookmarks/${bookmark.listing.id}`).then((response) => {
+      setLoading(false);
+      const responseAsBookmarks = response as BookmarksDelete;
+      if(!responseAsBookmarks.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsBookmarks.message);
+      refreshBookmarks();
+    })
+  }
+
   const onBulkArchive = () => {
-    bookmarks?.data.results.forEach(() => {}); // TODO add api call for removing bookmark
+    bookmarksChecked.forEach((checked, bookmark) => {
+      if(checked) {
+        archiveBookmark(bookmark);
+      }
+    })
   };
 
   const onArchiveDialogClose = (confirm: boolean) => {
-    // TODO: api call
-    console.log(confirm);
     setArchiveListingIsOpen(false);
+    if(confirm && selectedBookmark) {
+      archiveBookmark(selectedBookmark);
+      setSelectedBookmark(undefined);
+    }
   };
 
-  const onOpenChange = (open: boolean, listing: ListingData) => {
+  const onOpenBookmarkMenuChange = (open: boolean, bookmark: BookmarkData) => {
     if (open) {
       setArchiveListingIsOpen(false);
-      setSelectedListing(listing);
+      setSelectedBookmark(bookmark);
     }
   };
 
@@ -123,10 +159,11 @@ export default function AccountBookmarks() {
           <Search
             apiRoute={`/users/${userID}/bookmarks`}
             searchBy={"name"}
-            receiveResponse={receiveListings}
+            receiveResponse={receiveBookmarks}
             filterType={FilterComponentType.LISTINGS}
             placeholderText="Search Bookmarks"
             loadingResponse={onSearchLoading}
+            ref={searchRef}
           />
 
           {loading && <Spinner className="mt-[1rem]" />}
@@ -152,7 +189,7 @@ export default function AccountBookmarks() {
                     }
                     activeState={listingState.get(bookmark.listing)}
                     listing={bookmark.listing}
-                    onOpenChange={onOpenChange}
+                    onOpenMenuChange={(open) => onOpenBookmarkMenuChange(open, bookmark)}
                     onMenuItemClickModal={onMenuItemClick}
                     className="mb-[1rem] mx-auto animate-fadeIn"
                     key={bookmark.id}
@@ -160,7 +197,7 @@ export default function AccountBookmarks() {
                 ))}
               </div>
 
-              {selectedListing && (
+              {selectedBookmark && (
                 <Modal
                   isOpen={archiveListingIsOpen}
                   onClose={() => setArchiveListingIsOpen(false)}
@@ -170,7 +207,7 @@ export default function AccountBookmarks() {
                       "Are you sure you would like to archive this bookmarked listing?"
                     }
                     onClose={onArchiveDialogClose}
-                    header={`Archive ${selectedListing.name}?`}
+                    header={`Archive ${selectedBookmark.listing.name}?`}
                   />
                 </Modal>
               )}

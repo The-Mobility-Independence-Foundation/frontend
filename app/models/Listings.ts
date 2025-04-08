@@ -59,6 +59,15 @@ export interface Bookmarks {
   }
 }
 
+export interface BookmarksDelete {
+  success: boolean,
+  message: string,
+  data: {
+    raw: object[],
+    affected: number
+  }
+}
+
 export interface BookmarkData {
   id: number,
   dateCreated: string,
