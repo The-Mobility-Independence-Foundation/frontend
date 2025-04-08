@@ -18,13 +18,13 @@ export default function PrivateMessages() {
 
   const selectConversation = async (conversation: ConversationData) => {
     if(conversation.listingId != null) {
-      let response = await backendService.get("/listing/" + conversation.listingId);
+      const response = await backendService.get("/listing/" + conversation.listingId);
       setListing((response as SingleListing).data);
     }
 
     setConversationId(conversation.id);
 
-    let response = await backendService.get("/users/" + conversation.participantId);
+    const response = await backendService.get("/users/" + conversation.participantId);
     setUser((response as User).data);
   }
 

@@ -1,6 +1,5 @@
-import { MessageData, Messages } from "../models/Message";
-import { useEffect, useRef, useState } from "react";
-import { testMessages } from "../testData/TestMessagesData";
+import { Messages } from "../models/Message";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { ChatBubble, ChatBubbleAction, ChatBubbleActionWrapper, ChatBubbleMessage } from "@/components/ui/chat/chat-bubble";
 import ImageCarousel from "./ImageCarousel";
@@ -17,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area"
 import backendService from "../services/backend.service";
+import Image from "next/image";
 
 const formSchema = z.object({
     message: z.string().min(0, ""),
@@ -57,10 +57,10 @@ export default function Conversation({conversationId, user, className}: Conversa
         resolver: zodResolver(formSchema)
     });
 
-    const getMessages = async () => {
-        let response = await backendService.get(`/conversations/${conversationId}/messages`);
+    const getMessages = useCallback(async () => {
+        const response = await backendService.get(`/conversations/${conversationId}/messages`);
         setMessages(response);
-    };
+    }, [conversationId]);
 
     useEffect(() => {
         setLoading(true);
@@ -69,13 +69,13 @@ export default function Conversation({conversationId, user, className}: Conversa
 
         const timer = setInterval(getMessages, 2000);
         return () => clearInterval(timer);
-    }, []);
+    }, [getMessages]);
 
     const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let currentAttachments = attachments;
+        const currentAttachments = attachments;
 
         if(e.target.files != null) {
-            let urlSplit = e.target.files[0].name.split(".");
+            const urlSplit = e.target.files[0].name.split(".");
             if(fileTypes.includes(urlSplit[urlSplit.length - 1])) {
                 setAttachments(currentAttachments?.concat({url: URL.createObjectURL(e.target.files[0]), 
                     type: urlSplit[urlSplit.length - 1], name: e.target.files[0].name, file: e.target.files[0]}));
@@ -86,13 +86,13 @@ export default function Conversation({conversationId, user, className}: Conversa
     }
 
     const removeFile = (index: number) => {
-        let currentAttachments = [...attachments];
+        const currentAttachments = [...attachments];
 
         setAttachments([...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]);
     }
 
     function setEditing(messageId: string, editing: boolean) {
-        let currentMessagesEditing = new Map(messagesEditing);
+        const currentMessagesEditing = new Map(messagesEditing);
 
         currentMessagesEditing.set(messageId, editing);
 
@@ -110,11 +110,11 @@ export default function Conversation({conversationId, user, className}: Conversa
             });
         }
 
-        backendService.post(`/conversations/${conversationId}/messages`, formData).then(response => {
+        backendService.post(`/conversations/${conversationId}/messages`, formData).then(() => {
             sendForm.reset({message: ""});
             setAttachments([]);
             getMessages();
-        }).catch(error => {
+        }).catch(() => {
             toast.error("Error sending message. Please try again.");
         });
     }
@@ -122,9 +122,9 @@ export default function Conversation({conversationId, user, className}: Conversa
     function onEditSubmit(values: z.infer<typeof formSchema>, messageId: string) {
         backendService.patch(`/conversations/${conversationId}/messages/${messageId}`, {
             "content": values.message
-        }).then(response => {
+        }).then(() => {
             getMessages();
-        }).catch(error => {
+        }).catch(() => {
             toast.error("Error editing message. Please try again.");
         });
     }
@@ -240,13 +240,13 @@ export default function Conversation({conversationId, user, className}: Conversa
             <div className="bg-[#D1D5DB] py-6 px-8">
                 <div className="mb-2 flex">
                     {attachments?.map((attachment, index) => (
-                        <div className="relative group">
+                        <div key={index} className="relative group">
                             <Button variant="outline" onClick={() => removeFile(index)} className="h-6 p-1 absolute top-[2px] right-[2px] opacity-0 group-hover:opacity-100">
                                 <TrashIcon />
                             </Button>
 
                             {imageFileTypes.includes(attachment.type) ?
-                                <img src={attachment.url} className="h-[80px]"></img> :
+                                <Image src={attachment.url} className="h-[80px]" alt=""></Image> :
                                 <div>
                                     <FileIcon className="size-20" />
                                     <p className="text-xs text-center font-normal">{attachment.name.length <= 10 ? attachment.name : attachment.name.substring(0, 6) + "..."}</p>
@@ -293,7 +293,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                             <FormField
                                 control={sendForm.control}
                                 name="attachment"
-                                render={({ field }) => (
+                                render={() => (
                                     <FormItem className="flex items-end">
                                         <Button variant="ghost" className="h-[42px] w-[42px]" type="button" onClick={()=> {fileInputRef.current.click()}}>
                                             <FileIcon className="size-3.5"/>

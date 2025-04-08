@@ -24,15 +24,15 @@ export default function ConversationsList({userId, className, selectConversation
     const [conversationMessagesMap, setConversationMessagesMap] = useState<Map<string, MessageData[]>>(new Map());
     const [userNames, setUserNames] = useState<Map<string, string>>(new Map());
 
-    const receiveConversations = async (conversations: any) => {
-        setConversations(conversations as Conversations);
+    const receiveConversations = async (conversations: object) => {
+        setConversations((conversations as Conversations));
         
-        const messagesPromises = conversations.data.results.map(async (conversation: ConversationData) => {
+        const messagesPromises = (conversations as Conversations).data.results.map(async (conversation: ConversationData) => {
             const response = await backendService.get(`/conversations/${conversation.id}/messages`);
             return [conversation.id, response.data.results] as [string, MessageData[]];
         });
 
-        const usernamePromises = conversations.data.results.map(async (conversation: ConversationData) => {
+        const usernamePromises = (conversations as Conversations).data.results.map(async (conversation: ConversationData): Promise<[string, string]> => {
             const userIdToGet = conversation.initiatorId !== userId ? conversation.initiatorId : conversation.participantId;
             const response = await backendService.get(`/users/${userIdToGet}`);
             return [conversation.id, response.data.firstName + " " + response.data.lastName];

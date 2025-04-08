@@ -1,5 +1,3 @@
-import { ConversationData } from "../models/Conversation";
-
 export interface ConversationPreviewProps {
     userName?: string;
     listing?: string;
