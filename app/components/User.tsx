@@ -9,11 +9,11 @@ export interface UserProps {
     onConnectButtonClicked?: (userId: string) => void;
     onConnectedButtonClicked?: (userId: string) => void;
     connected?: boolean;
-    connectionsPage?: boolean;
+    accountsPage?: boolean;
     className?: string;
 }
 
-export default function User({user, listings, connections, onConnectButtonClicked, onConnectedButtonClicked, connected, connectionsPage, className}: UserProps) {
+export default function User({user, listings, connections, onConnectButtonClicked, onConnectedButtonClicked, connected, accountsPage: connectionsPage, className}: UserProps) {
     return <div className={"bg-[#DDEDFF] px-5 py-3 rounded-md drop-shadow-md w-[350px] " + className}>
         <h5 className="text-center"><a href={"/profile/listings?u_id=" + user.id}>{user.firstName + " " + user.lastName}</a></h5>
 

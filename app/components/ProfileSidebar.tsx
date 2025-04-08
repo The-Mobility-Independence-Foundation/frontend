@@ -10,7 +10,11 @@ interface Tab {
   route: string
 }
 
-export default function ProfileSidebar() {
+export interface ProfileSidebarProps {
+  isAdmin?: boolean
+}
+
+export default function ProfileSidebar({isAdmin}: ProfileSidebarProps) {
   const [user, setUser] = useState<UserData>();
   const [activePath, setActivePath] = useState<string>(`${usePathname()}`);
   const [activeElementY, setActiveElementY] = useState(0);
@@ -24,12 +28,17 @@ export default function ProfileSidebar() {
   })
 
   const router = useRouter();
-  const tabs: Tab[] = [
+  const tabs: Tab[] = [];
+
+  if(isAdmin) {
+    tabs.push({title: "Users", route: "/account/users"})
+  }
+  tabs.push(
     {title: "Connections", route: `/account/connections`},
     {title: "My Orders", route: `/account/my-orders`},
     {title: "Received Orders", route: `/account/received-orders`},
     {title: "Settings", route: `/account`}
-  ];
+  );
 
   useEffect(() => {
     const element = document.getElementById(activePath);
