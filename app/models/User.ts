@@ -1,5 +1,6 @@
 // GET
 
+import { ListingData } from "./Listings";
 import { OrganizationData } from "./Organization";
 
 export enum UserRole {
@@ -36,8 +37,9 @@ export interface UserData {
   lastActivity: string,
   inactive: boolean,
   referralCode: string | null,
-  rating: string
-  organization: OrganizationData | null
+  rating: string,
+  organization: OrganizationData | null,
+  bookmarks: ListingData[] | null
 }
 
 export interface PatchUser {

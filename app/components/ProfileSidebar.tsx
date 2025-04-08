@@ -35,6 +35,7 @@ export default function ProfileSidebar({isAdmin}: ProfileSidebarProps) {
   }
   tabs.push(
     {title: "Connections", route: `/account/connections`},
+    {title: "Bookmarks", route: `/account/bookmarks`},
     {title: "My Orders", route: `/account/my-orders`},
     {title: "Received Orders", route: `/account/received-orders`}, // TODO: Grab orders from an hour ago to display exclamation
     {title: "Settings", route: `/account`}

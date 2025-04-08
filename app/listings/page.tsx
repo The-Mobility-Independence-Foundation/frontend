@@ -1,16 +1,25 @@
 "use client";
 
 import Search from "../components/Search";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import { FilterComponentType } from "../types/FilterTypes";
 import PaginationComponent from "../components/Pagination";
 import { Spinner } from "@/components/ui/spinner";
+import { userEmitterBus } from "@/lib/userEmitterBus";
+import { UserData } from "../models/User";
 
 export default function PublicListings() {
   const [listings, setListings] = useState<Listings>();
   const [loading, setLoading] = useState(false);
+  const [userID, setUserID] = useState("");
+
+  useEffect(() => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
+      setUserID(userEmitted.id);
+    })
+  })
 
   const receiveListings = useCallback((listings: object) => {
     // received from Search component
@@ -45,6 +54,7 @@ export default function PublicListings() {
                     listing={listing}
                     className="mb-[1rem] mx-auto"
                     key={listing.id}
+                    userID={userID}
                   />
                 ))}
               </div>

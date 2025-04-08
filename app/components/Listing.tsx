@@ -25,23 +25,22 @@ import {
 } from "@/components/ui/form";
 import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
-import { userEmitterBus } from "@/lib/userEmitterBus";
-import { UserData } from "../models/User";
 import { toastErrors } from "../models/Generic";
 import { toast } from "sonner";
 
 export interface ListingProps {
   listing: ListingData;
+  userID: string | number;
   myListing?: boolean;
   // onCheckboxChange?: (checked: CheckedState) => void;
   checked?: boolean;
   onStateChange?: (state: number) => void;
   activeState?: number;
-  onOpenChange?: (open: boolean, listing: ListingData) => void;
+  onOpenMenuChange?: (open: boolean, listing: ListingData) => void;
   onMenuItemClickModal?: (itemClicked: string) => void;
   className?: string;
 }
@@ -53,17 +52,17 @@ const DELETE = "Delete";
 
 export default function Listing({
   listing,
+  userID,
   myListing,
   // onCheckboxChange,
   // checked,
   onStateChange,
   activeState,
-  onOpenChange,
+  onOpenMenuChange,
   onMenuItemClickModal,
   className,
 }: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
-  const [userID, setUserID] = useState("");
 
   const part = listing.part;
   const organization = listing.organization;
@@ -88,18 +87,11 @@ export default function Listing({
           : "You do not have access to modify this field"
       ),
   });
-
   const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
     resolver: zodResolver(quantityFormSchema),
     defaultValues: {
       quantity: listing.quantity,
     },
-  });
-
-  useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
-      setUserID(userEmitted.id);
-    });
   });
 
   const patchListing = (body: ListingPatchData) => {
@@ -240,31 +232,31 @@ export default function Listing({
                   </FormProvider>
                 </div>
 
-                <Menu
-                  onOpenChange={(open) =>
-                    onOpenChange && onOpenChange(open, listing)
-                  }
-                  items={[
-                    EDIT,
-                    activeState === 1 ? DEACTIVATE : ACTIVATE,
-                    DELETE,
-                  ]}
-                  onItemClick={onMenuItemClick}
-                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
-                />
-              </>
-            ) : (
-              <>
-                <div className="flex flex-col my-[1rem] justify-between mr-[5rem]">
-                  <h5>{organization.name}</h5>
-                  <p>{organization.phoneNumber}</p>
-                  <Link
-                    href={`/messages?u_id=${organization.id}`}
-                    className="w-full"
-                  >
-                    <button className="w-full button">Message</button>
-                  </Link>
-                </div>
+                    <Menu
+                      onOpenChange={(open) =>
+                        onOpenMenuChange && onOpenMenuChange(open, listing)
+                      }
+                      items={[
+                        EDIT,
+                        activeState === 1 ? DEACTIVATE : ACTIVATE,
+                        DELETE,
+                      ]}
+                      onItemClick={onMenuItemClick}
+                      className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col justify-between mr-[5rem] max-sm:mr-[0rem]">
+                      <h5>{organization.name}</h5>
+                      <p>{organization.phoneNumber}</p>
+                      <Link
+                        href={`/messages?u_id=${organization.id}`}
+                        className="w-full"
+                      >
+                        <button className="w-full button">Message</button>
+                      </Link>
+                    </div>
 
                 <div className="flex flex-col justify-between my-[1rem]">
                   <div className="mt-[1.5rem]">

@@ -236,16 +236,13 @@ export default function MyListings() {
                         //   onCheckboxChange(listing, checked)
                         // }
                         checked={listingsChecked.get(listing)}
-                        onStateChange={(state) =>
-                          onListingStateChange(listing, state)
-                        }
+                        onStateChange={(state) => onListingStateChange(listing, state)}
                         activeState={listingsStatus.get(listing)}
                         listing={listing}
-                        onOpenChange={onOpenChange}
+                        onOpenMenuChange={onOpenChange}
                         onMenuItemClickModal={onMenuItemClick}
                         className="mb-[1rem] mx-auto"
-                        key={listing.id}
-                      />
+                        key={listing.id} userID={""}                      />
                     ))}
                   </div>
                 )}
