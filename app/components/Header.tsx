@@ -29,7 +29,7 @@ export default function Header() {
 
   // URLS
   const PUBLIC_LISTINGS = "/listings";
-  const FORUM = "/forum";
+  // const FORUM = "/forum";
   const PRIVATE_MESSAGES = `/messages`;
   const INVENTORIES = `/inventories`;
   const MY_LISTINGS = `/listings/${user?.id}`;
@@ -37,7 +37,7 @@ export default function Header() {
 
   const links: LinkReference[] = [
     {route: PUBLIC_LISTINGS, title: "Public Listings", base: PUBLIC_LISTINGS.split("?")[0]},
-    {route: FORUM, title: "Forum", base: FORUM.split("?")[0]},
+    // {route: FORUM, title: "Forum", base: FORUM.split("?")[0]},
     {route: PRIVATE_MESSAGES, title: "Private Messages", base: PRIVATE_MESSAGES.split("?")[0]},
     {route: INVENTORIES, title: "My Inventories", base: INVENTORIES.split("?")[0]},
     {route: MY_LISTINGS, title: "My Listings", base: MY_LISTINGS.split("?")[0]},
@@ -80,7 +80,7 @@ export default function Header() {
       >
         <Link 
           href={link.route}
-          className={`${pathName.startsWith(link.base) ? "text-[#009D4F]" : ""} 
+          className={`${pathName.split("?")[0] == link.base ? "text-[#009D4F]" : ""} 
                       whitespace-nowrap lg:text-lg`}
         >{link.title}</Link>
         <span
