@@ -56,7 +56,7 @@ export default function RootLayout({
             
             <div className="flex flex-1">
               {pathName.startsWith("/account") && data.success && 
-              <ProfileSidebar />}
+              <ProfileSidebar isAdmin={data.data.type == "admin"} />}
 
               <main className="flex-1" >{children}</main>
             </div>

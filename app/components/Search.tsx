@@ -31,6 +31,7 @@ interface SearchProps {
   defaultQuery?: string;
   newButtonEvent?: (clicked: boolean) => void;
   loadingResponse?: (loading: boolean) => void;
+  boxWidth?: string;
   className?: string;
 }
 
@@ -50,6 +51,7 @@ const Search = forwardRef(
       defaultQuery,
       newButtonEvent,
       loadingResponse,
+      boxWidth,
       className,
     }: SearchProps,
     ref
@@ -159,7 +161,7 @@ const Search = forwardRef(
           <FormProvider {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="max-w-[44rem] w-[50%] h-full"
+              className={"max-w-[44rem] h-full " + (boxWidth ? "w-" + boxWidth : "w-[50%]")}
             >
               <FormField
                 control={form.control}
