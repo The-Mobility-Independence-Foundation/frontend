@@ -6,8 +6,8 @@ import Search from "../components/Search";
 import User from "../components/User";
 import { Connections } from "../models/Connection";
 import backendService from "../services/backend.service";
-import { toast } from "sonner";
 import { userEmitterBus } from "../layout";
+import { toastErrors } from "../models/Generic";
 
 export default function UsersPage() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function UsersPage() {
     useEffect(() => {
         const fetchConnections = async () => {
             if (currentUserId) {
-                const response = await backendService.get("/users/" + currentUserId + "/connections");
+                const response = await backendService.get(`/users/${currentUserId}/connections`);
 
                 setConnections((response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
                     connection.followingId : connection.followerId));
@@ -33,15 +33,9 @@ export default function UsersPage() {
     }, [currentUserId]);
 
     const onConnectButtonClicked = async (userId: string) => {
-        backendService.post("/users/" + currentUserId + "/connections/" + userId, {}).then(response => {
+        backendService.post(`/users/${currentUserId}/connections/${userId}`, {}).then(response => {
             if(!response.success) {
-                toast("Error occurred. Please try again", {
-                    action: {
-                        label: "Close",
-                        onClick: () => {},
-                    }
-                });
-
+                toastErrors(response);
                 return;
             }
 
@@ -53,15 +47,9 @@ export default function UsersPage() {
     }
     
     const onConnectedButtonClicked = async (userId: string) => {
-        backendService.delete("/users/" + currentUserId + "/connections/" + userId).then(response => {
+        backendService.delete(`/users/${currentUserId}/connections/${userId}`).then(response => {
             if(!response.success) {
-                toast("Error occurred. Please try again", {
-                    action: {
-                        label: "Close",
-                        onClick: () => {},
-                    }
-                });
-
+                toastErrors(response);
                 return;
             }
 
@@ -74,11 +62,11 @@ export default function UsersPage() {
     }
 
     function getListingsNum(userId: string) {
-        return userId; //TODO
+        return userId; //TODO get listings num from endpoint
     }
 
     function getConnectionsNum(userId: string) {
-        return userId; //TODO
+        return userId; //TODO get connections num from endpoint
     }
     
     const [users, setUsers] = useState<Users>({

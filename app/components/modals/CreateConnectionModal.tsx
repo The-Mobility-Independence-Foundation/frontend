@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+import { toastErrors } from "@/app/models/Generic";
 
 interface CreateConnectionModalProps {
   currentUserId: string;
@@ -33,15 +33,10 @@ export default function CreateConnectionModal({currentUserId, onClose}: CreateCo
 
         setLoadingCreate(true);
 
-        backendService.post("/users/" + currentUserId + "/connections/" + userId, {}).then(response => {
+        backendService.post(`/users/${currentUserId}/connections/${userId}`, {}).then(response => {
             console.log(response)
             if(!response.success) {
-                toast("Error occurred. Please try again", {
-                    action: {
-                        label: "Close",
-                        onClick: () => {},
-                    }
-                });
+                toastErrors(response);
     
                 setLoadingCreate(false);
                 return;

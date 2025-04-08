@@ -19,7 +19,7 @@ export default function AccountUsers() {
     });
 
     function getListingsNum(userId: string) {
-        return userId; //TODO
+        return userId; //TODO get listings num from endpoint
     }
     
     const [users, setUsers] = useState<Users>({

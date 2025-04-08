@@ -24,7 +24,7 @@ export default function AccountConnections() {
     useEffect(() => {
         const fetchConnections = async () => {
             if (currentUserId) {
-              const response = await backendService.get("/users/" + currentUserId + "/connections");
+              const response = await backendService.get(`/users/${currentUserId}/connections`);
     
               setConnections((response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
                 connection.followingId : connection.followerId));
@@ -35,14 +35,14 @@ export default function AccountConnections() {
     }, [currentUserId]);
 
     const getConnections = async () => {
-        const response = await backendService.get("/users/" + currentUserId + "/connections");
+        const response = await backendService.get(`/users/${currentUserId}/connections`);
     
         return (response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
           connection.followingId : connection.followerId);
     }
 
     function getListingsNum(userId: string) {
-        return userId; //TODO
+        return userId; //TODO get listings num from endpoint
     }
     
     const [users, setUsers] = useState<Users>({
