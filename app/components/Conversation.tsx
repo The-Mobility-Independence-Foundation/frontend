@@ -19,7 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import backendService from "../services/backend.service";
 
 const formSchema = z.object({
-    message: z.string().min(1, ""),
+    message: z.string().min(0, ""),
     attachment: z.instanceof(File)
 }).partial();
 
@@ -101,11 +101,10 @@ export default function Conversation({conversationId, user, className}: Conversa
 
     async function onSend(values: z.infer<typeof formSchema>) {
         const formData = new FormData();
-        if(values.message) {
+        if(values.message && values.message.length != 0) {
             formData.append("content", values.message);
         }
         if(attachments.length != 0) {
-            console.log(attachments)
             attachments.forEach((attachment) => {
                 formData.append("files", attachment.file);
             });

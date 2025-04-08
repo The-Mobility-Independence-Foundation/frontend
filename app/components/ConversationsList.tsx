@@ -3,9 +3,7 @@ import { ConversationData, Conversations } from "../models/Conversation";
 import Search from "./Search";
 import ConversationPreview from "./ConversationPreview";
 import backendService from "../services/backend.service";
-import { MessageData, Messages } from "../models/Message";
-import { User } from "../models/User";
-import { SingleListing } from "../models/Listings";
+import { MessageData } from "../models/Message";
 
 export interface ConversationsListProps {
     userId: string;
@@ -23,30 +21,31 @@ export default function ConversationsList({userId, className, selectConversation
             results: []
         }
     });
-    const [conversationMessagesMap, setConversationMessagesMap] = useState<Map<ConversationData, MessageData[]>>(new Map())
+    const [conversationMessagesMap, setConversationMessagesMap] = useState<Map<string, MessageData[]>>(new Map());
+    const [userNames, setUserNames] = useState<Map<string, string>>(new Map());
 
     const receiveConversations = async (conversations: any) => {
-        // received from Search component
         setConversations(conversations as Conversations);
+        
+        const messagesPromises = conversations.data.results.map(async (conversation: ConversationData) => {
+            const response = await backendService.get(`/conversations/${conversation.id}/messages`);
+            return [conversation.id, response.data.results] as [string, MessageData[]];
+        });
 
-        const conversationMessages: [ConversationData, MessageData[]][] = await Promise.all(
-            (conversations as Conversations).data.results.map(async (conversation) => {
-                let response = await backendService.get(`/conversations/${conversation.id}/messages`);
-                return [conversation, (response as Messages).data.results];
-            })
-        );
-        setConversationMessagesMap(new Map(conversationMessages));
-    }
+        const usernamePromises = conversations.data.results.map(async (conversation: ConversationData) => {
+            const userIdToGet = conversation.initiatorId !== userId ? conversation.initiatorId : conversation.participantId;
+            const response = await backendService.get(`/users/${userIdToGet}`);
+            return [conversation.id, response.data.firstName + " " + response.data.lastName];
+        });
 
-    const getName = async (userId: string) => {
-        let response = await backendService.get("/users/" + userId);
-        return (response as User).data.firstName + " " + (response as User).data.lastName;
-    }
-
-    const getListingName = async (listingId: string) => {
-        let response = await backendService.get("/listing/" + listingId);
-        return (response as SingleListing).data.title;
-    }
+        const [messages, userNames] = await Promise.all([
+            Promise.all(messagesPromises),
+            Promise.all(usernamePromises)
+        ]);
+    
+        setConversationMessagesMap(new Map(messages));
+        setUserNames(new Map(userNames));
+    };
 
     return (
         <div className={"bg-[#F4F4F5] " + className}>
@@ -55,16 +54,18 @@ export default function ConversationsList({userId, className, selectConversation
                 receiveResponse={receiveConversations}
                 placeholderText="Search Conversations" 
                 searchBy={"id"}
+                boxWidth="w-[70%]"
             />
 
-            {conversations.data?.results.map(async (conversation, index, conversations) => {
-                let messages = conversationMessagesMap.get(conversation);
+            {conversations.data?.results.map((conversation, index, conversations) => {
+                const messages = conversationMessagesMap.get(conversation.id);
+                const username = userNames.get(conversation.id);
 
                 return <ConversationPreview 
                     key={conversation.id}
-                    userName={await getName(conversation.initiatorId != userId ? conversation.initiatorId : conversation.participantId)}
-                    listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
-                    message={messages != null && messages.length != 0 ? messages[0].content : undefined}
+                    userName={username ? username : ""}
+                    // listing={conversation.listingId != null ? await getListingName(conversation.listingId) : undefined}
+                    message={messages?.[0]?.content}
                     lastConversation={index == conversations.length - 1}
                     time={messages && messages.length != 0 ? new Date(new Date(messages[0].createdAt).getTime() - 14400000).toLocaleTimeString([], {
                         hour: "numeric",
