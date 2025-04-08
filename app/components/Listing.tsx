@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  LISTING_STATES,
+  LISTING_STATUSES,
   ListingData,
   ListingPatchData,
   ACTIVE,
@@ -121,7 +121,7 @@ export default function Listing({
       onStateChange(newSelected);
     }
     patchListing({
-      state: LISTING_STATES[newSelected - 1].toLowerCase(),
+      state: LISTING_STATUSES[newSelected - 1].toLowerCase(),
     });
   };
 

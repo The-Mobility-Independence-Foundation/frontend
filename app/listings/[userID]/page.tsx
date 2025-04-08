@@ -5,7 +5,7 @@ import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { ListingData, Listings, LISTING_STATES } from "../../models/Listings";
+import { ListingData, Listings, LISTING_STATUSES } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
@@ -63,7 +63,7 @@ export default function MyListings() {
       new Map(
         responseData.results.map((listing) => [
           listing,
-          LISTING_STATES.indexOf(listing.state.toUpperCase()) + 1,
+          LISTING_STATUSES.indexOf(listing.status.toUpperCase()) + 1,
         ])
       )
     );
