@@ -23,8 +23,8 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: any = null) {
-    let token = localStorage.getItem("token");
+  private async fetcher(method: string, endpoint: string, data: object | null = null) {
+    const token = localStorage.getItem("token");
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${endpoint}`, {
       method: method,

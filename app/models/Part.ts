@@ -1,15 +1,54 @@
 // GET
 
-export interface Part {
-  message: string;
-  data: PartData;
+import { ModelData } from "./Model";
+
+export interface Parts {
+  success: boolean;
+  message: string | null;
+  data: {
+    results: PartData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string | null,
+    previousCursor: string | null
+  };
+}
+
+export interface PartTypes {
+  success: boolean,
+  message: string | null,
+  data: {
+    results: PartTypeData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string | null,
+    previousCursor: string | null
+  }
 }
 
 export interface PartData {
   id: number;
   name: string;
-  model: string;
   description: string;
   partNumber: string;
-  partType: string;
+  model: ModelData | null,
+  types: PartTypeData[]
+}
+
+export interface PartPost {
+  success: boolean,
+  message: string,
+  data: PartData
+}
+
+export interface PartTypeData {
+  id: number,
+  name: string,
+  parts: PartData[] | null
+}
+
+export interface PartTypePost {
+  success: boolean,
+  message: string,
+  data: PartTypeData
 }

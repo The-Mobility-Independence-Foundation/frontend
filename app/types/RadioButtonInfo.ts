@@ -5,3 +5,9 @@ export type RadioButtonInfo = {
     label1: string,
     label2: string
 }
+
+export type MultiRadioButtonInfo = {
+    title: string,
+    filterType: FilterType,
+    labels: string[]
+}
