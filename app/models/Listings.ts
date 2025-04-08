@@ -47,16 +47,8 @@ export interface ListingData {
 }
 
 export interface ListingPatchData {
-  name?: string;
-  description?: string;
-  attributes?: {[key: string]: string};
+  status?: string;
   quantity?: number;
-  latitude?: number;
-  longitude?: number;
-  inactive?: boolean;
-  zipCode?: string;
-  state?: string;
-  inventoryItemID?: number;
 }
 
 export interface ListingDelete {

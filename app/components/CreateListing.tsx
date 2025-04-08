@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
-import { ATTRIBUTES_STRING_REGEX, InventoryItemData, InventoryItems } from "../models/InventoryItem";
+import { ATTRIBUTES_STRING_REGEX, InventoryItemData, InventoryItems, stringToAttributes } from "../models/InventoryItem";
 import { ControllerRenderProps, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
@@ -21,6 +21,10 @@ import { UserData } from "../models/User";
 import { Inventory } from "../models/Inventory";
 import { userEmitterBus } from "../layout";
 import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
+import { SingleListing } from "../models/Listings";
+import { toastErrors } from "../models/Generic";
+import { toast } from "sonner";
 
 interface CreateListingProps {
   onClose: (created: boolean) => void;
@@ -32,6 +36,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
   const [activeButton, setActiveButton] = useState(1);
   const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
   const [orgID, setOrgID] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const attributesPlaceholder =
     'Each attribute must be separated by new lines and formatted as "key:value" pairs. i.e.\ncolor:red\nwidth:3in.\nheight:5in.';
@@ -95,9 +100,25 @@ export default function CreateListing({onClose}: CreateListingProps) {
   }, [orgID]);
 
   const onFormSubmit = (values: z.infer<typeof createListingSchema>) => {
-    console.log(values);
-    // TODO: POST call for creating a listing
-    onClose(true);
+    setLoading(true);
+    const body = {
+      files: [values.attachment],
+      inventoryItemId: values.inventoryItemID,
+      name: values.name,
+      description: values.description,
+      quantity: values.quantity,
+      attributes: stringToAttributes(values.attributes)
+    }
+    backendService.post(`/listings`, body).then((response) => {
+      setLoading(false);
+      const responseAsListing = response as SingleListing;
+      if(!responseAsListing.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsListing.message);
+      onClose(true);
+    })
   };
 
   const onInventoryItemChange = (value: string, field: ControllerRenderProps<{
@@ -308,9 +329,12 @@ export default function CreateListing({onClose}: CreateListingProps) {
             <div className="flex ml-auto mt-[1rem]
                             max-md:mx-auto">
             <button onClick={() => onClose(false)} className="button !bg-[#BBBBBB]">Cancel</button>
-              <button type="submit" className="button ml-[1rem]">
-                Create Listing
-              </button>
+                <button 
+                  type="submit" 
+                  className="button ml-[1rem] h-[3rem] w-[8rem]"
+                >
+                    {loading ? <Spinner className="text-white" /> : "Create Listing"}
+                </button>
             </div>
           </div>
           </div>

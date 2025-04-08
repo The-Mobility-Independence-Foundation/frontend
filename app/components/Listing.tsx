@@ -6,9 +6,10 @@ import {
   ListingPatchData,
   ACTIVE,
   INACTIVE,
+  Listings,
+  SingleListing,
 } from "../models/Listings";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
-// import {v4 as uuidv4} from "uuid";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
@@ -23,7 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-// import backendService from "../services/backend.service";
+import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
 import { useEffect, useState } from "react";
 import Modal from "./modals/Modal";
@@ -31,11 +32,13 @@ import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
 import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
+import { toastErrors } from "../models/Generic";
+import { toast } from "sonner";
 
 export interface ListingProps {
   listing: ListingData;
   myListing?: boolean;
-  onCheckboxChange?: (checked: CheckedState) => void;
+  // onCheckboxChange?: (checked: CheckedState) => void;
   checked?: boolean;
   onStateChange?: (state: number) => void;
   activeState?: number;
@@ -52,7 +55,7 @@ const DELETE = "Delete";
 export default function Listing({
   listing,
   myListing,
-  onCheckboxChange,
+  // onCheckboxChange,
   checked,
   onStateChange,
   activeState,
@@ -101,11 +104,15 @@ export default function Listing({
   });
 
   const patchListing = (body: ListingPatchData) => {
-    // TODO: patch listing
-    // backendService.put(`/listings/${listing.id}`, body)
-    //   .then(response => {
-    //   });
-    console.log(body);
+    backendService.patch(`/listings/${listing.id}`, body)
+      .then((response) => {
+        const responseAsListing = response as SingleListing;
+        if(!responseAsListing.success) {
+          toastErrors(response);
+          return;
+        }
+        toast(responseAsListing.message);
+      });
   };
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
@@ -119,7 +126,7 @@ export default function Listing({
       onStateChange(newSelected);
     }
     patchListing({
-      state: LISTING_STATUSES[newSelected - 1].toLowerCase(),
+      status: LISTING_STATUSES[newSelected - 1].toLowerCase(),
     });
   };
 
