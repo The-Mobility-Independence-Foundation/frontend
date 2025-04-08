@@ -34,6 +34,7 @@ export default function MyListings() {
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
   const [listings, setListings] = useState<Listings>();
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const path = usePathname();

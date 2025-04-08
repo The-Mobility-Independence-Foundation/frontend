@@ -65,8 +65,8 @@ export default function Listing({
 
   const part = listing.part;
   const organization = listing.organization;
-  const inventory = listing.inventory;
   const inventoryItem = listing.inventoryItem; // should not be null if myListing
+  const inventory = inventoryItem?.inventory;
   const images: ImageReference[] = listing.attachments.map((att) => {
     return {
       url: att.url,
@@ -145,7 +145,7 @@ export default function Listing({
       {inventory && organization && part && (
         <>
           <div
-            className={`flex flex-wrap justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
+            className={`animate-fadeIn flex flex-wrap justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
           >
             <div className="flex flex-wrap">
               <div className="flex">
@@ -184,7 +184,7 @@ export default function Listing({
                 <div className="mr-[5rem]">
                   <h5 className="mb-[1rem]">{inventory.name}</h5>
                   {inventory.address && (
-                    <div className="text-white">
+                    <div>
                       <h5>{inventory.address.addressLine1}</h5>
                       <h5>{inventory.address.addressLine2}</h5>
                       <p>

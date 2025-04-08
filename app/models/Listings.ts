@@ -25,18 +25,25 @@ export interface SingleListing {
 
 export interface ListingData {
   id: string;
+  inventoryItemId: number;
+  organizationId: number,
   name: string;
   description: string;
   attributes: {[key: string]: string};
   quantity: number;
-  address: AddressData;
   status: string;
   createdAt: string;
-  organization: OrganizationData;
-  inventory: InventoryData;
+  point: {
+    type: string,
+    coordinates: number[]
+  }
+  ftsVector: string;
+  deletedAt: string | null;
   inventoryItem: InventoryItemData | null;
+  organization: OrganizationData;
+  address: AddressData;
   attachments: AttachmentData[],
-  part: PartData
+  part: PartData;
 }
 
 export interface ListingPatchData {
