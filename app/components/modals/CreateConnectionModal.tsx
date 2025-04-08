@@ -6,8 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import backendService from "@/app/services/backend.service";
-import { Textarea } from "@/components/ui/textarea";
-import { ErrorCallback, toastErrors } from "@/app/models/Generic";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
@@ -31,7 +29,7 @@ export default function CreateConnectionModal({currentUserId, onClose}: CreateCo
   
   const onSubmit = (values: z.infer<typeof createConnectionFormSchema>) => {
     backendService.get("/users?username=" + values.displayName).then(response => {
-        let userId = response.data.results[0].id;
+        const userId = response.data.results[0].id;
 
         setLoadingCreate(true);
 

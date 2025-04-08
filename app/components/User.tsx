@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { UserData } from "../models/User";
-import { StarFilledIcon } from "@radix-ui/react-icons"
 
 export interface UserProps {
     user: UserData;
-    listings: number;
-    connections?: number;
+    listings: string;
+    connections?: string;
     onConnectButtonClicked?: (userId: string) => void;
     onConnectedButtonClicked?: (userId: string) => void;
     connected?: boolean;

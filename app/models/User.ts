@@ -1,6 +1,5 @@
 // GET
 
-import { ConnectionData } from "./Connection";
 import { OrganizationData } from "./Organization";
 
 export enum UserRole {

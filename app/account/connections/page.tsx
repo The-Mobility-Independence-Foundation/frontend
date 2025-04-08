@@ -1,12 +1,11 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
-import { UserData, UserRole, Users } from "../../models/User";
+import { UserRole, Users } from "../../models/User";
 import Search from "../../components/Search";
 import User from "../../components/User";
-import { ConnectionData, Connections } from "../../models/Connection";
+import { Connections } from "../../models/Connection";
 import backendService from "../../services/backend.service";
-import { toast } from "sonner";
 import Modal from "@/app/components/modals/Modal";
 import CreateConnectionModal from "@/app/components/modals/CreateConnectionModal";
 
@@ -29,7 +28,10 @@ export default function AccountConnections() {
     useEffect(() => {
         const fetchConnections = async () => {
             if (currentUserId) {
-                setConnections(await getConnections());
+              const response = await backendService.get("/users/" + currentUserId + "/connections");
+    
+              setConnections((response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
+                connection.followingId : connection.followerId));
             }
         }
 
@@ -37,14 +39,14 @@ export default function AccountConnections() {
     }, [currentUserId]);
 
     const getConnections = async () => {
-        let response = await backendService.get("/users/" + currentUserId + "/connections");
+        const response = await backendService.get("/users/" + currentUserId + "/connections");
     
         return (response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
           connection.followingId : connection.followerId);
     }
 
     function getListingsNum(userId: string) {
-        return 0; //TODO
+        return userId; //TODO
     }
     
     const [users, setUsers] = useState<Users>({
@@ -62,12 +64,6 @@ export default function AccountConnections() {
         // received from Search component
         setUsers(users as Users);
     }, []);
-
-    const onOpenChange = (open: boolean) => {
-      if(open) {
-        setCreateConnectionIsOpen(false);
-      }
-    };
     
     const onCreateConnectionClose = (submit: boolean) => {
       setCreateConnectionIsOpen(false);

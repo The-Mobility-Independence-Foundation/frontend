@@ -5,10 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import backendService from "@/app/services/backend.service";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
 
 interface InviteUserModalProps {
   onClose: (submit: boolean) => void;
@@ -27,7 +25,10 @@ export default function InviteUserModal({onClose}: InviteUserModalProps) {
   })
   
   const onSubmit = (values: z.infer<typeof inviteFormSchema>) => {
+    setLoadingInvite(true);
+    console.log(values);
     //TODO endpoint
+    setLoadingInvite(false);
   }
 
   return (

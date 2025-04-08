@@ -1,10 +1,10 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
-import { UserData, UserRole, Users } from "../models/User";
+import { UserRole, Users } from "../models/User";
 import Search from "../components/Search";
 import User from "../components/User";
-import { ConnectionData, Connections } from "../models/Connection";
+import { Connections } from "../models/Connection";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
 
@@ -26,19 +26,15 @@ export default function UsersPage() {
     useEffect(() => {
         const fetchConnections = async () => {
             if (currentUserId) {
-                setConnections(await getConnections());
+                const response = await backendService.get("/users/" + currentUserId + "/connections");
+
+                setConnections((response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
+                    connection.followingId : connection.followerId));
             }
         }
 
         fetchConnections();
     }, [currentUserId]);
-
-    const getConnections = async () => {
-        let response = await backendService.get("/users/" + currentUserId + "/connections");
-
-        return (response as Connections).data.results.map(connection => connection.followingId != currentUserId ? 
-            connection.followingId : connection.followerId);
-    }
 
     const onConnectButtonClicked = async (userId: string) => {
         backendService.post("/users/" + currentUserId + "/connections/" + userId, {}).then(response => {
@@ -53,8 +49,10 @@ export default function UsersPage() {
                 return;
             }
 
-            let currentConnections = connections;
-            currentConnections && setConnections([...currentConnections, userId]);
+            const currentConnections = connections;
+            if(currentConnections) {
+                setConnections([...currentConnections, userId]);
+            }
         })
     }
     
@@ -71,18 +69,20 @@ export default function UsersPage() {
                 return;
             }
 
-            let currentConnections = connections;
-            currentConnections && setConnections([...currentConnections.slice(0, currentConnections.indexOf(userId)), 
+            const currentConnections = connections;
+            if(currentConnections) {
+                setConnections([...currentConnections.slice(0, currentConnections.indexOf(userId)), 
                 ...currentConnections.slice(currentConnections.indexOf(userId) + 1)]);
+            }
         })
     }
 
     function getListingsNum(userId: string) {
-        return 0; //TODO
+        return userId; //TODO
     }
 
     function getConnectionsNum(userId: string) {
-        return 0; //TODO
+        return userId; //TODO
     }
     
     const [users, setUsers] = useState<Users>({

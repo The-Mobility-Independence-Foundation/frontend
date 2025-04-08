@@ -5,7 +5,6 @@ import { UserRole, Users } from "../../models/User";
 import Search from "../../components/Search";
 import User from "../../components/User";
 import backendService from "../../services/backend.service";
-import { toast } from "sonner";
 import Modal from "@/app/components/modals/Modal";
 import InviteUserModal from "@/app/components/modals/InviteUserModal";
 
@@ -25,7 +24,7 @@ export default function AccountUsers() {
     }, []);
 
     function getListingsNum(userId: string) {
-        return 0; //TODO
+        return userId; //TODO
     }
     
     const [users, setUsers] = useState<Users>({
@@ -43,12 +42,6 @@ export default function AccountUsers() {
         // received from Search component
         setUsers(users as Users);
     }, []);
-
-    const onOpenChange = (open: boolean) => {
-      if(open) {
-        setInviteUserIsOpen(false);
-      }
-    };
     
     const onInviteUserClose = (submit: boolean) => {
         setInviteUserIsOpen(false);
