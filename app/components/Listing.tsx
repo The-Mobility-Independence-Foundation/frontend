@@ -29,8 +29,6 @@ import { useEffect, useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
-import { InventoryData } from "../models/Inventory";
-import { OrganizationData } from "../models/Organization";
 import { userEmitterBus } from "../layout";
 import { UserData } from "../models/User";
 

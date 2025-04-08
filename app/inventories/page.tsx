@@ -12,7 +12,7 @@ import Link from "next/link";
 import Dialog from "../components/modals/Dialog";
 import { Spinner } from "@/components/ui/spinner";
 import PaginationComponent from "../components/Pagination";
-import { PaginationData, toastErrors } from "../models/Generic";
+import { toastErrors } from "../models/Generic";
 import backendService from "../services/backend.service";
 import { toast } from "sonner";
 import { userEmitterBus } from "../layout";
@@ -24,14 +24,13 @@ const ARCHIVE = "Archive";
 const RESTORE = "Restore";
 
 export default function Inventories() {
-  const [inventories, setInventories] = useState<InventoryData[]>([]);
+  const [inventories, setInventories] = useState<Inventory>();
   const [editInventoryIsOpen, setEditInventoryIsOpen] = useState(false);
   const [createInventoryIsOpen, setCreateInventoryIsOpen] = useState(false);
   const [archiveInventoryIsOpen, setArchiveInventoryIsOpen] = useState(false);
   const [selectedInventory, setSelectedInventory] =
     useState<InventoryData | null>(null);
   const [loadingInventories, setLoadingInventories] = useState(false);
-  const [paginationData, setPaginationData] = useState<PaginationData>();
   const [orgID, setOrgID] = useState("");
   const [restoreInventoryIsOpen, setRestoreInventoryIsOpen] = useState(false);
 
@@ -116,14 +115,8 @@ export default function Inventories() {
   const receiveInventories = useCallback(
     (response: object) => {
       if (orgID) {
-        const responseData = (response as Inventory).data;
-        setInventories(responseData.results);
-        setPaginationData({
-          hasNextPage: responseData.hasNextPage,
-          hasPreviousPage: responseData.hasPreviousPage,
-          nextCursor: responseData.nextCursor,
-          previousCursor: responseData.previousCursor,
-        });
+        const responseData = response as Inventory;
+        setInventories(responseData);
       }
     },
     [orgID]
@@ -169,55 +162,66 @@ export default function Inventories() {
           />
           <div className="px-[1rem] py-[2rem] max-h-[45rem] overflow-y-auto">
             {loadingInventories && <Spinner />}
-            {!loadingInventories &&
-              inventories.map((inventory, index) => (
-                <div
-                  key={inventory.id}
-                  className={`animate-fadeIn flex flex-wrap mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
-                    index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"
-                  }`}
-                >
-                  <div className="w-80 mr-[1rem]">
-                    <div className="flex items-start h-min">
-                      <h3 className="text-white hover:underline">
-                        <Link
-                          href={`/inventories/inventory?inventoryID=${inventory.id}`}
-                        >
-                          {inventory.name}
-                        </Link>
-                      </h3>
-                      {inventory.archivedAt && (
-                        <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem] mt-[0.75rem]">
-                          Archived
-                        </span>
-                      )}
+            {!loadingInventories && inventories && (
+              <>
+                {inventories.data.results.map((inventory, index) => (
+                  <div
+                    key={inventory.id}
+                    className={`animate-fadeIn flex flex-wrap mb-[0.5rem] px-[0.75rem] py-[1rem] rounded min-h-[6.25rem] drop-shadow-sm ${
+                      index % 2 == 0 ? "bg-[#034FA7]" : "bg-[#002856]"
+                    }`}
+                  >
+                    <div className="w-80 mr-[1rem]">
+                      <div className="flex items-start h-min">
+                        <h3 className="text-white hover:underline">
+                          <Link
+                            href={`/inventories/inventory?inventoryID=${inventory.id}`}
+                          >
+                            {inventory.name}
+                          </Link>
+                        </h3>
+                        {inventory.archivedAt && (
+                          <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem] mt-[0.75rem]">
+                            Archived
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-white">{inventory.description}</p>
                     </div>
-                    <p className="text-white">{inventory.description}</p>
+                    {inventory.address && (
+                      <div className="mr-[2rem]">
+                        <h5 className="text-white">
+                          {inventory.address.addressLine1}
+                        </h5>
+                        <h5 className="text-white">
+                          {inventory.address.addressLine2}
+                        </h5>
+                        <p className="text-white">
+                          {inventory.address.city}, {inventory.address.state}
+                        </p>
+                        <p className="text-white">
+                          {inventory.address.zipCode}
+                        </p>
+                      </div>
+                    )}
+                    <Menu
+                      onOpenChange={(open) => onOpenChange(open, inventory)}
+                      items={
+                        inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]
+                      }
+                      onItemClick={(item) => onMenuItemClick(item)}
+                      className="text-white text-lg absolute right-2.5"
+                    />
                   </div>
-                  {inventory.address && (
-                    <div className="mr-[2rem]">
-                      <h5 className="text-white">
-                        {inventory.address.addressLine1}
-                      </h5>
-                      <h5 className="text-white">
-                        {inventory.address.addressLine2}
-                      </h5>
-                      <p className="text-white">
-                        {inventory.address.city}, {inventory.address.state}
-                      </p>
-                      <p className="text-white">{inventory.address.zipCode}</p>
-                    </div>
-                  )}
-                  <Menu
-                    onOpenChange={(open) => onOpenChange(open, inventory)}
-                    items={
-                      inventory.archivedAt ? [EDIT, RESTORE] : [EDIT, ARCHIVE]
-                    }
-                    onItemClick={(item) => onMenuItemClick(item)}
-                    className="text-white text-lg absolute right-2.5"
-                  />
-                </div>
-              ))}
+                ))}
+                <PaginationComponent
+                  hasNextPage={inventories.data.hasNextPage}
+                  hasPreviousPage={inventories.data.hasPreviousPage}
+                  nextCursor={inventories.data.nextCursor}
+                  previousCursor={inventories.data.previousCursor}
+                />
+              </>
+            )}
           </div>
           {selectedInventory && (
             <Modal
@@ -267,14 +271,6 @@ export default function Inventories() {
                 />
               </Modal>
             </>
-          )}
-          {paginationData && (
-            <PaginationComponent
-              hasNextPage={paginationData.hasNextPage}
-              hasPreviousPage={paginationData.hasPreviousPage}
-              nextCursor={paginationData.nextCursor}
-              previousCursor={paginationData.previousCursor}
-            />
           )}
         </>
       )}

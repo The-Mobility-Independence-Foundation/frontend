@@ -9,7 +9,6 @@ import { ListingData, Listings, LISTING_STATUSES } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
-// import PaginationComponent from "../../components/PaginationComponent";
 import Modal from "@/app/components/modals/Modal";
 import EditListingAttachmentModal from "@/app/components/modals/EditListingAttachment";
 import Dialog from "@/app/components/modals/Dialog";
@@ -17,7 +16,6 @@ import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import PaginationComponent from "@/app/components/Pagination";
 import { toast } from "sonner";
-// import { PaginationData } from "@/app/models/Generic";
 
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
@@ -35,7 +33,6 @@ export default function MyListings() {
   const [editListingIsOpen, setEditListingIsOpen] = useState(false);
   const [deleteListingIsOpen, setDeleteListingIsOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ListingData>();
-  // const [paginationData, setPaginationData] = useState<PaginationData>();
   const [listings, setListings] = useState<Listings>();
 
   const router = useRouter();
@@ -46,7 +43,7 @@ export default function MyListings() {
       const pathSplit = path.split("/");
       const userIDInRoute = pathSplit[pathSplit.length - 1];
       if (userEmitted.id !== userIDInRoute) {
-        toast("Denied from this user's listings")
+        toast("You don't have access to this user's listings")
         router.push(`/listings`);
       }  
     })

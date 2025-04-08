@@ -124,11 +124,11 @@ const Search = forwardRef(
       }
     };
 
-    const onFilterValueChange = (
+    const onFilterValueChange = useCallback((
       values: Map<string, string | number | boolean>
     ) => {
       setSelectedFilters(values);
-    };
+    }, []);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
 
