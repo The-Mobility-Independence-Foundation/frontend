@@ -25,12 +25,14 @@ import {
 } from "@/components/ui/form";
 // import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
 import { InventoryData } from "../models/Inventory";
 import { OrganizationData } from "../models/Organization";
+import { userEmitterBus } from "../layout";
+import { UserData } from "../models/User";
 
 export interface ListingProps {
   listing: ListingData;
@@ -61,6 +63,7 @@ export default function Listing({
   className,
 }: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
+  const [userID, setUserID] = useState("");
 
   const part = listing.part;
   const organization = listing.organization;
@@ -92,6 +95,12 @@ export default function Listing({
       quantity: listing.quantity,
     },
   });
+
+  useEffect(() => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
+      setUserID(userEmitted.id);
+    })
+  })
 
   const patchListing = (body: ListingPatchData) => {
     // TODO: patch listing
@@ -284,6 +293,7 @@ export default function Listing({
           >
             <CreateOrder
               listing={listing}
+              userID={userID}
               listingImages={images}
               onClose={() => setCreateOrderModalIsOpen(false)}
             />

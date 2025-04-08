@@ -40,7 +40,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${interRegular.variable} antialiased`}>
           <div className="flex items-center justify-center h-screen">
-            <Spinner></Spinner>
+            <Spinner />
           </div>
         </body>
       </html>

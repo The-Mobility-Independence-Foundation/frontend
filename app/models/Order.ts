@@ -34,6 +34,12 @@ export interface OrdersPatch {
   data: OrdersPatchData
 }
 
+export interface OrdersPost {
+  success: boolean
+  message: string,
+  data: OrdersPostData
+}
+
 export interface OrderData {
   id: number,
   quantity: number,
@@ -56,4 +62,17 @@ export interface OrdersPatchData {
   address: AddressData | null,
   recipientOrganization: OrganizationData,
   provider: UserData
+}
+
+export interface OrdersPostData {
+  listing: ListingData,
+  providerOrganization: OrganizationData,
+  recipient: UserData,
+  recipientOrganization: OrganizationData,
+  quantity: number,
+  status: string,
+  dateCreated: string,
+  address: AddressData,
+  dateCompleted: string | null;
+  id: number
 }
