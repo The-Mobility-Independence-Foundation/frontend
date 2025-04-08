@@ -51,16 +51,16 @@ export default function MyListings() {
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
-    const dataAsListings = data as Listings;
-    setListings(dataAsListings);
-    const checkedMap = new Map<ListingData, boolean>();
-    const statusMap = new Map<ListingData, number>();
-    dataAsListings.data.results.forEach(listing => {
-      checkedMap.set(listing, false);
-      statusMap.set(listing, LISTING_STATUSES.indexOf(listing.status.toUpperCase()) + 1)
-    })
-    setListingsChecked(checkedMap);
-    setListingsStatus(statusMap);
+    // const dataAsListings = data as Listings;
+    // setListings(dataAsListings);
+    // const checkedMap = new Map<ListingData, boolean>();
+    // const statusMap = new Map<ListingData, number>();
+    // dataAsListings.data.results.forEach(listing => {
+    //   checkedMap.set(listing, false);
+    //   statusMap.set(listing, LISTING_STATUSES.indexOf(listing.status.toUpperCase()) + 1)
+    // })
+    // setListingsChecked(checkedMap);
+    // setListingsStatus(statusMap);
   }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
