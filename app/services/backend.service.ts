@@ -23,8 +23,8 @@ class BackendService {
     return this.fetcher("DELETE", endpoint);
   }
 
-  private async fetcher(method: string, endpoint: string, data: any = null, formData?: boolean) {
-    let token = localStorage.getItem("token");
+  private async fetcher(method: string, endpoint: string, data: object | null = null, formData?: boolean) {
+    const token = localStorage.getItem("token");
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${token != null ? token : ""}`,

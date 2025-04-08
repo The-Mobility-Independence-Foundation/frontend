@@ -24,6 +24,7 @@ export default function Menu({items, onItemClick, onOpenChange, triggerText, cla
           <DropdownMenuGroup>
             {items.map((item) => (
               <DropdownMenuItem 
+                className="cursor-pointer"
                 onClick={() => onItemClick(item)}
                 key={createHash("sha256").update(item).digest("hex")}
               >

@@ -1,13 +1,13 @@
 "use client"
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image"
-import backendService from "../services/backend.service";
-import { User, UserData } from "../models/User";
-import { toast } from "sonner";
-import { userEmitter } from "../layout";
+// import backendService from "../services/backend.service";
+import { UserData } from "../models/User";
+// import { toast } from "sonner";
+import { userEmitterBus } from "../layout";
 
 interface LinkReference {
   route: string;
@@ -15,13 +15,12 @@ interface LinkReference {
   base: string;
 }
 
-// TODO: highlight "Public Listings" with query parameters (should work with all links)
 export default function Header() {
   const [hasMessages, setHasMessages] = useState(false);
   const [user, setUser] = useState<UserData>();
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       setUser(userEmitted);
     })
   })

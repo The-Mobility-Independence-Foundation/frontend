@@ -1,67 +1,109 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Filters, { FilterOptions } from "./Filters";
 import { FilterType } from "@/app/types/FilterTypes";
+import { PartData, Parts } from "@/app/models/Part";
+import { ModelData, Models } from "@/app/models/Model";
+import backendService from "@/app/services/backend.service";
+import { toastErrors } from "@/app/models/Generic";
 
 interface InventoryItemFilterProps {
   onFilterValueChange: (values: Map<string, string>) => void;
 }
 
-export default function InventoryItemFilters({onFilterValueChange}: InventoryItemFilterProps) {
+export default function InventoryItemFilters({
+  onFilterValueChange,
+}: InventoryItemFilterProps) {
   const [selectedValues, setSelectedValues] = useState(new Map());
-  
-  // TODO: grab parts and models that exist in inventory
-  const inventoryItemFilterOptions: FilterOptions = {
-    multiSelects: [
+  const [parts, setParts] = useState<PartData[]>([]);
+  const [models, setModels] = useState<ModelData[]>([]);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>();
+
+  useEffect(() => {
+    backendService.get(`/parts`).then((response) => {
+      const responseAsParts = response as Parts;
+      if (!responseAsParts.success) {
+        toastErrors(response);
+        return;
+      }
+      setParts(responseAsParts.data.results);
+    });
+
+    backendService.get(`/models`).then((response) => {
+      const responseAsModels = response as Models;
+      if (!responseAsModels.success) {
+        toastErrors(response);
+        return;
+      }
+      setModels(responseAsModels.data.results);
+    });
+  }, []);
+
+  useEffect(() => {
+    setFilterOptions({
+      multiSelects: [
+        {
+          title: "Archived",
+          filterType: FilterType.Archived,
+          options: ["Archived"]
+        }
+      ],
+      multiInputs: [],
+      radioButtons: [],
+      multiRadioButtons: [        
       {
         title: "Part",
         filterType: FilterType.Part,
-        options: ["Type 1", "Type 2", "Type 3", "Type 4"],
+        labels: parts.map((part) => part.name),
       },
       {
         title: "Model",
         filterType: FilterType.Model,
-        options: ["Brand 1", "Brand 2", "Brand 3", "Brand 4"],
-      },
-    ],
-    multiInputs: [{
-      title: "Quantity",
-      inputs: [
-        {
-          placeholder: "Lower Bound",
-          type: "number",
-          minValue: "0",
-          maxValue: "100",
-          onValueChange: onFilterValueChange
-        },
-        {
-          placeholder: "Upper Bound",
-          type: "number",
-          minValue: "0",
-          maxValue: "100",
-          onValueChange: onFilterValueChange
-        },
-      ],
-      divider: "-",
-    }],
-    radioButtons: []
-  }
+        labels: models.map((model) => model.name),
+      },]
+    });
+  }, [parts, models]);
 
-  const onValueChange = (field: string, newValue: string | number | boolean | string[]) => {
+  const onValueChange = (
+    field: string,
+    newValue: string | number | boolean | string[]
+  ) => {
     const newSelectedValues = new Map(selectedValues);
     if (newValue == null || newValue == "") {
       newSelectedValues.delete(field);
     } else {
-      newSelectedValues.set(field, newValue);
+      let key = field.toLowerCase();
+      let value;
+      if (key == "part") {
+        value = parts.find(part => part.name == newValue)?.id;
+        key = "partId";
+      } else if(key == "model") {
+        key = "modelId";
+        value = models.find(model => model.name == newValue)?.id;
+      } else if(key == FilterType.Archived.toLowerCase()) {
+        const selectedValues = newValue as string[];
+        const findArchived = selectedValues.find(value => value == "Archived")?.length;
+        key = "status";
+        value = findArchived && findArchived > 0 ? "archived" : "unarchived";
+      }
+      if(value) {
+        newSelectedValues.set(key, value);
+      }
     }
     setSelectedValues(newSelectedValues);
     onFilterValueChange(newSelectedValues);
   };
 
   return (
-      <Filters
-        options={inventoryItemFilterOptions}
-        selectedValues={selectedValues}
-        onValueChange={onValueChange}
-      />
+    <>
+      {filterOptions && (
+        <Filters
+          options={filterOptions}
+          selectedValues={selectedValues}
+          onValueChange={onValueChange}
+        />
+      )}
+    </>
   );
 }
