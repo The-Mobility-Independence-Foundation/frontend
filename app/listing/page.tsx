@@ -182,6 +182,7 @@ export default function ListingPage() {
                       listingsFromOrg.map((listing) => (
                         <Listing
                           listing={listing}
+                          userID={userID}
                           className="mr-[1rem] bg-[#EFFBFF]"
                           key={listing.id}
                         />
@@ -197,6 +198,7 @@ export default function ListingPage() {
                       recommendedListings.map((listing) => (
                         <Listing
                           listing={listing}
+                          userID={userID}
                           className="mr-[1rem] bg-[#EFFBFF]"
                           key={listing.id}
                         />

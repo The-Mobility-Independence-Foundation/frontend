@@ -7,14 +7,13 @@ import {
   BookmarkData,
   Bookmarks,
   BookmarksDelete,
-  LISTING_STATES,
+  LISTING_STATUSES,
   ListingData,
-  Listings,
 } from "../../models/Listings";
 import Listing from "../../components/Listing";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import BulkOperations from "../../components/BulkOperations";
-import KeysetPagination from "../../components/KeysetPagination";
+import PaginationComponent from "../../components/Pagination";
 import Modal from "@/app/components/modals/Modal";
 import Dialog from "@/app/components/modals/Dialog";
 import { userEmitterBus } from "@/app/layout";
@@ -69,7 +68,7 @@ export default function AccountBookmarks() {
       new Map(
         dataAsBookmarks.data.results.map((bookmark) => [
           bookmark.listing,
-          LISTING_STATES.indexOf(bookmark.listing.state) + 1,
+          LISTING_STATUSES.indexOf(bookmark.listing.status) + 1,
         ])
       )
     );
@@ -180,6 +179,7 @@ export default function AccountBookmarks() {
                 {bookmarks.data.results.length == 0 && <h4 className="text-gray-400">You have no bookmarks</h4>}
                 {bookmarks.data.results.map((bookmark) => (
                   <Listing
+                  userID={userID}
                     onCheckboxChange={(checked) =>
                       onCheckboxChange(bookmark, checked)
                     }
@@ -212,7 +212,7 @@ export default function AccountBookmarks() {
                 </Modal>
               )}
 
-              <KeysetPagination
+              <PaginationComponent
                 hasNextPage={bookmarks.data.hasNextPage}
                 hasPreviousPage={bookmarks.data.hasPreviousPage}
                 nextCursor={bookmarks.data.nextCursor}

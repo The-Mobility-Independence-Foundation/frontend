@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/form";
 // import backendService from "../services/backend.service";
 import RadioButton from "./RadioButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
@@ -33,13 +33,14 @@ import { toast } from "sonner";
 
 export interface ListingProps {
   listing: ListingData;
+  userID: string | number;
   myListing?: boolean;
   onCheckboxChange?: (checked: CheckedState) => void;
   checked?: boolean;
   onStateChange?: (state: number) => void;
   activeState?: number;
   onOpenMenuChange?: (open: boolean, listing: ListingData) => void;
-  onMenuItemClickModal?: (itemClicked: string) => void; 
+  onMenuItemClickModal?: (itemClicked: string) => void;
   className?: string;
 }
 
@@ -48,11 +49,39 @@ const DEACTIVATE = "Deactivate";
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
 
-export default function Listing({listing, myListing, onCheckboxChange, checked, onStateChange, activeState, onOpenMenuChange, onMenuItemClickModal, className}: ListingProps) {
+export default function Listing({
+  listing,
+  userID,
+  myListing,
+  onCheckboxChange,
+  checked,
+  onStateChange,
+  activeState,
+  onOpenMenuChange,
+  onMenuItemClickModal,
+  className,
+}: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
-  if(!inventoryItem) {
+  const quantityFormSchema = z.object({
+    quantity: z.coerce
+      .number()
+      .min(1, "Must list at least one item.")
+      .max(
+        inventoryItem ? inventoryItem.publicCount : 0,
+        inventoryItem
+          ? `Listing quantity cannot exceed public count (${inventoryItem.publicCount})`
+          : "You do not have access to modify this field"
+      ),
+  });
+  const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
+    resolver: zodResolver(quantityFormSchema),
+    defaultValues: {
+      quantity: listing.quantity,
+    },
+  });
+  if (!inventoryItem) {
     toast(`Error on listing "${listing.id}", no inventory item retrieved.`);
     return;
   }
@@ -66,31 +95,6 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
       id: att.id,
     };
   });
-
-  const quantityFormSchema = z.object({
-    quantity: z.coerce
-      .number()
-      .min(1, "Must list at least one item.")
-      .max(
-        inventoryItem ? inventoryItem.publicCount : 0,
-        inventoryItem
-          ? `Listing quantity cannot exceed public count (${inventoryItem.publicCount})`
-          : "You do not have access to modify this field"
-      ),
-  });
-
-  const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
-    resolver: zodResolver(quantityFormSchema),
-    defaultValues: {
-      quantity: listing.quantity,
-    },
-  });
-
-  useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
-      setUserID(userEmitted.id);
-    })
-  })
 
   const patchListing = (body: ListingPatchData) => {
     // TODO: patch listing
@@ -235,7 +239,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
 
                     <Menu
                       onOpenChange={(open) =>
-                        onOpenChange && onOpenChange(open, listing)
+                        onOpenMenuChange && onOpenMenuChange(open, listing)
                       }
                       items={[
                         EDIT,

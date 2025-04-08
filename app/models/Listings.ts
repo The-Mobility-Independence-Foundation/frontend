@@ -8,7 +8,6 @@ import { PartData } from "./Part";
 export interface Listings {
   success: boolean;
   message: string;
-  success: boolean;
   data: {
     hasNextPage: boolean,
     hasPreviousPage: boolean,
