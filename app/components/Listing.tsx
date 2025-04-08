@@ -17,6 +17,7 @@ import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
+import { toast } from "sonner";
 
 export interface ListingProps {
   listing: ListingData;
@@ -39,6 +40,10 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
 
   const inventoryItem = listing.inventoryItem;
+  if(!inventoryItem) {
+    toast(`Error on listing "${listing.id}", no inventory item retrieved.`);
+    return;
+  }
   const part = inventoryItem.part;
   const inventory = inventoryItem.inventory;
   const organization = inventory?.organization;
@@ -210,7 +215,7 @@ export default function Listing({listing, myListing, onCheckboxChange, checked, 
                             className="bg-white rounded-sm"
                             type="number"
                             min="1"
-                            max={listing.inventoryItem.publicCount}
+                            max={inventoryItem.publicCount}
                           />
                         </FormControl>
                         <FormMessage />

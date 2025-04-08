@@ -47,6 +47,24 @@ export interface ListingPatchData {
   inventoryItemID?: number;
 }
 
+export interface Bookmarks {
+  success: boolean,
+  message: string,
+  data: {
+    results: BookmarkData[],
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    nextCursor: string | null,
+    previousCursor: string | null
+  }
+}
+
+export interface BookmarkData {
+  id: number,
+  dateCreated: string,
+  listing: ListingData
+}
+
 export const ACTIVE = "ACTIVE";
 export const INACTIVE = "INACTIVE";
 

@@ -20,7 +20,7 @@ export default function PaginationComponent({hasNextPage, hasPreviousPage, nextC
   }, [hasPreviousPage, previousCursor])
 
   return <Pagination className="absolute left-[1rem] bottom-[1rem] justify-start items-center">
-    {/* As of now there is no functionality in the backend for going back a page. In the event that gets figured out just uncomment this and it'll work **/}
+    {/* As of now there is no functionality in the backend for going back a page (i.e. generating a correct previousCurosr). In the event that gets figured out just uncomment this and it'll work **/}
     {/* <PaginationItem
       onClick={() => paginationEventBus.emit(PAGE_CHANGE_EVENT, previousCursor)}
       className={`list-none ${hasPreviousPage ? "cursor-pointer" : "pointer-events-none"} border rounded`}
