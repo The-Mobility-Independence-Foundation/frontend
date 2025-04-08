@@ -1,8 +1,11 @@
-// GET
-
+import { AddressData } from "./Address";
+import { AttachmentData } from "./Attachment";
 import { InventoryItemData } from "./InventoryItem";
+import { OrganizationData } from "./Organization";
+import { PartData } from "./Part";
 
 export interface Listings {
+  success: boolean;
   message: string;
   data: {
     hasNextPage: boolean,
@@ -21,36 +24,42 @@ export interface SingleListing {
 
 export interface ListingData {
   id: string;
+  inventoryItemId: number;
+  organizationId: number,
   name: string;
   description: string;
   attributes: {[key: string]: string};
   quantity: number;
-  latitude: number;
-  longitude: number;
-  inactive: boolean;
-  zipCode: string;
-  state: string;
+  status: string;
   createdAt: string;
+  point: {
+    type: string,
+    coordinates: number[]
+  }
+  ftsVector: string;
+  deletedAt: string | null;
   inventoryItem: InventoryItemData | null;
+  organization: OrganizationData;
+  address: AddressData;
+  attachments: AttachmentData[],
+  part: PartData;
 }
 
 export interface ListingPatchData {
-  name?: string;
-  description?: string;
-  attributes?: {[key: string]: string};
+  status?: string;
   quantity?: number;
-  latitude?: number;
-  longitude?: number;
-  inactive?: boolean;
-  zipCode?: string;
-  state?: string;
-  inventoryItemID?: number;
+}
+
+export interface ListingDelete {
+  success: boolean;
+  message: string;
+  data: null;
 }
 
 export const ACTIVE = "ACTIVE";
 export const INACTIVE = "INACTIVE";
 
-export const LISTING_STATES = [ACTIVE, INACTIVE];
+export const LISTING_STATUSES = [ACTIVE, INACTIVE];
 
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);

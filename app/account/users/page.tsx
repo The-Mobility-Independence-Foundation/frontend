@@ -6,7 +6,7 @@ import Search from "../../components/Search";
 import User from "../../components/User";
 import Modal from "@/app/components/modals/Modal";
 import InviteUserModal from "@/app/components/modals/InviteUserModal";
-import { userEmitterBus } from "@/app/layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 
 export default function AccountUsers() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);

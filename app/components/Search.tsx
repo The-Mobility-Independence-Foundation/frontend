@@ -17,7 +17,7 @@ import ListingFilters from "./filters/ListingFilters";
 import InventoryItemFilters from "./filters/InventoryItemFilters";
 import { FilterComponentType } from "../types/FilterTypes";
 import { toast } from "sonner";
-import { PAGE_CHANGE_EVENT, paginationEventBus } from "./KeysetPagination";
+import { PAGE_CHANGE_EVENT, paginationEventBus } from "./Pagination";
 import OrderFilters from "./filters/OrderFilters";
 import InventoryFilters from "./filters/InventoryFilters";
 
@@ -126,11 +126,11 @@ const Search = forwardRef(
       }
     };
 
-    const onFilterValueChange = (
+    const onFilterValueChange = useCallback((
       values: Map<string, string | number | boolean>
     ) => {
       setSelectedFilters(values);
-    };
+    }, []);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => setSearchQuery(values.query);
 

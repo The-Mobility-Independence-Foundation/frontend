@@ -8,7 +8,7 @@ import { Connections } from "../../models/Connection";
 import backendService from "../../services/backend.service";
 import Modal from "@/app/components/modals/Modal";
 import CreateConnectionModal from "@/app/components/modals/CreateConnectionModal";
-import { userEmitterBus } from "@/app/layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 
 export default function AccountConnections() {
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);

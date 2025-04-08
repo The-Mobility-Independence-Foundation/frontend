@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { UserData } from "../models/User";
 import backendService from "../services/backend.service";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

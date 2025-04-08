@@ -6,7 +6,7 @@ import Search from "../components/Search";
 import User from "../components/User";
 import { Connections } from "../models/Connection";
 import backendService from "../services/backend.service";
-import { userEmitterBus } from "../layout";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 import { toastErrors } from "../models/Generic";
 
 export default function UsersPage() {

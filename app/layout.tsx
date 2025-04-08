@@ -9,16 +9,13 @@ import { Suspense, useEffect } from "react";
 import ProfileSidebar from "./components/ProfileSidebar";
 import { useUser } from "@/lib/hooks/useUser";
 import { Spinner } from "@/components/ui/spinner";
-import EventEmitter from "events";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 
 const interRegular = localFont({
   src: "./fonts/Inter-Regular.woff",
   variable: "--font-inter",
   weight: "100 600 900"
 });
-
-export const userEmitterBus = new EventEmitter();
-userEmitterBus.setMaxListeners(999999);
 
 export default function RootLayout({
   children,
@@ -40,7 +37,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${interRegular.variable} antialiased`}>
           <div className="flex items-center justify-center h-screen">
-            <Spinner></Spinner>
+            <Spinner />
           </div>
         </body>
       </html>
