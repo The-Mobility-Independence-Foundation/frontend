@@ -35,13 +35,14 @@ export default function PublicListings() {
         <>
           <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
             {loading && <Spinner />}
-            {!loading && listings.data.results.map((listing) => (
+            {!loading && <div className="flex flex-wrap">
+              {listings.data.results.map((listing) => (
               <Listing
                 listing={listing}
-                className="mb-[1rem] mx-auto"
+                className="mb-[1rem] mr-[1rem]"
                 key={listing.id}
               />
-            ))}
+            ))}</div>}
           </div>
           <PaginationComponent
             hasNextPage={listings.data.hasNextPage}

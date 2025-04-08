@@ -97,8 +97,8 @@ export default function Listing({
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
       setUserID(userEmitted.id);
-    })
-  })
+    });
+  });
 
   const patchListing = (body: ListingPatchData) => {
     // TODO: patch listing
@@ -145,10 +145,10 @@ export default function Listing({
       {inventory && organization && part && (
         <>
           <div
-            className={`animate-fadeIn flex flex-wrap justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
+            className={`animate-fadeIn w-[33%] min-w-[300px] flex flex-wrap justify-between bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
           >
             <div className="flex flex-wrap">
-              <div className="flex">
+              <div className="flex mr-[1rem]">
                 {onCheckboxChange != null && (
                   <Checkbox
                     checked={checked}
@@ -157,132 +157,123 @@ export default function Listing({
                 )}
                 <ImageCarousel images={images} />
               </div>
+              <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
+                {Object.entries(listing.attributes).map(([key, value]) => (
+                  <li className="mb-[0.25rem]" key={`${key}: ${value}`}>
+                    - {key}: {value}
+                  </li>
+                ))}
+              </ul>
+              </div>
+              <div>
+                <Link href={`/listing?listingID=${listing.id}`}>
+                  <h4 className="hover:underline">{listing.name}</h4>
+                </Link>
+                <h5>{part.name}</h5>
+                <p>#{part.partNumber}</p>
+              </div>
+              <p className="max-w-[8rem] font-normal">{listing.description}</p>
 
-              <div className="flex">
+            <div className="mr-[5rem] my-[1rem]">
+              <h5 className="mb-[1rem]">{inventory.name}</h5>
+              {inventory.address && (
                 <div>
-                  <Link href={`/listing?listingID=${listing.id}`}>
-                    <h4 className="hover:underline">{listing.name}</h4>
+                  <p>{inventory.address.addressLine1}</p>
+                  <p>{inventory.address.addressLine2}</p>
+                  <p>
+                    {inventory.address.city}, {inventory.address.state}
+                  </p>
+                  <p>{inventory.address.zipCode}</p>
+                </div>
+              )}
+            </div>
+
+            {myListing && inventoryItem ? (
+              <>
+                <div className="flex flex-col mr-[5rem] my-[1rem]">
+                  <Link
+                    href={`/inventories/inventory?inventory_id=${inventory.id}&inventoryItemID=${inventoryItem.id}`}
+                    className="text-[#009D4F] text-center"
+                  >
+                    View Part in Inventory
                   </Link>
-                  <h5>{part.name}</h5>
-                  <p className="mt-[revert]">{part.partNumber}</p>
+                  <RadioButton
+                    label1={ACTIVE}
+                    label2={INACTIVE}
+                    selected={activeState != undefined ? activeState : 1}
+                    onChange={onActiveChange}
+                    className="bg-[#FFFFFF] mt-auto"
+                  />
                 </div>
 
-                <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
-                  {Object.entries(listing.attributes).map(([key, value]) => (
-                    <li className="mb-[0.25rem]" key={`${key}: ${value}`}>
-                      - {key}: {value}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="max-w-[5rem]">{listing.description}</p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap">
-              <div className="flex max-sm:justify-between">
-                <div className="mr-[5rem]">
-                  <h5 className="mb-[1rem]">{inventory.name}</h5>
-                  {inventory.address && (
-                    <div>
-                      <h5>{inventory.address.addressLine1}</h5>
-                      <h5>{inventory.address.addressLine2}</h5>
-                      <p>
-                        {inventory.address.city}, {inventory.address.state}
-                      </p>
-                      <p>{inventory.address.zipCode}</p>
-                    </div>
-                  )}
-                </div>
-
-                {myListing && inventoryItem ? (
-                  <>
-                    <div className="flex flex-col mr-[5rem]">
-                      <Link
-                        href={`/inventories/inventory?inventory_id=${inventory.id}&inventoryItemID=${inventoryItem.id}`}
-                        className="text-[#009D4F] text-center"
-                      >
-                        View Part in Inventory
-                      </Link>
-                      <RadioButton
-                        label1={ACTIVE}
-                        label2={INACTIVE}
-                        selected={activeState != undefined ? activeState : 1}
-                        onChange={onActiveChange}
-                        className="bg-[#FFFFFF] mt-auto"
+                <div className="mt-auto  my-[1rem]">
+                  <FormProvider {...quantityForm}>
+                    <form
+                      onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}
+                    >
+                      <FormField
+                        control={quantityForm.control}
+                        name="quantity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Quantity Available:</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                className="bg-white rounded-sm"
+                                type="number"
+                                min="1"
+                                max={inventoryItem.publicCount}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
+                    </form>
+                  </FormProvider>
+                </div>
 
-                    <div className="mt-auto">
-                      <FormProvider {...quantityForm}>
-                        <form
-                          onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}
-                        >
-                          <FormField
-                            control={quantityForm.control}
-                            name="quantity"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Quantity Available:</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    className="bg-white rounded-sm"
-                                    type="number"
-                                    min="1"
-                                    max={inventoryItem.publicCount}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </form>
-                      </FormProvider>
-                    </div>
+                <Menu
+                  onOpenChange={(open) =>
+                    onOpenChange && onOpenChange(open, listing)
+                  }
+                  items={[
+                    EDIT,
+                    activeState === 1 ? DEACTIVATE : ACTIVATE,
+                    DELETE,
+                  ]}
+                  onItemClick={onMenuItemClick}
+                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+                />
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col my-[1rem] justify-between mr-[5rem]">
+                  <h5>{organization.name}</h5>
+                  <p>{organization.phoneNumber}</p>
+                  <Link
+                    href={`/messages?u_id=${organization.id}`}
+                    className="w-full"
+                  >
+                    <button className="w-full button">Message</button>
+                  </Link>
+                </div>
 
-                    <Menu
-                      onOpenChange={(open) =>
-                        onOpenChange && onOpenChange(open, listing)
-                      }
-                      items={[
-                        EDIT,
-                        activeState === 1 ? DEACTIVATE : ACTIVATE,
-                        DELETE,
-                      ]}
-                      onItemClick={onMenuItemClick}
-                      className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div className="flex flex-col justify-between mr-[5rem] max-sm:mr-[0rem]">
-                      <h5>{organization.name}</h5>
-                      <p>{organization.phoneNumber}</p>
-                      <Link
-                        href={`/messages?u_id=${organization.id}`}
-                        className="w-full"
-                      >
-                        <button className="w-full button">Message</button>
-                      </Link>
-                    </div>
-
-                    <div className="flex flex-col justify-between">
-                      <div className="mt-[1.5rem]">
-                        <p className="w-max mx-auto">Quantity Available:</p>
-                        <h5 className="w-min mx-auto">{listing.quantity}</h5>
-                      </div>
-                      <button
-                        className="button"
-                        onClick={() => setCreateOrderModalIsOpen(true)}
-                      >
-                        Create Order
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+                <div className="flex flex-col justify-between my-[1rem]">
+                  <div className="mt-[1.5rem]">
+                    <p className="w-max mx-auto">Quantity Available:</p>
+                    <h5 className="w-min mx-auto">{listing.quantity}</h5>
+                  </div>
+                  <button
+                    className="button"
+                    onClick={() => setCreateOrderModalIsOpen(true)}
+                  >
+                    Create Order
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           <Modal
