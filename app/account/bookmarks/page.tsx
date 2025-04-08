@@ -16,12 +16,12 @@ import BulkOperations from "../../components/BulkOperations";
 import PaginationComponent from "../../components/Pagination";
 import Modal from "@/app/components/modals/Modal";
 import Dialog from "@/app/components/modals/Dialog";
-import { userEmitterBus } from "@/app/layout";
 import { UserData } from "@/app/models/User";
 import { Spinner } from "@/components/ui/spinner";
 import backendService from "@/app/services/backend.service";
 import { toastErrors } from "@/app/models/Generic";
 import { toast } from "sonner";
+import { userEmitterBus } from "@/lib/userEmitterBus";
 
 const ARCHIVE = "Archive";
 
@@ -74,15 +74,15 @@ export default function AccountBookmarks() {
     );
   }, []);
 
-  const onCheckboxChange = (bookmark: BookmarkData, checked: CheckedState) => {
-    if (checked == "indeterminate") {
-      return;
-    }
-    const bookmarksCheckedUpdate = new Map(bookmarksChecked);
-    bookmarksCheckedUpdate.set(bookmark, checked);
-    setBookmarksChecked(new Map(bookmarksCheckedUpdate));
-    setShowBulkOps(bookmarksCheckedUpdate.values().toArray().includes(true));
-  };
+  // const onCheckboxChange = (bookmark: BookmarkData, checked: CheckedState) => {
+  //   if (checked == "indeterminate") {
+  //     return;
+  //   }
+  //   const bookmarksCheckedUpdate = new Map(bookmarksChecked);
+  //   bookmarksCheckedUpdate.set(bookmark, checked);
+  //   setBookmarksChecked(new Map(bookmarksCheckedUpdate));
+  //   setShowBulkOps(bookmarksCheckedUpdate.values().toArray().includes(true));
+  // };
 
   const onStateChange = (listing: ListingData, state: number) => {
     const listingStateUpdate = new Map(listingState);
@@ -180,9 +180,9 @@ export default function AccountBookmarks() {
                 {bookmarks.data.results.map((bookmark) => (
                   <Listing
                   userID={userID}
-                    onCheckboxChange={(checked) =>
-                      onCheckboxChange(bookmark, checked)
-                    }
+                    // onCheckboxChange={(checked) =>
+                    //   onCheckboxChange(bookmark, checked)
+                    // }
                     checked={bookmarksChecked.get(bookmark)}
                     onStateChange={(state) =>
                       onStateChange(bookmark.listing, state)

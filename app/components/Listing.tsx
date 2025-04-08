@@ -29,8 +29,6 @@ import { useState } from "react";
 import Modal from "./modals/Modal";
 import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
-import { userEmitterBus } from "@/lib/userEmitterBus";
-import { UserData } from "../models/User";
 import { toastErrors } from "../models/Generic";
 import { toast } from "sonner";
 
@@ -65,7 +63,6 @@ export default function Listing({
   className,
 }: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
-  const [userID, setUserID] = useState("");
 
   const part = listing.part;
   const organization = listing.organization;
@@ -95,12 +92,6 @@ export default function Listing({
     defaultValues: {
       quantity: listing.quantity,
     },
-  });
-
-  useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
-      setUserID(userEmitted.id);
-    });
   });
 
   const patchListing = (body: ListingPatchData) => {
