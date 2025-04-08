@@ -1,6 +1,6 @@
 "use client";
 
-import KeysetPagination from "@/app/components/KeysetPagination";
+import PaginationComponent from "@/app/components/Pagination";
 import Dialog from "@/app/components/modals/Dialog";
 import Modal from "@/app/components/modals/Modal";
 import Order from "@/app/components/Order";
@@ -120,7 +120,7 @@ export default function AccountMyOrders() {
                   userID={userID}
                 />
               ))}
-              <KeysetPagination
+              <PaginationComponent
                 hasNextPage={orders.data.hasNextPage}
                 hasPreviousPage={orders.data.hasPreviousPage}
                 nextCursor={orders.data.nextCursor}

@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { Listings } from "../models/Listings";
 import Listing from "../components/Listing";
 import { FilterComponentType } from "../types/FilterTypes";
-import KeysetPagination from "../components/KeysetPagination";
+import PaginationComponent from "../components/Pagination";
 
 export default function PublicListings() {
   const [listings, setListings] = useState<Listings>();
@@ -36,7 +36,7 @@ export default function PublicListings() {
               />
             ))}
           </div>
-          <KeysetPagination
+          <PaginationComponent
             hasNextPage={listings.data.hasNextPage}
             hasPreviousPage={listings.data.hasPreviousPage}
             nextCursor={listings.data.nextCursor}
