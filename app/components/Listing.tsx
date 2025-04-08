@@ -148,15 +148,15 @@ export default function Listing({
             className={`animate-fadeIn w-[33%] min-w-[300px] flex flex-wrap justify-between bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
           >
             <div className="flex flex-wrap">
-              <div className="flex mr-[1rem]">
+              {/* <div className="flex mr-[1rem]">
                 {onCheckboxChange != null && (
                   <Checkbox
                     checked={checked}
                     onCheckedChange={(checked) => onCheckboxChange(checked)}
                   />
-                )}
+                )} */}
                 <ImageCarousel images={images} />
-              </div>
+              {/* </div> */}
               <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
                 {Object.entries(listing.attributes).map(([key, value]) => (
                   <li className="mb-[0.25rem]" key={`${key}: ${value}`}>

@@ -59,6 +59,12 @@ export interface ListingPatchData {
   inventoryItemID?: number;
 }
 
+export interface ListingDelete {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
 export const ACTIVE = "ACTIVE";
 export const INACTIVE = "INACTIVE";
 

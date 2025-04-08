@@ -39,7 +39,7 @@ export default function PublicListings() {
               {listings.data.results.map((listing) => (
               <Listing
                 listing={listing}
-                className="mb-[1rem] mr-[1rem]"
+                className="mb-[1rem] mx-auto"
                 key={listing.id}
               />
             ))}</div>}
