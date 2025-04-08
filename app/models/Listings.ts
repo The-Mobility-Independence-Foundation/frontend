@@ -6,6 +6,7 @@ import { OrganizationData } from "./Organization";
 import { PartData } from "./Part";
 
 export interface Listings {
+  success: boolean;
   message: string;
   data: {
     hasNextPage: boolean,
@@ -16,7 +17,8 @@ export interface Listings {
   }
 }
 
-export interface Listing {
+export interface SingleListing {
+  success: boolean;
   message: string;
   data: ListingData;
 }

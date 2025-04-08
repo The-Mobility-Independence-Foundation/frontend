@@ -162,7 +162,7 @@ export default function Listing({
 
               <div className="flex">
                 <div>
-                  <Link href={`/listing?listing_id=${listing.id}`}>
+                  <Link href={`/listing?listingID=${listing.id}`}>
                     <h4 className="hover:underline">{listing.name}</h4>
                   </Link>
                   <h5>{part.name}</h5>

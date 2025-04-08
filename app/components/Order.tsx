@@ -46,7 +46,7 @@ export default function Order({order, menuItems, userID, onMenuItemClick, classN
       className={`flex justify-between flex-wrap w-full bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
   >
     <div className="flex flex-col">
-      <Link href={`/listing?listing_id=${order.listing.id}`}>
+      <Link href={`/listing?listingID=${order.listing.id}`}>
         <h4 className="hover:underline cursor-pointer">{order.listing.name}</h4>      
       </Link>
       <h5>{order.listing.description}</h5>

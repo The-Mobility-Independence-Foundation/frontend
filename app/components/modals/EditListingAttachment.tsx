@@ -37,7 +37,6 @@ export default function EditListingAttachmentModal({listingData, onClose}: EditL
     // };
     // backendService.patch(`/listings/${listingData.id}`, body)
     //   .then(response => {
-    //     // TODO: toastr with message
     //   }
     // );
     if(values) {
@@ -57,7 +56,7 @@ export default function EditListingAttachmentModal({listingData, onClose}: EditL
 
   return (
     <div className="min-w-[25rem]">
-      <ModalHeader title={`Edit ${listingData.title} Attachment`} onClose={onClose} />
+      <ModalHeader title={`Edit ${listingData.name} Attachment(s)`} onClose={onClose} />
       <ModalBody>
         <>
           <FormProvider {...editListingForm}>
