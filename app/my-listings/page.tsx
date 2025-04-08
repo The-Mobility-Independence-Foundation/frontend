@@ -217,7 +217,10 @@ export default function MyListings() {
             <>
               <div className="px-[1rem] pt-[1.25rem] h-[75vh] min-h-0 overflow-y-auto">
                 {loading && <Spinner />}
-                {!loading && (
+                {listings.data.results.length == 0 && (
+                  <h4 className="text-gray-400">You have no listings</h4>
+                )}
+                {!loading && listings.data.results.length > 0 && (
                   <div className="flex flex-wrap">
                     {listings.data.results.map((listing) => (
                       <Listing
