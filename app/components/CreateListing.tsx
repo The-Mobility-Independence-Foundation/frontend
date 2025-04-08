@@ -17,9 +17,9 @@ import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import backendService from "../services/backend.service";
-import { userEmitter } from "../layout";
 import { UserData } from "../models/User";
 import { Inventory } from "../models/Inventory";
+import { userEmitterBus } from "../layout";
 
 interface CreateListingProps {
   onClose: (created: boolean) => void;
@@ -34,7 +34,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
   const [orgID, setOrgID] = useState("");
 
   useEffect(() => {
-    userEmitter.on("user", (userEmitted: UserData) => {
+    userEmitterBus.on("user", (userEmitted: UserData) => {
       if(userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       }
@@ -158,7 +158,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                                 key={item.id}
                                 value={item.id.toString()}
                               >
-                                {item.name} [{item.inventory?.name}]
+                                {item.part?.name} [{item.inventory?.name}]
                               </SelectItem>
                             ))}
                           </SelectGroup>

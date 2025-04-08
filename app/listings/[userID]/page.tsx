@@ -42,7 +42,7 @@ export default function MyListings() {
     userEmitterBus.on("user", (userEmitted: UserData) => {
       const pathSplit = path.split("/");
       const userIDInRoute = pathSplit[pathSplit.length - 1];
-      if (userEmitted.id !== userIDInRoute) {
+      if (userEmitted.id != userIDInRoute) {
         toast("You don't have access to this user's listings")
         router.push(`/listings`);
       }  
@@ -51,19 +51,16 @@ export default function MyListings() {
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component
-    const responseData = (data as Listings).data;
-    setListings(data as Listings);
-    setListingsChecked(
-      new Map(responseData.results.map((listing) => [listing, false]))
-    );
-    setListingsStatus(
-      new Map(
-        responseData.results.map((listing) => [
-          listing,
-          LISTING_STATUSES.indexOf(listing.status.toUpperCase()) + 1,
-        ])
-      )
-    );
+    const dataAsListings = data as Listings;
+    setListings(dataAsListings);
+    const checkedMap = new Map<ListingData, boolean>();
+    const statusMap = new Map<ListingData, number>();
+    dataAsListings.data.results.forEach(listing => {
+      checkedMap.set(listing, false);
+      statusMap.set(listing, LISTING_STATUSES.indexOf(listing.status.toUpperCase()) + 1)
+    })
+    setListingsChecked(checkedMap);
+    setListingsStatus(statusMap);
   }, []);
 
   const onCheckboxChange = (listing: ListingData, checked: CheckedState) => {
