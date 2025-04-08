@@ -174,6 +174,13 @@ export default function MyListings() {
     setLoading(loading);
   }, []);
 
+  const onCreateListingDropdownClose = (created: boolean) => {
+    setNewListingDropdownIsOpen(false);
+    if(created) {
+      refreshListings();
+    }
+  }
+
   return (
     <>
       {orgID && (
@@ -197,7 +204,7 @@ export default function MyListings() {
               } transition-all duration-200 ease-in-out w-screen`}
             >
               <CreateListing
-                onClose={() => setNewListingDropdownIsOpen(false)}
+                onClose={onCreateListingDropdownClose}
               />
               <div
                 className="w-full h-screen bg-black/20"
