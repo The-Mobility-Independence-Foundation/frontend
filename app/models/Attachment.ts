@@ -1,9 +1,13 @@
 export interface AttachmentData {
-  id: number,
-  fileName: string,
-  fileSize: string,
-  mimeType: string,
-  key: string,
-  createdAt: string,
-  url: string
+    id: string,
+    authorId: string,
+    entityId: string,
+    entityType: string,
+    fileName: string,
+    fileSize: string,
+    mimeType: string,
+    key: string,
+    createdAt: Date,
+    deletedAt: Date | null,
+    url: string
 }

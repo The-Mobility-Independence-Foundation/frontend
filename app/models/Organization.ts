@@ -12,5 +12,6 @@ export interface OrganizationData {
   rating: string;
   phoneNumber: string | null;
   ein: string;
-  socials: string[]
+  socials: string[];
+  email: string;
 }
