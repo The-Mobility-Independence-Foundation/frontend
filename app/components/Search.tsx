@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { PAGE_CHANGE_EVENT, paginationEventBus } from "./Pagination";
 import OrderFilters from "./filters/OrderFilters";
 import InventoryFilters from "./filters/InventoryFilters";
+import { toastErrors } from "../models/Generic";
 
 interface SearchProps {
   apiRoute: string;
@@ -96,17 +97,18 @@ const Search = forwardRef(
           params.push(`${key}=${value}`);
         });
       }
-      const url = `${apiRoute}${
-        params.length > 0 ? `?${params.join("&")}` : ""
+      const routeSplit = apiRoute.split("?");
+      const baseUrl = routeSplit[0];
+      let existingParams = "";
+      if(routeSplit.length > 1) {
+        existingParams = routeSplit[1];
+      }
+      const url = `${baseUrl}${
+        params.length > 0 ? `?${existingParams}&${params.join("&")}` : ""
       }`;
       backendService.get(url).then((response) => {
         if (!response.success) {
-          toast("There was an error grabbing data", {
-            action: {
-              label: "Close",
-              onClick: () => {},
-            },
-          });
+          toastErrors(response);
           loading(false);
           if (!response.success) {
             return;

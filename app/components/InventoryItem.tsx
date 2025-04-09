@@ -114,7 +114,7 @@ export default function InventoryItem({
             <p className="mr-[0.5rem]">Quantity Listed: </p>
             <h5>{inventoryItem.publicCount}</h5>
           </span>
-          <Link href={`/listings?u_id=${userID}`}>
+          <Link href={`/my-listings`}>
             <p className="text-[#00A028] italic underline">View Listings</p>
           </Link>
         </div>

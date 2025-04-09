@@ -187,7 +187,7 @@ export default function MyListings() {
         <>
           <div>
             <Search
-              apiRoute={`/listings?organizationId=${orgID}`}
+              apiRoute={`/organizations/${orgID}/listings`}
               searchBy={"query"}
               receiveResponse={receiveListings}
               filterType={FilterComponentType.LISTINGS}
@@ -204,6 +204,7 @@ export default function MyListings() {
               } transition-all duration-200 ease-in-out w-screen`}
             >
               <CreateListing
+                orgID={orgID}
                 onClose={onCreateListingDropdownClose}
               />
               <div

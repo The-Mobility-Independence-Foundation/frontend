@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ATTRIBUTES_STRING_REGEX, InventoryItemData, InventoryItems, stringToAttributes } from "../models/InventoryItem";
 import { ControllerRenderProps, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -17,9 +17,7 @@ import { Input } from "@/components/ui/input";
 import RadioButton from "./RadioButton";
 import ImageCarousel, { ImageReference } from "./ImageCarousel";
 import backendService from "../services/backend.service";
-import { UserData } from "../models/User";
 import { Inventory } from "../models/Inventory";
-import { userEmitterBus } from "@/lib/userEmitterBus";
 import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import { SingleListing } from "../models/Listings";
@@ -27,15 +25,15 @@ import { toastErrors } from "../models/Generic";
 import { toast } from "sonner";
 
 interface CreateListingProps {
+  orgID: number | string;
   onClose: (created: boolean) => void;
 }
 
-export default function CreateListing({onClose}: CreateListingProps) {
+export default function CreateListing({onClose, orgID}: CreateListingProps) {
   const [inventoryItems, setInventoryItems] = useState<InventoryItemData[]>([]);
   const [quantityAvailable, setQuantityAvailable] = useState(-1);
   const [activeButton, setActiveButton] = useState(1);
   const [imageDisplaying, setImageDisplaying] = useState<ImageReference>();
-  const [orgID, setOrgID] = useState("");
   const [loading, setLoading] = useState(false);
 
   const attributesPlaceholder =
@@ -48,10 +46,10 @@ export default function CreateListing({onClose}: CreateListingProps) {
       description: z.string({
         required_error: "Description is required"
       }),
-      inventoryItemID: z.number({
+      inventoryItemID: z.coerce.number({
         required_error: "Select an item from your inventories",
       }),
-      quantity: z
+      quantity: z.coerce
         .number({
           required_error: "Include how much you would like to list",
         })
@@ -61,26 +59,21 @@ export default function CreateListing({onClose}: CreateListingProps) {
           "Indicate whether or not this listing will be active upon creation",
       }),
       attributes: z.string().regex(ATTRIBUTES_STRING_REGEX),
-      attachment: z.string(),
+      attachment: z.instanceof(File),
     });
   
     const createListingForm = useForm<z.infer<typeof createListingSchema>>({
       resolver: zodResolver(createListingSchema),
       defaultValues: {
         active: true,
+        name: "",
+        description: "",
+        // inventoryItemID: 0,
+        quantity: 0
       },
     });
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
-      if(userEmitted.organization) {
-        setOrgID(userEmitted.organization.id);
-      }
-    });
-  })
-
-  useEffect(() => {
-    // Grabs all items from every inventory
     if(orgID) {
       backendService.get(`/organizations/${orgID}/inventories`)
       .then(async response => {
@@ -101,15 +94,16 @@ export default function CreateListing({onClose}: CreateListingProps) {
 
   const onFormSubmit = (values: z.infer<typeof createListingSchema>) => {
     setLoading(true);
-    const body = {
-      files: [values.attachment],
-      inventoryItemId: values.inventoryItemID,
-      name: values.name,
-      description: values.description,
-      quantity: values.quantity,
-      attributes: stringToAttributes(values.attributes)
-    }
-    backendService.post(`/listings`, body).then((response) => {
+    const formData = new FormData();
+    formData.append("inventoryItemId", JSON.stringify(values.inventoryItemID));
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+    formData.append("quantity", JSON.stringify(values.quantity));
+    const attributesAsObj = stringToAttributes(values.attributes);
+    Object.entries(attributesAsObj).forEach(([key, value]) => {
+      formData.append(`attributes[${key}]`, value)
+    })
+    backendService.post(`/listings`, formData).then((response) => {
       setLoading(false);
       const responseAsListing = response as SingleListing;
       if(!responseAsListing.success) {
@@ -125,7 +119,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
         inventoryItemID: number;
         quantity: number;
         active: boolean;
-        attachment: string;
+        attachment: File;
         name: string;
         description: string;
         attributes: string;
@@ -142,7 +136,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
     inventoryItemID: number;
     quantity: number;
     active: boolean;
-    attachment: string;
+    attachment: File;
     name: string;
     description: string;
     attributes: string;
@@ -152,12 +146,15 @@ export default function CreateListing({onClose}: CreateListingProps) {
   };
 
   const onAttachmentChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if(event.target?.files && event.target?.files.length > 0) {
+    const file = event.target?.files?.[0] ?? null;
+    if(file) {
       setImageDisplaying({
-        url: URL.createObjectURL(event.target.files[0]),
+        url: URL.createObjectURL(file),
         alt: event.target?.value,
-        id: 1
+        id: 1,
+        file: file
       });
+      createListingForm.setValue("attachment", file)
     }
   }
 
@@ -184,6 +181,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       placeholder="Name"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -199,6 +197,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       placeholder="Description"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -214,6 +213,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                           onInventoryItemChange(value, field)
                         }
                         required={true}
+                        value={field.value?.toString()}
                       >
                         <SelectTrigger className="mb-[0.75rem]">
                           <SelectValue placeholder="Select an item from your inventories" />
@@ -240,6 +240,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       </div>
                     </>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -259,6 +260,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       id="quantity"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -278,6 +280,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       className="bg-[#F4F4F5]"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -294,6 +297,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
                       className="h-[10rem]"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -311,7 +315,6 @@ export default function CreateListing({onClose}: CreateListingProps) {
                 <FormItem>
                   <FormControl>
                     <Input 
-                      {...field}
                       onChange={event => onAttachmentChange(event)}
                       type="file" 
                       accept=".png,.jpg,.jpeg"
@@ -331,7 +334,7 @@ export default function CreateListing({onClose}: CreateListingProps) {
             <button onClick={() => onClose(false)} className="button !bg-[#BBBBBB]">Cancel</button>
                 <button 
                   type="submit" 
-                  className="button ml-[1rem] h-[3rem] w-[8rem]"
+                  className="button ml-[1rem] h-[3rem] w-[10rem]"
                 >
                     {loading ? <Spinner className="text-white" /> : "Create Listing"}
                 </button>
