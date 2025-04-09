@@ -73,6 +73,7 @@ export default function Listing({
       url: att.url,
       alt: att.fileName,
       id: att.id,
+      file: null
     };
   });
 
@@ -95,15 +96,14 @@ export default function Listing({
   });
 
   const patchListing = (body: ListingPatchData) => {
-    backendService.patch(`/listings/${listing.id}`, body)
-      .then((response) => {
-        const responseAsListing = response as SingleListing;
-        if(!responseAsListing.success) {
-          toastErrors(response);
-          return;
-        }
-        toast(responseAsListing.message);
-      });
+    backendService.patch(`/listings/${listing.id}`, body).then((response) => {
+      const responseAsListing = response as SingleListing;
+      if (!responseAsListing.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsListing.message);
+    });
   };
 
   const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
@@ -153,25 +153,24 @@ export default function Listing({
                     onCheckedChange={(checked) => onCheckboxChange(checked)}
                   />
                 )} */}
-                <ImageCarousel images={images} />
+              <ImageCarousel images={images} />
               {/* </div> */}
-              <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
-                {Object.entries(listing.attributes).map(([key, value]) => (
-                  <li className="mb-[0.25rem]" key={`${key}: ${value}`}>
-                    - {key}: {value}
-                  </li>
-                ))}
-              </ul>
-              </div>
-              <div>
-                <Link href={`/listing?listingID=${listing.id}`}>
-                  <h4 className="hover:underline">{listing.name}</h4>
-                </Link>
-                <h5>{part.name}</h5>
-                <p>#{part.partNumber}</p>
-              </div>
-              <p className="max-w-[8rem] font-normal">{listing.description}</p>
-
+            </div>
+            <div>
+              <Link href={`/listing?listingID=${listing.id}`}>
+                <h4 className="hover:underline">{listing.name}</h4>
+              </Link>
+              <h5>{part.name}</h5>
+              <p>#{part.partNumber}</p>
+            </div>
+            <p className="max-w-[8rem] font-normal">{listing.description}</p>
+            <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
+              {Object.entries(listing.attributes).map(([key, value]) => (
+                <li className="mb-[0.25rem]" key={`${key}: ${value}`}>
+                  - {key}: {value}
+                </li>
+              ))}
+            </ul>
             <div className="mr-[5rem] my-[1rem]">
               <h5 className="mb-[1rem]">{inventory.name}</h5>
               {inventory.address && (
@@ -232,31 +231,31 @@ export default function Listing({
                   </FormProvider>
                 </div>
 
-                    <Menu
-                      onOpenChange={(open) =>
-                        onOpenMenuChange && onOpenMenuChange(open, listing)
-                      }
-                      items={[
-                        EDIT,
-                        activeState === 1 ? DEACTIVATE : ACTIVATE,
-                        DELETE,
-                      ]}
-                      onItemClick={onMenuItemClick}
-                      className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div className="flex flex-col justify-between mr-[5rem] max-sm:mr-[0rem]">
-                      <h5>{organization.name}</h5>
-                      <p>{organization.phoneNumber}</p>
-                      <Link
-                        href={`/messages?u_id=${organization.id}`}
-                        className="w-full"
-                      >
-                        <button className="w-full button">Message</button>
-                      </Link>
-                    </div>
+                <Menu
+                  onOpenChange={(open) =>
+                    onOpenMenuChange && onOpenMenuChange(open, listing)
+                  }
+                  items={[
+                    EDIT,
+                    activeState === 1 ? DEACTIVATE : ACTIVATE,
+                    DELETE,
+                  ]}
+                  onItemClick={onMenuItemClick}
+                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+                />
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col justify-between mr-[5rem] max-sm:mr-[0rem]">
+                  <h5>{organization.name}</h5>
+                  <p>{organization.phoneNumber}</p>
+                  <Link
+                    href={`/messages?u_id=${organization.id}`}
+                    className="w-full"
+                  >
+                    <button className="w-full button">Message</button>
+                  </Link>
+                </div>
 
                 <div className="flex flex-col justify-between my-[1rem]">
                   <div className="mt-[1.5rem]">

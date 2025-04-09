@@ -40,7 +40,7 @@ export default function ListingPage() {
   useEffect(() => {
     setLoadingListing(true);
     backendService.get(`/listings/${listingID}`).then((response) => {
-      setLoadingListing(false);
+      console.log(response)
       const responseAsListing = response as SingleListing;
       if (!responseAsListing.success) {
         toastErrors(response);
@@ -79,10 +79,18 @@ export default function ListingPage() {
           url: att.url,
           alt: att.fileName,
           id: att.id,
+          file: null
         };
       })
     );
   }, [listing]);
+
+  const onCreateOrderClose = (submitted: boolean) => {
+    setCreateOrderModalIsOpen(false);
+    if(submitted) {
+    // TODO: open messages page to org who created listing
+    }
+  }
 
   return (
     <>
@@ -123,14 +131,14 @@ export default function ListingPage() {
                       (social) => (
                         <p key={social}>{social}</p>
                       )
-                    )}
+                    )} 
                   </div>
                   <Link
                     href={`/messages?u_id=${listing.organization.id}`}
                     className="w-full"
                   >
                     <button className="w-full button">Message</button>{" "}
-                    {/**TODO: routes to specified user pv */}
+                    {/**TODO: routes to specified user pv*/}
                   </Link>
                 </div>
                 <div className="flex flex-col my-[1rem] mx-[0.25rem] justify-between">
@@ -214,7 +222,7 @@ export default function ListingPage() {
                 listing={listing}
                 userID={userID}
                 listingImages={images}
-                onClose={() => setCreateOrderModalIsOpen(false)}
+                onClose={onCreateOrderClose}
               />
             </Modal>
           </>
