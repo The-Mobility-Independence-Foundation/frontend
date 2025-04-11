@@ -15,11 +15,12 @@ import { userEmitterBus } from "@/lib/userEmitterBus";
 export default function PrivateMessages() {
   const [conversationId, setConversationId] = useState<string>();
   const [user, setUser] = useState<UserData>();
+  const [currentUser, setCurrentUser] = useState<UserData>();
   const [listing, setListing] = useState<ListingData>();
 
   useEffect(() => {
     userEmitterBus.on("user", (userEmitted: UserData) => {
-      setUser(userEmitted);
+      setCurrentUser(userEmitted);
     })
   }, [])
 
@@ -36,12 +37,12 @@ export default function PrivateMessages() {
     setUser((response as User).data);
   }
 
-  return (user && <div className="flex relative">
-    <ConversationsList userId={user.id} className="w-[20%]" selectConversation={selectConversation} />
+  return (currentUser && <div className="flex relative">
+    <ConversationsList userId={currentUser.id} className="w-[20%]" selectConversation={selectConversation} />
 
     {conversationId != null && user != null && <Conversation conversationId={conversationId} user={user} className="w-full" />}
 
-    {listing != null && 
+    {listing != null && user != null &&
       <>
       <Listing listing={listing} userID={user.id} />
       <Button variant="ghost" className="absolute top-0 right-0">
