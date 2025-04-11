@@ -201,7 +201,8 @@ export default function Conversation({conversationId, user, className}: Conversa
                                                 {
                                                     url: attachment.url,
                                                     alt: "",
-                                                    id: index
+                                                    id: index,
+                                                    file: null
                                                 }
                                             ))}
                                             className="w-[150px] md:w-[300px] text-accent-foreground"
@@ -246,7 +247,7 @@ export default function Conversation({conversationId, user, className}: Conversa
                             </Button>
 
                             {imageFileTypes.includes(attachment.type) ?
-                                <Image src={attachment.url} className="h-[80px]" alt=""></Image> :
+                                <Image src={attachment.url} width={80} height={80} alt=""></Image> :
                                 <div>
                                     <FileIcon className="size-20" />
                                     <p className="text-xs text-center font-normal">{attachment.name.length <= 10 ? attachment.name : attachment.name.substring(0, 6) + "..."}</p>
