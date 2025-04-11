@@ -63,10 +63,14 @@ export default function Conversation({conversationId, user, className}: Conversa
     }, [conversationId]);
 
     useEffect(() => {
-        setLoading(true);
-        getMessages();
-        setLoading(false);
-
+        const fetchData = async () => {
+            setLoading(true);
+            await getMessages();
+            setLoading(false);
+        };
+    
+        fetchData();
+    
         const timer = setInterval(getMessages, 2000);
         return () => clearInterval(timer);
     }, [getMessages]);
