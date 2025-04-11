@@ -21,9 +21,9 @@ export default function ConversationPreview({userName, listing, message, lastCon
                 </div>
 
                 <p className="text-xs absolute top-2 right-2 text-gray-600">{time}</p>
-
-                <hr className={(!lastConversation ? "w-[90%] " : "") + "mx-auto border-t-2 mt-1"}></hr>
             </div>
+
+            <hr className={(!lastConversation ? "w-[90%] " : "") + "mx-auto border-t-2 mt-1"}></hr>
         </div>
     )
 }
