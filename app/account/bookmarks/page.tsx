@@ -4,9 +4,6 @@ import Search from "@/app/components/Search";
 import { FilterComponentType } from "@/app/types/FilterTypes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  BookmarkData,
-  Bookmarks,
-  BookmarksDelete,
   LISTING_STATUSES,
   ListingData,
 } from "../../models/Listings";
@@ -22,6 +19,7 @@ import backendService from "@/app/services/backend.service";
 import { toastErrors } from "@/app/models/Generic";
 import { toast } from "sonner";
 import { userEmitterBus } from "@/lib/userEmitterBus";
+import { BookmarkData, Bookmarks, BookmarksDelete } from "@/app/models/Bookmark";
 
 const ARCHIVE = "Archive";
 
@@ -59,7 +57,7 @@ export default function AccountBookmarks() {
 
   const receiveBookmarks = useCallback((data: object) => {
     const dataAsBookmarks = data as Bookmarks;
-    console.log(dataAsBookmarks);
+
     setBookmarks(dataAsBookmarks);
     setBookmarksChecked(
       new Map(dataAsBookmarks.data.results.map((bookmark) => [bookmark, false]))
@@ -179,7 +177,7 @@ export default function AccountBookmarks() {
                 {bookmarks.data.results.length == 0 && <h4 className="text-gray-400">You have no bookmarks</h4>}
                 {bookmarks.data.results.map((bookmark) => (
                   <Listing
-                  userID={userID}
+                    userID={userID}
                     // onCheckboxChange={(checked) =>
                     //   onCheckboxChange(bookmark, checked)
                     // }

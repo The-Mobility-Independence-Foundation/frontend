@@ -84,14 +84,12 @@ export default function InventoryItem({
       className={`flex justify-between w-full bg-[#F4F4F5] min-h-[11rem] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] 
       ${className}`}
     >
-      <div
-        className="flex flex-wrap w-full"
-      >
+      <div className="flex flex-wrap w-full">
         <div className="flex">
           <div className="w-64">
             <div className="flex items-start">
               <h4>
-                {inventoryItem.part?.name} ({inventoryItem.quantity})
+                {inventoryItem.part?.name}
               </h4>
               {inventoryItem.archivedAt && (
                 <span className="text-white p-[0.2rem] border border-white rounded bg-[#fb5555] font-bold ml-[1rem] mt-[0.75rem]">
@@ -110,10 +108,16 @@ export default function InventoryItem({
           </ul>
         </div>
         <div className="flex flex-col justify-between items-center">
-          <span className="flex items-center h-min mt-[1rem]">
-            <p className="mr-[0.5rem]">Quantity Listed: </p>
-            <h5>{inventoryItem.publicCount}</h5>
-          </span>
+          <div>
+            <span className="flex items-center h-min">
+              <p className="mr-[0.5rem]">Quantity: </p>
+              <h5>{inventoryItem.quantity}</h5>
+            </span>
+            <span className="flex items-center h-min">
+              <p className="mr-[0.5rem]">Public Count: </p>
+              <h5>{inventoryItem.publicCount}</h5>
+            </span>
+          </div>
           <Link href={`/my-listings`}>
             <p className="text-[#00A028] italic underline">View Listings</p>
           </Link>

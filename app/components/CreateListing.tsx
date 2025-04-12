@@ -107,6 +107,7 @@ export default function CreateListing({onClose, orgID}: CreateListingProps) {
       setLoading(false);
       const responseAsListing = response as SingleListing;
       if(!responseAsListing.success) {
+        console.log(response)
         toastErrors(response);
         return;
       }
@@ -127,7 +128,7 @@ export default function CreateListing({onClose, orgID}: CreateListingProps) {
     field.onChange(value);
     inventoryItems.forEach((item) => {
       if (item.id.toString() == value) {
-        setQuantityAvailable(item.quantity - item.publicCount);
+        setQuantityAvailable(item.quantity);
       }
     });
   };

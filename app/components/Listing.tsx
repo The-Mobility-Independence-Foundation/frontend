@@ -31,6 +31,7 @@ import CreateOrder from "./modals/CreateOrder";
 import Menu from "./Menu";
 import { toastErrors } from "../models/Generic";
 import { toast } from "sonner";
+import { BookmarkPost } from "../models/Bookmark";
 
 export interface ListingProps {
   listing: ListingData;
@@ -49,6 +50,7 @@ const ACTIVATE = "Activate";
 const DEACTIVATE = "Deactivate";
 const EDIT = "Edit Attachment";
 const DELETE = "Delete";
+const BOOKMARK = "Bookmark";
 
 export default function Listing({
   listing,
@@ -63,12 +65,16 @@ export default function Listing({
   className,
 }: ListingProps) {
   const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
+  // const [organization, setOrganization] = useState<OrganizationData>();
+  // const [inventoryItem, setInventoryItem] = useState<InventoryItemData>();
+  // const [inventory, setInventory] = useState<InventoryData | null>();
 
+  console.log(listing)
   const part = listing.part;
   const organization = listing.organization;
   const inventoryItem = listing.inventoryItem; // should not be null if myListing
   const inventory = inventoryItem?.inventory;
-  const images: ImageReference[] = listing.attachments.map((att) => {
+  const images: ImageReference[] = listing.attachments?.map((att) => {
     return {
       url: att.url,
       alt: att.fileName,
@@ -121,6 +127,18 @@ export default function Listing({
     });
   };
 
+  const bookmarkListing = () => {
+    // TODO: API call for bookmarking listing
+    backendService.post(`/users/${userID}/bookmarks/${listing.id}`, {}).then((response) => {
+      const responseAsBookmarks = response as BookmarkPost;
+      if(!responseAsBookmarks.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsBookmarks.message);
+    })
+  }
+
   const onMenuItemClick = (itemClicked: string) => {
     switch (itemClicked) {
       case ACTIVATE: {
@@ -129,6 +147,10 @@ export default function Listing({
       }
       case DEACTIVATE: {
         onActiveChange(2);
+        break;
+      }
+      case BOOKMARK: {
+        bookmarkListing();
         break;
       }
       default: {
@@ -145,7 +167,7 @@ export default function Listing({
           <div
             className={`animate-fadeIn w-[33%] min-w-[300px] flex flex-wrap justify-between bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
           >
-            <div className="flex flex-wrap">
+            {/* <div className="flex flex-wrap"> */}
               {/* <div className="flex mr-[1rem]">
                 {onCheckboxChange != null && (
                   <Checkbox
@@ -155,7 +177,7 @@ export default function Listing({
                 )} */}
               <ImageCarousel images={images} />
               {/* </div> */}
-            </div>
+            {/* </div> */}
             <div>
               <Link href={`/listing?listingID=${listing.id}`}>
                 <h4 className="hover:underline">{listing.name}</h4>
@@ -189,7 +211,7 @@ export default function Listing({
               <>
                 <div className="flex flex-col mr-[5rem] my-[1rem]">
                   <Link
-                    href={`/inventories/inventory?inventory_id=${inventory.id}&inventoryItemID=${inventoryItem.id}`}
+                    href={`/inventories/inventory?inventoryID=${inventory.id}`}
                     className="text-[#009D4F] text-center"
                   >
                     View Part in Inventory
@@ -230,19 +252,6 @@ export default function Listing({
                     </form>
                   </FormProvider>
                 </div>
-
-                <Menu
-                  onOpenChange={(open) =>
-                    onOpenMenuChange && onOpenMenuChange(open, listing)
-                  }
-                  items={[
-                    EDIT,
-                    activeState === 1 ? DEACTIVATE : ACTIVATE,
-                    DELETE,
-                  ]}
-                  onItemClick={onMenuItemClick}
-                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
-                />
               </>
             ) : (
               <>
@@ -271,6 +280,18 @@ export default function Listing({
                 </div>
               </>
             )}
+                <Menu
+                  onOpenChange={(open) =>
+                    onOpenMenuChange && onOpenMenuChange(open, listing)
+                  }
+                  items={myListing ? [
+                    EDIT,
+                    activeState === 1 ? DEACTIVATE : ACTIVATE,
+                    DELETE,
+                  ] : [BOOKMARK]}
+                  onItemClick={onMenuItemClick}
+                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+                />
           </div>
 
           <Modal

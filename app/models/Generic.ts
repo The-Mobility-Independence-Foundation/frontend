@@ -25,6 +25,8 @@ export function toastErrors(error: ErrorCallback) {
         toast(message);
       });
     });
+  } else if(error.message) {
+    toast(error.message);
   } else {
     toast("An error occurred");
   }

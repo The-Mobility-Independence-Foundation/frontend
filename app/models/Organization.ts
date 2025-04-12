@@ -1,5 +1,6 @@
 export interface Organization {
   message: string;
+  success: boolean;
   data: OrganizationData;
 }
 
