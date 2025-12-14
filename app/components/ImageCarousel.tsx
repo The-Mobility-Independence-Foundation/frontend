@@ -9,7 +9,7 @@ export interface ImageReference {
   url: string;
   alt: string;
   id: string | number;
-  file: File | null;
+  file?: File | null;
 }
 
 export interface ImageCarouselProps {

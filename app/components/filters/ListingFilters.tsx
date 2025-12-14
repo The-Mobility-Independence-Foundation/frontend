@@ -19,14 +19,14 @@ export default function ListingFilters({
   const [models, setModels] = useState<ModelData[]>([]);
 
   useEffect(() => {
-    backendService.get("/part?limit=100").then((response) => {
+    backendService.get("/parts?limit=100").then((response) => {
       const responseAsParts = response as Parts;
       if (responseAsParts.success) {
         setParts(responseAsParts.data.results);
       }
     });
 
-    backendService.get("/model?limit=100").then((response) => {
+    backendService.get("/models?limit=100").then((response) => {
       const responseAsModels = response as Models;
       if (responseAsModels.success) {
         setModels(responseAsModels.data.results);
