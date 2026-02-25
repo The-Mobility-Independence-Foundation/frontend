@@ -32,10 +32,16 @@ export default function ListingPage() {
   const listingID = params.get("listingID");
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUserID(userEmitted.id);
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, []);
 
   useEffect(() => {
     setLoadingListing(true);

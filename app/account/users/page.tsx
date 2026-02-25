@@ -13,10 +13,16 @@ export default function AccountUsers() {
     const [inviteUserIsOpen, setInviteUserIsOpen] = useState(false);
 
     useEffect(() => {
-        userEmitterBus.on("user", (userEmitted: UserData) => {
+        const handleUser = (userEmitted: UserData) => {
             setCurrentUserId(userEmitted.id);
-        })
-    });
+        };
+
+        userEmitterBus.on("user", handleUser);
+
+        return () => {
+          userEmitterBus.off("user", handleUser);
+        };
+    }, []);
 
     function getListingsNum(userId: string) {
         return userId; //TODO get listings num from endpoint

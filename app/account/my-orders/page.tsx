@@ -31,10 +31,16 @@ export default function AccountMyOrders() {
   } | null>(null);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUserID(userEmitted.id);
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, []);
 
   const receiveOrders = useCallback((data: object) => {
     const dataAsOrders = data as Orders;

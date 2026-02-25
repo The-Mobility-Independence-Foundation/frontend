@@ -16,10 +16,16 @@ export default function AccountConnections() {
     const [createConnectionIsOpen, setCreateConnectionIsOpen] = useState(false);
 
     useEffect(() => {
-      userEmitterBus.on("user", (userEmitted: UserData) => {
+      const handleUser = (userEmitted: UserData) => {
         setCurrentUserId(userEmitted.id);
-      })
-    });
+      };
+
+      userEmitterBus.on("user", handleUser);
+
+      return () => {
+        userEmitterBus.off("user", handleUser);
+      };
+    }, []);
 
     useEffect(() => {
         const fetchConnections = async () => {

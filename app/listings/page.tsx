@@ -16,10 +16,16 @@ export default function PublicListings() {
   const [userID, setUserID] = useState("");
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUserID(userEmitted.id);
-    })
-  })
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, [])
 
   const receiveListings = useCallback((listings: object) => {
     // received from Search component

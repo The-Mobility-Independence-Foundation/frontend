@@ -46,15 +46,21 @@ export default function AccountReceivedOrders() {
   }, [orgID]);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUserID(userEmitted.id);
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       } else {
         router.push("/listings"); // route somewhere else?
       }
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, [router]);
 
   useEffect(() => {
     if(orgID) {

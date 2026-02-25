@@ -34,7 +34,7 @@ export default function Inventory() {
   } | null>(null);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       } else {
@@ -42,8 +42,14 @@ export default function Inventory() {
         router.push("/listings");
       }
       setUserID(userEmitted.id);
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, [router]);
 
   const receiveInventoryItems = useCallback((data: object) => {
     const inventoryItemData = data as InventoryItems;

@@ -34,6 +34,7 @@ interface SearchProps {
   loadingResponse?: (loading: boolean) => void;
   boxWidth?: string;
   className?: string;
+  showMapFilter?: boolean;
 }
 
 const formSchema = z.object({
@@ -218,7 +219,7 @@ const Search = forwardRef(
             } transition-all duration-200 ease-in-out w-screen`}
           >
             {filterType == FilterComponentType.LISTINGS && (
-              <ListingFilters onFilterValueChange={onFilterValueChange} />
+              <ListingFilters onFilterValueChange={onFilterValueChange} showMap={showMapFilter} />
             )}
             {filterType == FilterComponentType.INVENTORY_ITEMS && (
               <InventoryItemFilters onFilterValueChange={onFilterValueChange} />

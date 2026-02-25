@@ -22,10 +22,16 @@ export default function ProfileSidebar({isAdmin}: ProfileSidebarProps) {
   const [appearing, setAppearing] = useState(true);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUser(userEmitted);
-    })
-  })
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, [])
 
   const router = useRouter();
   const tabs: Tab[] = [];

@@ -19,9 +19,15 @@ export default function PrivateMessages() {
   const [listing, setListing] = useState<ListingData>();
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setCurrentUser(userEmitted);
-    })
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
   }, [])
 
   const selectConversation = async (conversation: ConversationData) => {

@@ -14,10 +14,16 @@ export default function UsersPage() {
     const [connections, setConnections] = useState<string[] | null>(null);
 
     useEffect(() => {
-        userEmitterBus.on("user", (userEmitted: UserData) => {
-        setCurrentUserId(userEmitted.id);
-        })
-    });
+        const handleUser = (userEmitted: UserData) => {
+            setCurrentUserId(userEmitted.id);
+        };
+
+        userEmitterBus.on("user", handleUser);
+
+        return () => {
+          userEmitterBus.off("user", handleUser);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchConnections = async () => {

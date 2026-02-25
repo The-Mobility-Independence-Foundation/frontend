@@ -43,10 +43,16 @@ export default function AccountBookmarks() {
   } | null>(null);
   
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUserID(userEmitted.id);
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, []);
 
   const refreshBookmarks = () => {
     if(searchRef.current) {
@@ -160,6 +166,7 @@ export default function AccountBookmarks() {
             filterType={FilterComponentType.LISTINGS}
             placeholderText="Search Bookmarks"
             loadingResponse={onSearchLoading}
+	    showMapFilter={false}
             ref={searchRef}
           />
 

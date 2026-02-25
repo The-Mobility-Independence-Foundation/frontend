@@ -37,14 +37,20 @@ export default function Inventories() {
   const router = useRouter();
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       } else {
-        router.back();
+        router.push("/listings");
       }
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, [router]);
 
   const searchRef = useRef<{
     executeSearch: () => void;

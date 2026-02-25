@@ -25,10 +25,16 @@ export default function AccountSettings() {
   const [logoutModalIsOpen, setLogoutModalIsOpen] = useState(false);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       setUser(userEmitted);
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, []);
 
   const personalInformationSchema = z.object({
     firstName: z.string().optional(),

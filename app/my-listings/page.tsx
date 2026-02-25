@@ -57,12 +57,18 @@ export default function MyListings() {
   }, []);
 
   useEffect(() => {
-    userEmitterBus.on("user", (userEmitted: UserData) => {
+    const handleUser = (userEmitted: UserData) => {
       if (userEmitted.organization) {
         setOrgID(userEmitted.organization.id);
       }
-    });
-  });
+    };
+
+    userEmitterBus.on("user", handleUser);
+
+    return () => {
+      userEmitterBus.off("user", handleUser);
+    };
+  }, []);
 
   const receiveListings = useCallback((data: object) => {
     // received from Search component

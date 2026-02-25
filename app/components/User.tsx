@@ -23,10 +23,16 @@ export default function User({user, listings, connections, onConnectButtonClicke
     const router = useRouter();
 
     useEffect(() => {
-        userEmitterBus.on("user", (userEmitted: UserData) => {
+        const handleUser = (userEmitted: UserData) => {
           setCurrentUserId(userEmitted.id);
-        })
-      });
+        };
+
+        userEmitterBus.on("user", handleUser);
+
+        return () => {
+          userEmitterBus.off("user", handleUser);
+        };
+      }, []);
 
     const onMessageButtonClicked = () => {
         backendService.post(`/users/${currentUserId}/conversations`, {

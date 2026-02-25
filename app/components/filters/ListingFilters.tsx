@@ -8,10 +8,11 @@ import { ModelData, Models } from "@/app/models/Model";
 
 export interface ListingFiltersProps {
   onFilterValueChange: (values: Map<string, string>) => void;
+  showMap?: boolean;
 }
 
 export default function ListingFilters({
-  onFilterValueChange,
+  onFilterValueChange, showMap = true,
 }: ListingFiltersProps) {
   const [selectedValues, setSelectedValues] = useState(new Map());
   const [filterOptions, setFilterOptions] = useState<FilterOptions>();
@@ -98,7 +99,7 @@ export default function ListingFilters({
         },
       ],
       multiRadioButtons: [],
-      map: true,
+      map: showMap,
     });
   }, [parts, models, onFilterValueChange]);
 
