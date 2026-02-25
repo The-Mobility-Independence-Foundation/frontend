@@ -1,4 +1,21 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos'
+      },
+      {
+        protocol: 'https',
+        hostname: 'f4ace19bccf4e8dc4a42fe945c75b9c8.r2.cloudflarestorage.com'
+      }
+    ],
+    domains: ['f4ace19bccf4e8dc4a42fe945c75b9c8.r2.cloudflarestorage.com']
+  },
+};
 
 export default nextConfig;

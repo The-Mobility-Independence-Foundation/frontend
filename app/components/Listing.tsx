@@ -1,0 +1,312 @@
+"use client";
+
+import {
+  LISTING_STATUSES,
+  ListingData,
+  ListingPatchData,
+  ACTIVE,
+  INACTIVE,
+  SingleListing,
+} from "../models/Listings";
+import ImageCarousel, { ImageReference } from "./ImageCarousel";
+import Link from "next/link";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { CheckedState } from "@radix-ui/react-checkbox";
+import { Input } from "@/components/ui/input";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import backendService from "../services/backend.service";
+import RadioButton from "./RadioButton";
+import { useState } from "react";
+import Modal from "./modals/Modal";
+import CreateOrder from "./modals/CreateOrder";
+import Menu from "./Menu";
+import { toastErrors } from "../models/Generic";
+import { toast } from "sonner";
+import { BookmarkPost } from "../models/Bookmark";
+
+export interface ListingProps {
+  listing: ListingData;
+  userID: string | number;
+  myListing?: boolean;
+  // onCheckboxChange?: (checked: CheckedState) => void;
+  checked?: boolean;
+  onStateChange?: (state: number) => void;
+  activeState?: number;
+  onOpenMenuChange?: (open: boolean, listing: ListingData) => void;
+  onMenuItemClickModal?: (itemClicked: string) => void;
+  className?: string;
+}
+
+const ACTIVATE = "Activate";
+const DEACTIVATE = "Deactivate";
+const EDIT = "Edit Attachment";
+const DELETE = "Delete";
+const BOOKMARK = "Bookmark";
+
+export default function Listing({
+  listing,
+  userID,
+  myListing,
+  // onCheckboxChange,
+  // checked,
+  onStateChange,
+  activeState,
+  onOpenMenuChange,
+  onMenuItemClickModal,
+  className,
+}: ListingProps) {
+  const [createOrderModalIsOpen, setCreateOrderModalIsOpen] = useState(false);
+  // const [organization, setOrganization] = useState<OrganizationData>();
+  // const [inventoryItem, setInventoryItem] = useState<InventoryItemData>();
+  // const [inventory, setInventory] = useState<InventoryData | null>();
+
+  console.log(listing)
+  const part = listing.part;
+  const organization = listing.organization;
+  const inventoryItem = listing.inventoryItem; // should not be null if myListing
+  const inventory = inventoryItem?.inventory;
+  const images: ImageReference[] = listing.attachments?.map((att) => {
+    return {
+      url: att.url,
+      alt: att.fileName,
+      id: att.id,
+      file: null
+    };
+  });
+
+  const quantityFormSchema = z.object({
+    quantity: z.coerce
+      .number()
+      .min(1, "Must list at least one item.")
+      .max(
+        inventoryItem ? inventoryItem.publicCount : 0,
+        inventoryItem
+          ? `Listing quantity cannot exceed public count (${inventoryItem.publicCount})`
+          : "You do not have access to modify this field"
+      ),
+  });
+  const quantityForm = useForm<z.infer<typeof quantityFormSchema>>({
+    resolver: zodResolver(quantityFormSchema),
+    defaultValues: {
+      quantity: listing.quantity,
+    },
+  });
+
+  const patchListing = (body: ListingPatchData) => {
+    backendService.patch(`/listings/${listing.id}`, body).then((response) => {
+      const responseAsListing = response as SingleListing;
+      if (!responseAsListing.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsListing.message);
+    });
+  };
+
+  const onQuantitySubmit = (values: z.infer<typeof quantityFormSchema>) => {
+    patchListing({
+      quantity: values.quantity,
+    });
+  };
+
+  const onActiveChange = (newSelected: number) => {
+    if (onStateChange) {
+      onStateChange(newSelected);
+    }
+    patchListing({
+      status: LISTING_STATUSES[newSelected - 1].toLowerCase(),
+    });
+  };
+
+  const bookmarkListing = () => {
+    // TODO: API call for bookmarking listing
+    backendService.post(`/users/${userID}/bookmarks/${listing.id}`, {}).then((response) => {
+      const responseAsBookmarks = response as BookmarkPost;
+      if(!responseAsBookmarks.success) {
+        toastErrors(response);
+        return;
+      }
+      toast(responseAsBookmarks.message);
+    })
+  }
+
+  const onMenuItemClick = (itemClicked: string) => {
+    switch (itemClicked) {
+      case ACTIVATE: {
+        onActiveChange(1);
+        break;
+      }
+      case DEACTIVATE: {
+        onActiveChange(2);
+        break;
+      }
+      case BOOKMARK: {
+        bookmarkListing();
+        break;
+      }
+      default: {
+        if (onMenuItemClickModal) {
+          onMenuItemClickModal(itemClicked);
+        }
+      }
+    }
+  };
+  return (
+    <>
+      {inventory && organization && part && (
+        <>
+          <div
+            className={`animate-fadeIn w-[33%] min-w-[300px] flex flex-wrap justify-between bg-[#F4F4F5] drop-shadow-md rounded-sm px-[1rem] py-[0.75rem] ${className}`}
+          >
+            {/* <div className="flex flex-wrap"> */}
+              {/* <div className="flex mr-[1rem]">
+                {onCheckboxChange != null && (
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={(checked) => onCheckboxChange(checked)}
+                  />
+                )} */}
+              <ImageCarousel images={images} />
+              {/* </div> */}
+            {/* </div> */}
+            <div>
+              <Link href={`/listing?listingID=${listing.id}`}>
+                <h4 className="hover:underline">{listing.name}</h4>
+              </Link>
+              <h5>{part.name}</h5>
+              <p>#{part.partNumber}</p>
+            </div>
+            <p className="max-w-[8rem] font-normal">{listing.description}</p>
+            <ul className="ml-[3rem] max-h-[10rem] overflow-y-auto">
+              {Object.entries(listing.attributes).map(([key, value]) => (
+                <li className="mb-[0.25rem]" key={`${key}: ${value}`}>
+                  - {key}: {value}
+                </li>
+              ))}
+            </ul>
+            <div className="mr-[5rem] my-[1rem]">
+              <h5 className="mb-[1rem]">{inventory.name}</h5>
+              {inventory.address && (
+                <div>
+                  <p>{inventory.address.addressLine1}</p>
+                  <p>{inventory.address.addressLine2}</p>
+                  <p>
+                    {inventory.address.city}, {inventory.address.state}
+                  </p>
+                  <p>{inventory.address.zipCode}</p>
+                </div>
+              )}
+            </div>
+
+            {myListing && inventoryItem ? (
+              <>
+                <div className="flex flex-col mr-[5rem] my-[1rem]">
+                  <Link
+                    href={`/inventories/inventory?inventoryID=${inventory.id}`}
+                    className="text-[#009D4F] text-center"
+                  >
+                    View Part in Inventory
+                  </Link>
+                  <RadioButton
+                    label1={ACTIVE}
+                    label2={INACTIVE}
+                    selected={activeState != undefined ? activeState : 1}
+                    onChange={onActiveChange}
+                    className="bg-[#FFFFFF] mt-auto"
+                  />
+                </div>
+
+                <div className="mt-auto  my-[1rem]">
+                  <FormProvider {...quantityForm}>
+                    <form
+                      onSubmit={quantityForm.handleSubmit(onQuantitySubmit)}
+                    >
+                      <FormField
+                        control={quantityForm.control}
+                        name="quantity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Quantity Available:</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                className="bg-white rounded-sm"
+                                type="number"
+                                min="1"
+                                max={inventoryItem.publicCount}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </form>
+                  </FormProvider>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col justify-between mr-[5rem] max-sm:mr-[0rem]">
+                  <h5>{organization.name}</h5>
+                  <p>{organization.phoneNumber}</p>
+                  <Link
+                    href={`/messages?u_id=${organization.id}`}
+                    className="w-full"
+                  >
+                    <button className="w-full button">Message</button>
+                  </Link>
+                </div>
+
+                <div className="flex flex-col justify-between my-[1rem]">
+                  <div className="mt-[1.5rem]">
+                    <p className="w-max mx-auto">Quantity Available:</p>
+                    <h5 className="w-min mx-auto">{listing.quantity}</h5>
+                  </div>
+                  <button
+                    className="button"
+                    onClick={() => setCreateOrderModalIsOpen(true)}
+                  >
+                    Create Order
+                  </button>
+                </div>
+              </>
+            )}
+                <Menu
+                  onOpenChange={(open) =>
+                    onOpenMenuChange && onOpenMenuChange(open, listing)
+                  }
+                  items={myListing ? [
+                    EDIT,
+                    activeState === 1 ? DEACTIVATE : ACTIVATE,
+                    DELETE,
+                  ] : [BOOKMARK]}
+                  onItemClick={onMenuItemClick}
+                  className="fixed top-2 right-4 sm:top-0 sm:right-0 xl:top-2 xl:right-4"
+                />
+          </div>
+
+          <Modal
+            isOpen={createOrderModalIsOpen}
+            onClose={() => setCreateOrderModalIsOpen(false)}
+          >
+            <CreateOrder
+              listing={listing}
+              userID={userID}
+              listingImages={images}
+              onClose={() => setCreateOrderModalIsOpen(false)}
+            />
+          </Modal>
+        </>
+      )}
+    </>
+  );
+}

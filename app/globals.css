@@ -4,6 +4,64 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  
+  .button {
+    background-color: #002856;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 15px 10px 15px;
+    font-weight: 650;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: filter 0.5s ease; 
+
+    &[type="submit"] {
+      background-color: #35B254;
+    }
+
+    &.cancel {
+      background-color: #BBBBBB;
+    }
+
+    &:hover {
+      transition: 0.3s;
+      filter: brightness(1.05);
+    }
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: black;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+  }
+
+  h3 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2D3748;
+  }
+
+  h4 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2D3748;
+  }
+
+  h5 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2D3748;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 600;
+  }
 }
 
 @layer utilities {
@@ -75,4 +133,54 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+      transform: translateX(0);
+  }
+  to {
+      transform: translateX(-100%);
+  }
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateX(-100%);
+  }
+  to {
+      transform: translateX(0%);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slideOut {
+  animation: slideOut 0.3s ease-in-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-in-out forwards;
 }
